@@ -2,7 +2,7 @@
 import { addDays, dayOf, monthOf } from '../lib/days';
 import { PERIOD_DAYS } from './formSummary';
 import { activityLoad, dailyLoads, firstDay } from './load';
-import { FITNESS_DAYS, trainingDays, zoneOf, type Zone } from './training';
+import { FITNESS_DAYS, trainingDays, zoneOf, type TrainingDay, type Zone } from './training';
 import type { Activity, Athlete, Dataset, DayKey, Sport } from './types';
 
 export type ActivityFilter = 'all' | Sport;
@@ -72,18 +72,22 @@ export function activityDetail(a: Activity, athlete: Athlete): ActivityDetail {
 }
 
 /**
- * Each day's form zone, as the Form screen shows it (from the day before's
- * fitness and fatigue), started where the Form screen's year starts so the
- * two agree. Days in the first week of history have none.
+ * Fitness, fatigue and form for every day up to today, as the Form screen
+ * computes them, started where its year starts so the two agree.
  */
-export function zonesByDay(data: Pick<Dataset, 'activities' | 'athlete' | 'asOf'>): Map<DayKey, Zone> {
+export function trainingByDay(data: Pick<Dataset, 'activities' | 'athlete' | 'asOf'>): Map<DayKey, TrainingDay> {
   const { activities, athlete, asOf } = data;
-  const zones = new Map<DayKey, Zone>();
-  if (!activities.length) return zones;
+  const days = new Map<DayKey, TrainingDay>();
+  if (!activities.length) return days;
   const from = [firstDay(activities, asOf), addDays(asOf, -(PERIOD_DAYS.year + FITNESS_DAYS))].sort()[0]!;
-  for (const d of trainingDays(dailyLoads(activities, athlete, from, asOf), from)) {
-    if (d.form !== null) zones.set(d.date, zoneOf(d.form));
-  }
+  for (const d of trainingDays(dailyLoads(activities, athlete, from, asOf), from)) days.set(d.date, d);
+  return days;
+}
+
+/** Each day's form zone (from the day before's fitness and fatigue). Days in the first week of history have none. */
+export function zonesByDay(data: Pick<Dataset, 'activities' | 'athlete' | 'asOf'>): Map<DayKey, Zone> {
+  const zones = new Map<DayKey, Zone>();
+  for (const d of trainingByDay(data).values()) if (d.form !== null) zones.set(d.date, zoneOf(d.form));
   return zones;
 }
 

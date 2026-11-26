@@ -279,6 +279,23 @@ export const pl: Messages = {
     loadFrom: (time, bpm) => `Obciążenie z czasu ${time} przy tętnie ${bpm}.`,
     loadNoHr: (time) => `Obciążenie z czasu ${time}; bez tętna, więc liczone jak spokojny wysiłek.`,
     formThatDay: 'Forma tego dnia',
+
+    view: 'Widok',
+    views: { list: 'Lista', weeks: 'Tygodnie' },
+    olderWeeks: 'Pokaż starsze tygodnie',
+    legendRun: 'Biegi',
+    legendRide: 'Rower',
+    legendOther: 'Inne: spacery, siłownia i reszta',
+    legendHeight: 'Wyższy blok, większe obciążenie',
+    weekLoad: (load, feel) =>
+      feel ? `Obciążenie ${load}, ${{ easy: 'lekki tydzień', steady: 'równy tydzień', hard: 'ciężki tydzień' }[feel]}` : `Obciążenie ${load} do dziś`,
+    formOnSunday: 'Forma w niedzielę',
+    formToday: 'Forma dziś',
+    sleep: (time) => `Sen ${time} na noc`,
+    rest: 'Odpoczynek',
+    restDay: 'Bez aktywności',
+    dayLabel: (date, names) => (names.length ? `${date}, ${names.join(', ')}` : `${date}, odpoczynek`),
+    dayDetails: (date) => `Aktywności, ${date}`,
   },
 
   easyHr: {

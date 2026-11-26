@@ -22,6 +22,10 @@ export interface Format {
   dayMonth: (d: Date) => string;
   /** "Wed 19 Nov" / "śr. 19 lis" */
   weekdayDate: (d: Date) => string;
+  /** "Mon" / "pon", for day columns */
+  weekdayShort: (d: Date) => string;
+  /** "17–23 Nov", or "27 Oct – 2 Nov" across months */
+  dayRange: (from: Date, to: Date) => string;
   /** "November" / "listopad" */
   monthName: (d: Date) => string;
   /** "Nov" / "Lis", for chart labels */
@@ -61,6 +65,7 @@ export function createFormat(locale: Locale): Format {
   const month = new Intl.DateTimeFormat(tag, { month: 'long' });
   const weekdayDate = new Intl.DateTimeFormat(tag, { weekday: 'short', day: 'numeric', month: 'short' });
   const dayMonth = new Intl.DateTimeFormat(tag, { day: 'numeric', month: 'short' });
+  const weekdayShort = new Intl.DateTimeFormat(tag, { weekday: 'short' });
   // en-GB writes "Sept"; chart labels want three letters.
   const monthShort = new Intl.DateTimeFormat(locale === 'pl' ? tag : 'en-US', { month: 'short' });
   const monthYear = new Intl.DateTimeFormat(tag, { month: 'long', year: 'numeric' });
@@ -73,6 +78,13 @@ export function createFormat(locale: Locale): Format {
     // en-GB writes "14 Sept"; three letters like every other month.
     dayMonth: (d) => dayMonth.format(d).replace('.', '').replace('Sept', 'Sep'),
     weekdayDate: (d) => capitalise(weekdayDate.format(d).replace(/,/g, '').replace('Sept', 'Sep')),
+    weekdayShort: (d) => weekdayShort.format(d).replace('.', ''),
+    dayRange: (from, to) => {
+      const end = dayMonth.format(to).replace('.', '').replace('Sept', 'Sep');
+      return from.getMonth() === to.getMonth()
+        ? `${from.getDate()}–${end}`
+        : `${dayMonth.format(from).replace('.', '').replace('Sept', 'Sep')} – ${end}`;
+    },
     monthName: (d) => month.format(d),
     monthShort: (d) => capitalise(monthShort.format(d).replace('.', '')),
     monthYear: (d) => capitalise(monthYear.format(d)),
