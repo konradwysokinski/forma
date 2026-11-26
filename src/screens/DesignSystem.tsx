@@ -395,7 +395,7 @@ export function DesignSystem() {
           </Example>
 
           <Example title={t.ds.sidebarRows} hint={t.ds.sidebarRowsHint}>
-            {/* Inert copies of the sidebar's rows, on the navy ground with its own tokens. */}
+            {/* Inert copies of the sidebar's rows, on the sidebar ground with its own tokens. */}
             <div className={s.sidebar} aria-hidden="true">
               <span className={`${layout.navRow} ${layout.active}`}>
                 <Icon name="form" className={layout.navIcon} />
@@ -552,7 +552,7 @@ const DARK = { ...LIGHT, ...readTheme("[data-theme='dark']") };
 /**
  * One collection of colour variables: a heading row, then name, light and dark
  * per token. Swatches sit on that theme's surface (or `on`, e.g. the sidebar's
- * navy), so translucent tokens show as they're used.
+ * ground), so translucent tokens show as they're used.
  */
 function Variables({ title, hint, names, on = 'surface' }: { title: string; hint?: string; names: string[]; on?: string }) {
   return (

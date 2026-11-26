@@ -285,7 +285,7 @@ export const en = {
     principlesTitle: 'Principles',
     principles: [
       'One question, answered calmly: am I getting fitter, how tired am I, is today a day for a hard run.',
-      'A navy ground with one white panel floating on it. Cards inside have a 1px border and no shadow.',
+      'A warm beige-grey ground with one white panel floating on it. Cards inside have a 1px border and no shadow.',
       'Big tabular numbers with one line under each that says what it means.',
       'Training colours mean one thing each: blue is fitness, violet fatigue, red heart rate, and five colours for the form zones. Nothing else uses them.',
       'Restraint: light weights (400 and 500), generous space, soft borders, pills, colour as soft tints.',
@@ -299,7 +299,7 @@ export const en = {
     accentHint: 'Moss, the one brand colour: primary buttons, links, focus ring, the new-record chip.',
     states: 'States',
     sidebar: 'Sidebar',
-    sidebarHint: 'The navy ground. The sidebar redefines ink, muted ink, hover, selected and accent to these, so its rows need no rules of their own.',
+    sidebarHint: 'The warm ground behind the sidebar and panel. The sidebar redefines ink, muted ink, hover, selected and accent to these, so its rows need no rules of their own.',
     training: 'Training',
     trainingHint: 'Fitness, fatigue, daily load and heart rate. Used for these measures only; -ink for text.',
     zones: 'Form zones',

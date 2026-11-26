@@ -77,7 +77,7 @@ Forma uses Kilometr's design system (`../Kilometr/CLAUDE.md` §4): the same grou
 
 What differs:
 - **No gear colours.** Forma has no gear, so `--gear-*` are gone.
-- **Navy sidebar** (Konrad, 2026-11-26): the app ground is `--sidebar-bg` (#13234A, a dark shade of `--fitness`; #0E1830 in dark), with the white content panel floating on it. The sidebar redefines `--ink`, `--ink-muted`, `--hover`, `--selected` and `--accent` to its `--sidebar-*` values, so its rows and status need no rules of their own. Kilometr keeps its light sidebar.
+- **Warm ground and sidebar** (Konrad, 2026-11-26): the ground behind the panel and sidebar is a warm beige-grey (`--canvas` #F3F1EC, gradient #F4F2ED → #E9E5DD), warmer than Kilometr's grey. The sidebar has its own `--sidebar-*` set (`--sidebar-bg`, `-ink`, `-ink-muted`, `-hover`, `-selected`, `-accent`, `-accent-soft`) that `.sidebar` maps onto `--ink`, `--hover` and so on, so its character can change in one place. A navy sidebar (#13234A, light text) was tried and set aside as too loud; it may come back.
 - **Training colours are their own tokens** and are used for nothing else:
   - `--fitness` (#2563EB, line, gradient 18% → 0) and `--fitness-ink`
   - `--fatigue` (#8B5CF6, thinner line) and `--fatigue-ink`

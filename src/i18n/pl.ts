@@ -276,7 +276,7 @@ export const pl: Messages = {
     principlesTitle: 'Zasady',
     principles: [
       'Jedno pytanie, spokojna odpowiedź: czy forma rośnie, jakie jest zmęczenie, czy dziś jest dzień na mocny bieg.',
-      'Granatowe tło i jeden biały panel, który na nim leży. Karty w środku mają ramkę 1px i bez cienia.',
+      'Ciepłe, beżowoszare tło i jeden biały panel, który na nim leży. Karty w środku mają ramkę 1px i bez cienia.',
       'Duże cyfry o stałej szerokości, pod każdą jedna linijka, która mówi, co znaczy.',
       'Kolory treningu znaczą po jednej rzeczy: niebieski to kondycja, fioletowy zmęczenie, czerwony tętno, plus pięć kolorów stref formy. Nic innego ich nie używa.',
       'Umiar: lekkie grubości (400 i 500), dużo powietrza, delikatne ramki, pigułki, kolor jako miękki odcień.',
@@ -290,7 +290,7 @@ export const pl: Messages = {
     accentHint: 'Mech, jedyny kolor marki: główne przyciski, linki, obwódka fokusu, chip nowego rekordu.',
     states: 'Stany',
     sidebar: 'Pasek boczny',
-    sidebarHint: 'Granatowe tło. Pasek boczny podmienia na te wartości tekst, tekst wyciszony, hover, zaznaczenie i akcent, więc jego wiersze nie potrzebują własnych reguł.',
+    sidebarHint: 'Ciepłe tło pod paskiem bocznym i panelem. Pasek boczny podmienia na te wartości tekst, tekst wyciszony, hover, zaznaczenie i akcent, więc jego wiersze nie potrzebują własnych reguł.',
     training: 'Trening',
     trainingHint: 'Kondycja, zmęczenie, obciążenie dzienne i tętno. Tylko do tych miar; -ink do tekstu.',
     zones: 'Strefy formy',

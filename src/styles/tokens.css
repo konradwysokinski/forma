@@ -4,8 +4,8 @@
   color-scheme: light;
 
   /* ground */
-  --canvas: #f2f3f5;
-  --canvas-gradient: linear-gradient(180deg, #f1f2f4 0%, #e8eaed 100%);
+  --canvas: #f3f1ec;
+  --canvas-gradient: linear-gradient(180deg, #f4f2ed 0%, #e9e5dd 100%); /* warm beige-grey */
   --surface: #ffffff;
   --surface-sunken: #f6f7f9;
   --line: #e3e5e9;
@@ -33,14 +33,18 @@
   --warn-soft: rgba(168, 89, 11, 0.12);
   --danger: #b23a2a;
 
-  /* sidebar: deep navy, a dark shade of --fitness, with light text on it */
-  --sidebar-bg: #13234a;
-  --sidebar-ink: #eef2fb;
-  --sidebar-ink-muted: rgba(226, 232, 246, 0.68);
-  --sidebar-hover: rgba(255, 255, 255, 0.07);
-  --sidebar-selected: rgba(255, 255, 255, 0.13);
-  --sidebar-accent: #7fc29e;
-  --sidebar-accent-soft: rgba(127, 194, 158, 0.22);
+  /*
+   * sidebar: the warm ground the panel floats on. Its own set, so the sidebar
+   * can change character (navy was tried: #13234a with #eef2fb text) without
+   * touching the rest.
+   */
+  --sidebar-bg: var(--canvas-gradient);
+  --sidebar-ink: #17191c;
+  --sidebar-ink-muted: #5c5952; /* warm muted, 5.9:1 on the ground */
+  --sidebar-hover: rgba(60, 46, 25, 0.05);
+  --sidebar-selected: rgba(60, 46, 25, 0.08);
+  --sidebar-accent: #2f6b4f;
+  --sidebar-accent-soft: #e3eee7;
 
   /* training: only for these measures, nothing else */
   --fitness: #2563eb;
@@ -128,7 +132,13 @@
   --warn-soft: #3a2b1a;
   --danger: #f08a78;
 
-  --sidebar-bg: #0e1830;
+  --sidebar-bg: var(--canvas-gradient);
+  --sidebar-ink: #eceef1;
+  --sidebar-ink-muted: #a2a8b1;
+  --sidebar-hover: rgba(236, 238, 241, 0.05);
+  --sidebar-selected: rgba(236, 238, 241, 0.09);
+  --sidebar-accent: #7fc29e;
+  --sidebar-accent-soft: #23362b;
 
   --fitness: #6b9bff;
   --fitness-ink: #6b9bff;

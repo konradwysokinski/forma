@@ -1,4 +1,4 @@
-/* The app sits on deep navy (--sidebar-bg); the white content panel floats on it. */
+/* The app sits on the sidebar ground (--sidebar-bg, warm beige-grey); the white content panel floats on it. */
 .app {
   min-height: 100vh;
   display: flex;
