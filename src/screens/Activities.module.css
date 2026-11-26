@@ -131,13 +131,21 @@
   background: linear-gradient(90deg, transparent, var(--hover) 8%, var(--hover) 92%, transparent);
 }
 
-/* Open: the row and its details become one tile; the negative margin keeps the columns in line. */
+/*
+ * Open: the row and its details become one tile. Only sideways margins (they
+ * keep the columns in line), so the row itself never moves when it opens.
+ */
 .open {
-  margin: 4px -12px;
+  margin: 0 -12px;
   padding: 0 12px;
   border-bottom-color: transparent;
   border-radius: var(--radius-tile);
   background: var(--hover);
+}
+
+/* The row above an open one drops its rule, which would otherwise sit on the tile's edge. */
+.item:has(+ .open) {
+  border-bottom-color: transparent;
 }
 
 .date {
@@ -212,10 +220,10 @@
   animation: reveal 0.18s ease-out;
 }
 
+/* A fade only: nothing slides, so the row stays put. */
 @keyframes reveal {
   from {
     opacity: 0;
-    transform: translateY(-4px);
   }
 }
 
