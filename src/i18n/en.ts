@@ -203,7 +203,7 @@ export const en = {
     kpiFatigue: 'Fatigue',
     fatigueSub: (week: WeekFeel) =>
       ({ easy: 'From the last 7 days, an easy week', steady: 'From the last 7 days, a steady week', hard: 'From the last 7 days, a hard week' })[week],
-    kpiEasyHr: 'Easy-pace heart rate',
+    kpiEasyHr: 'Easy-pace HR',
     bpm: 'bpm',
     easyHrSub: (pace: string, change: number | null, month: number) =>
       change === null

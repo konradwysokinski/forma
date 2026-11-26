@@ -6,11 +6,11 @@ import { useWidth } from '../lib/useWidth';
 import { AXIS_LEFT, barWidth, dayX } from './chartAxis';
 import s from './Charts.module.css';
 
-const HEIGHT = 72;
-const BASE = 68;
+const HEIGHT = 56;
+const BASE = 52;
 /** Bars are drawn on a 0–10 h scale; longer nights stop at the top. */
 const MAX_HOURS = 10;
-const PLOT = 62;
+const PLOT = 46;
 const GRID_HOURS = [4, 8];
 /** Three steps of the sleep colour: darker for a better score. */
 const SHADE: Record<SleepLevel, number> = { low: 0.3, mid: 0.6, good: 1 };
