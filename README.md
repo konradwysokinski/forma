@@ -1,15 +1,25 @@
 # Forma
 
-A calm, easy-to-read view of your running **fitness, fatigue and form**, fed by Strava. Local-first: your data stays in your browser.
+A calm, easy-to-read view of your running **fitness, fatigue and form**, fed by your COROS watch. It answers three questions: am I getting fitter, how tired am I, and is today a day for a hard run.
+
+Local-first: your activities stay in your browser. No account, no server that keeps your data.
+
+## What it shows
 
 - **Fitness**: your average training load over the last 42 days.
 - **Fatigue**: the same over the last 7 days.
-- **Form**: how far fatigue sits below or above fitness, as a share of fitness, in five zones from High risk to Transition.
-- **Records** (5 km, 10 km, half marathon, longest run) and **heart rate at easy pace**, month by month: lower at the same pace means fitter.
+- **Form**: the gap between them as a share of fitness, in five zones from High risk to Transition. Each zone opens a short guide to what it means.
+- **Day by day**: hover, tap or use the arrow keys on the charts to see a day's form, fitness, fatigue, load and activities.
+- **Records** within the chosen period (5 km, 10 km, half marathon, marathon, longest run), each with its heart rate.
+- **Heart rate at easy pace**, month by month: lower at the same pace means fitter.
 
-Load comes from each activity's moving time and average heart rate (Banister TRIMP), so Forma reads only Strava's activity list, with no request per activity.
+Load comes from each activity's moving time and average heart rate (Banister TRIMP). Max and resting heart rate are estimated (resting from COROS) until you set your own in Settings. The model is Eric Banister's impulse-response model from the 1970s, the same idea behind Fitness & Freshness charts in training apps.
 
-> Status: the Form screen runs on sample data. Connecting Strava is next.
+Forma speaks English and Polish, with light and dark themes.
+
+## How the data gets in
+
+Forma signs in to COROS's official MCP server (`mcp.coros.com`) with OAuth from the browser, then reads your activity list, resting heart rate and sex, a month at a time. That is all it reads: no GPS tracks, no per-activity requests. Later syncs only fetch what is new. You can also look around with sample data, no sign-in needed.
 
 ## Run it
 
@@ -19,11 +29,13 @@ npm run dev   # http://localhost:5174
 npm test
 ```
 
-To sign in with Strava locally, copy `.env.example` to `.env.local` and fill in your own Strava API app's Client ID and secret.
+COROS sign-in needs no keys: Forma registers itself with COROS on first use. It is tried on `http://localhost:5174`; other origins may not be allowed by COROS yet.
+
+Strava sign-in exists in the code but is not wired in yet. To try it later, copy `.env.example` to `.env.local` and fill in your own Strava API app's Client ID and secret.
 
 ## Built with
 
-Vite, React 19, TypeScript, CSS modules. Design system shared with its sister project, [Kilometr](https://kilometr-roan.vercel.app).
+Vite, React 19, TypeScript, CSS modules, hand-drawn SVG charts. Design system shared with its sister project, [Kilometr](https://kilometr-roan.vercel.app). Forma is an independent app, not made by COROS.
 
 ## Licence
 
