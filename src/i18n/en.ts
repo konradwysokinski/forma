@@ -275,10 +275,21 @@ export const en = {
 
   easyHr: {
     title: 'Heart rate at easy pace',
-    note: (from: string, to: string) => `Average on runs at ${from}–${to} /km. Lower at the same pace means fitter.`,
+    note: (from: string, to: string) =>
+      `Average heart rate on runs at ${from}–${to} /km, and how many there were each month. Lower at the same pace means fitter.`,
     aria: (first: string, from: string, last: string, to: string) =>
       `Easy-pace heart rate went from ${first} bpm in ${from} to ${last} bpm in ${to}.`,
     empty: 'No easy runs with heart rate in these months.',
+    /** Beside the big number: "bpm in November"; month 0–11. */
+    unit: (month: number) => `bpm ${inMonth(month)}`,
+    /** The latest month against the first one shown. */
+    change: (change: number, month: number) =>
+      change < 0
+        ? `${-change} bpm lower than ${inMonth(month)}`
+        : change > 0
+          ? `${change} bpm higher than ${inMonth(month)}`
+          : `The same as ${inMonth(month)}`,
+    runs: (n: number) => (n === 1 ? '1 run' : `${n} runs`),
   },
 
   ds: {

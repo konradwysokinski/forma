@@ -49,8 +49,7 @@
 }
 
 .fitness,
-.fatigue,
-.heart {
+.fatigue {
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -66,14 +65,8 @@
   stroke-width: 1.5;
 }
 
-.heart {
-  stroke: var(--heart);
-  stroke-width: 2.5;
-}
-
 .fitnessDot,
-.fatigueDot,
-.heartDot {
+.fatigueDot {
   fill: var(--surface);
   stroke-width: 2;
 }
@@ -84,17 +77,6 @@
 
 .fatigueDot {
   stroke: var(--fatigue);
-}
-
-.heartDot {
-  stroke: var(--heart);
-}
-
-/* The month's value above its point, in the heart colour's ink. */
-.heartLabel {
-  font-size: 12px;
-  font-weight: 500;
-  fill: var(--heart-ink);
 }
 
 .empty {

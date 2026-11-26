@@ -80,21 +80,22 @@
   min-width: 0;
 }
 
+/* Card titles 16 with a 12px note under them (Konrad, 2026-11-26): quieter than Kilometr's 18/13. */
 .heading {
-  font-size: 18px;
-  line-height: 24px;
-  font-weight: 500;
-}
-
-.subheading {
   font-size: 16px;
   line-height: 22px;
   font-weight: 500;
 }
 
+.subheading {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+}
+
 .muted {
-  font-size: 13px;
-  line-height: 18px;
+  font-size: 12px;
+  line-height: 16px;
   color: var(--ink-muted);
 }
 
@@ -353,8 +354,13 @@
   letter-spacing: -0.02em;
 }
 
+/* Takes the Records card's height; its bars grow to fill it, so neither card has a gap at the bottom. */
 .easyHr {
   gap: 14px;
+}
+
+.easyHr > :last-child {
+  flex: 1;
 }
 
 .headingBlock {

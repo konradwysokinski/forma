@@ -1,0 +1,114 @@
+/* Easy-pace heart rate: a large latest value, then a bar per month in --heart. */
+.body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.headline {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.big {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+/* line-height 1 puts the box's bottom just under the baseline, so the chip's bottom edge lines up with it. */
+.number {
+  font-size: 48px;
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  color: var(--heart-ink);
+}
+
+.unit {
+  font-size: 16px;
+  color: var(--ink-muted);
+}
+
+.chip {
+  padding: 0 10px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: 500;
+  white-space: nowrap;
+  margin-bottom: 6.5px;
+}
+
+.bars,
+.labels {
+  display: grid;
+  grid-template-columns: repeat(var(--months), minmax(0, 1fr));
+  gap: 10px;
+}
+
+.bars {
+  flex: 1;
+  align-items: end;
+  min-height: 110px;
+  border-bottom: 1px solid var(--line);
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  height: 100%;
+}
+
+.value {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  color: var(--ink-muted);
+}
+
+.bar {
+  width: 100%;
+  border-radius: var(--radius-bar-seg) var(--radius-bar-seg) 2px 2px;
+  background: color-mix(in srgb, var(--heart) 20%, transparent);
+}
+
+.col[data-latest] .value {
+  color: var(--heart-ink);
+}
+
+.col[data-latest] .bar {
+  background: linear-gradient(180deg, var(--heart), color-mix(in srgb, var(--heart) 70%, transparent));
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  font-size: 12px;
+  line-height: 16px;
+  min-width: 0;
+}
+
+.runs {
+  font-size: 11px;
+  line-height: 14px;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.empty {
+  font-size: 14px;
+  color: var(--ink-muted);
+}
