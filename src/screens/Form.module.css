@@ -410,3 +410,10 @@
   flex: 1 1 220px;
   min-width: 0;
 }
+
+/* One line whichever records are shown, so switching never moves the table. */
+.recordsHead .muted {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

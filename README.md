@@ -4,13 +4,25 @@ A calm, easy-to-read view of your running **fitness, fatigue and form**, fed by 
 
 Local-first: your activities stay in your browser. No account, no server that keeps your data.
 
+![The Form screen on sample data: fitness, fatigue and form over three months](docs/screenshots/form-light.jpg)
+
+<details>
+<summary>Dark theme and the Activities screen</summary>
+
+![The Form screen in the dark theme](docs/screenshots/form-dark.jpg)
+
+![Activities by month, one row open with its load, pace and heart rate](docs/screenshots/activities.jpg)
+
+</details>
+
 ## What it shows
 
 - **Fitness**: your average training load over the last 42 days.
 - **Fatigue**: the same over the last 7 days.
 - **Form**: the gap between them as a share of fitness, in five zones from High risk to Transition. Each zone opens a short guide to what it means.
+- **Activities**: every session by month, with what it added to your load.
 - **Day by day**: hover, tap or use the arrow keys on the charts to see a day's form, fitness, fatigue, load and activities.
-- **Records** within the chosen period (5 km, 10 km, half marathon, marathon, longest run), each with its heart rate.
+- **Records** for the chosen period or everything Forma holds (5 km, 10 km, half marathon, marathon, longest run), each with its heart rate.
 - **Heart rate at easy pace**, month by month: lower at the same pace means fitter.
 
 Load comes from each activity's moving time and average heart rate (Banister TRIMP). Max and resting heart rate are estimated (resting from COROS) until you set your own in Settings. The model is Eric Banister's impulse-response model from the 1970s, the same idea behind Fitness & Freshness charts in training apps.

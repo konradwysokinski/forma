@@ -243,9 +243,9 @@ export const en = {
     marathon: 'Marathon',
     longest: 'Longest run',
     /** Under the title: which runs the records come from. */
-    note: { '6w': 'Best whole runs in the last 6 weeks', '3m': 'Best whole runs in the last 3 months', year: 'Best whole runs in the last year' },
+    note: { '6w': 'Best whole runs, last 6 weeks', '3m': 'Best whole runs, last 3 months', year: 'Best whole runs, last year' },
     isNew: (date: string) => `New · ${date}`,
-    noteAll: (since: string) => `Best whole runs since ${since}, the first activity in Forma`,
+    noteAll: (since: string) => `Best whole runs since ${since}`,
     scope: 'Records from',
     all: 'All',
     none: 'None in this period',

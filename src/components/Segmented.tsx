@@ -14,7 +14,7 @@ interface Props<T extends string> {
   options: readonly SegmentedOption<T>[];
   value: T;
   onChange: (value: T) => void;
-  /** sm and md: pills on a track. box: a bordered 40px box, for page-level choices like the period. */
+  /** One boxed look in three sizes: box 40px (page-level, the period), md 36px (Settings), sm 30px (inside cards). */
   size?: 'sm' | 'md' | 'box';
 }
 
