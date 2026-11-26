@@ -1,4 +1,4 @@
-/** What Forma keeps per activity: everything comes from Strava's activity list, no extra requests. */
+/** What Forma keeps per activity: everything comes from the source's activity list (COROS, later Strava), no extra requests. */
 export type Sport = 'run' | 'ride' | 'other';
 
 export interface Activity {
@@ -25,7 +25,7 @@ export interface Athlete {
 }
 
 export interface Dataset {
-  source: 'sample' | 'strava';
+  source: 'sample' | 'coros' | 'strava';
   activities: Activity[];
   athlete: Athlete;
   /** "Today" for this data, "2026-11-25". Sample data is pinned to a date; real data uses the real day. */

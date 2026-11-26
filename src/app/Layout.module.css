@@ -71,26 +71,99 @@
   margin-top: auto;
   padding: 0 12px;
   display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footerRow {
+  display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
 }
 
 .status {
+  min-height: 34px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 0 10px;
   font-size: 13px;
   line-height: 18px;
   color: var(--ink-muted);
 }
 
+/* "Synced 12 min ago": the whole row syncs now. */
+.statusButton {
+  margin: 0 -8px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: var(--radius-nav);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.statusButton:hover {
+  background: var(--hover);
+}
+
+.statusText {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* After the text, or under it, lined up with it, when both don't fit (Polish). */
+.action {
+  flex: none;
+  margin-left: 13px;
+}
+
+.quiet {
+  color: var(--ink-muted);
+  font-weight: 400;
+}
+
+.quiet:hover {
+  color: var(--ink);
+}
+
 .dot {
+  flex: none;
   width: 7px;
   height: 7px;
   border-radius: var(--radius-pill);
   background: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.dotQuiet {
+  background: var(--ink-muted);
+  box-shadow: 0 0 0 3px var(--neutral-chip);
+}
+
+.dotWarn {
+  background: var(--warn);
+  box-shadow: 0 0 0 3px var(--warn-soft);
+}
+
+.dotBusy {
+  animation: breathe 1.4s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dotBusy {
+    animation: none;
+  }
 }
 
 .panel {
@@ -133,9 +206,12 @@
 
   .footer {
     margin: 0 0 0 auto;
+    flex-direction: row;
+    align-items: center;
   }
 
-  .status {
+  .status,
+  .quiet {
     display: none;
   }
 

@@ -20,6 +20,47 @@ export const pl: Messages = {
 
   sidebar: {
     sampleData: 'Przykładowe dane',
+    connect: 'Połącz COROS',
+    synced: (ago) => `Zsynchronizowano ${ago}`,
+    syncedJustNow: 'Zsynchronizowano przed chwilą',
+    syncing: 'Synchronizacja…',
+    syncNow: 'Synchronizuj z COROS teraz',
+    syncFailed: 'Błąd synchronizacji',
+    retry: 'Spróbuj ponownie',
+    reconnect: 'Połącz ponownie',
+    disconnect: 'Odłącz',
+    disconnectHint: 'Wyloguj z COROS i usuń jego dane z tej przeglądarki',
+  },
+
+  start: {
+    title: 'Kondycja, zmęczenie i forma',
+    titleMuted: 'z Twoich treningów',
+    lead: 'Forma pokazuje, czy kondycja rośnie, jak duże jest zmęczenie i czy dziś jest dzień na mocny bieg.',
+    connectTitle: 'Połącz COROS',
+    connectBody:
+      'Zaloguj się kontem COROS. Forma pobiera aktywności z ostatniego roku, tętno spoczynkowe i płeć, potrzebne do wzoru na obciążenie. Nic więcej.',
+    connectButton: 'Połącz COROS',
+    connecting: 'Otwieranie COROS…',
+    connectNote: 'Dane zostają w tej przeglądarce: bez konta, bez serwera.',
+    connectFailed: (message) => `Nie udało się otworzyć logowania COROS. ${message}`,
+    sample: 'Zobacz na przykładowych danych',
+    openSource: 'Open source · MIT',
+  },
+
+  callback: {
+    finishing: 'Kończenie logowania…',
+    failed: 'Logowanie się nie powiodło',
+    back: 'Wróć do startu',
+  },
+
+  firstSync: {
+    title: 'Pobieranie treningów',
+    titleMuted: 'z COROS',
+    body: 'Rok aktywności, miesiąc po miesiącu. Kolejne synchronizacje pobierają tylko nowe.',
+    progressLabel: 'Postęp synchronizacji',
+    failed: 'Synchronizacja się przerwała',
+    retry: 'Spróbuj ponownie',
+    reconnect: 'Połącz ponownie',
   },
 
   period: {

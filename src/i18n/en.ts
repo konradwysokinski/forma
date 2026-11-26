@@ -21,6 +21,47 @@ export const en = {
 
   sidebar: {
     sampleData: 'Sample data',
+    connect: 'Connect COROS',
+    synced: (ago: string) => `Synced ${ago}`,
+    syncedJustNow: 'Synced just now',
+    syncing: 'Syncing…',
+    syncNow: 'Sync with COROS now',
+    syncFailed: 'Sync failed',
+    retry: 'Try again',
+    reconnect: 'Connect again',
+    disconnect: 'Disconnect',
+    disconnectHint: 'Sign out of COROS and remove its data from this browser',
+  },
+
+  start: {
+    title: 'Fitness, fatigue and form',
+    titleMuted: 'from your own training',
+    lead: 'Forma shows whether you are getting fitter, how tired you are, and whether today is a day for a hard run.',
+    connectTitle: 'Connect COROS',
+    connectBody:
+      'Sign in with your COROS account. Forma reads a year of activities, your resting heart rate and sex, for the load formula. Nothing else.',
+    connectButton: 'Connect COROS',
+    connecting: 'Opening COROS…',
+    connectNote: 'Your data stays in this browser: no account, no server.',
+    connectFailed: (message: string) => `COROS sign-in didn't start. ${message}`,
+    sample: 'Look around with sample data',
+    openSource: 'Open source · MIT',
+  },
+
+  callback: {
+    finishing: 'Finishing sign-in…',
+    failed: "Sign-in didn't finish",
+    back: 'Back to start',
+  },
+
+  firstSync: {
+    title: 'Fetching your training',
+    titleMuted: 'from COROS',
+    body: 'A year of activities, a month at a time. Later syncs only fetch what is new.',
+    progressLabel: 'Sync progress',
+    failed: 'The sync stopped',
+    retry: 'Try again',
+    reconnect: 'Connect again',
   },
 
   period: {

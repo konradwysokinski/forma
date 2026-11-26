@@ -33,6 +33,8 @@ export interface Format {
   /** "5:30" for a range's ends */
   paceShort: (secondsPerKm: number) => string;
   bpm: (n: number) => string;
+  /** How long ago a moment was: "12 min ago" / "12 min temu", "now" / "teraz". */
+  ago: (ms: number, now?: number) => string;
 }
 
 /** 3125 → "52:05", 3852 → "1:04:12". */
@@ -50,6 +52,7 @@ export function createFormat(locale: Locale): Format {
   const dayMonth = new Intl.DateTimeFormat(tag, { day: 'numeric', month: 'short' });
   // en-GB writes "Sept"; chart labels want three letters.
   const monthShort = new Intl.DateTimeFormat(locale === 'pl' ? tag : 'en-US', { month: 'short' });
+  const relative = new Intl.RelativeTimeFormat(tag, { numeric: 'auto', style: 'short' });
   const oneDecimal = (n: number) => (locale === 'pl' ? n.toFixed(1).replace('.', ',') : n.toFixed(1));
 
   return {
@@ -64,5 +67,11 @@ export function createFormat(locale: Locale): Format {
     pace: (secondsPerKm) => `${clock(secondsPerKm)}${NBSP}/km`,
     paceShort: clock,
     bpm: (n) => `${formatInt(n)}${NBSP}bpm`,
+    ago: (ms, now = Date.now()) => {
+      const minutes = Math.max(0, Math.round((now - ms) / 60_000));
+      if (minutes < 60) return relative.format(-minutes, 'minute');
+      const hours = Math.round(minutes / 60);
+      return hours < 24 ? relative.format(-hours, 'hour') : relative.format(-Math.round(hours / 24), 'day');
+    },
   };
 }

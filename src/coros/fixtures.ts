@@ -1,0 +1,78 @@
+/**
+ * Hand-written COROS replies for tests, shaped like the real ones (spaces,
+ * separators, the line break before " | Avg HR" on records without a
+ * distance) but invented: no real names, places, coordinates or dates of birth.
+ * Never paste a real reply here.
+ */
+import type { ToolResult } from './mcp';
+
+/** As COROS sends it: the text as a JSON string inside content[0].text. */
+export const wrap = (text: string): ToolResult => ({
+  content: [{ type: 'text', text: JSON.stringify(text) }],
+  isError: false,
+});
+
+export const SPORT_RECORDS = [
+  'Sport Records — 2026-11-20 to 2026-11-26 (5 records)',
+  '========================',
+  '',
+  '1. Outdoor Run — 2026-11-25',
+  '   Location: Sample Park Run',
+  '   Start Coordinates: 10.000000, 10.000000',
+  '   Time Window: startTimestamp=1795600000 | endTimestamp=1795603600',
+  '   Duration: 58:03 | Distance: 10.98 km',
+  '   Average Pace: 5:17 /km | Avg HR: 140 bpm | Calories: 750 kcal',
+  '   LabelId: 100000000000000005 | SportType: 100',
+  '',
+  '2. Ping Pong — 2026-11-24',
+  '   Location: Table Tennis',
+  '   Time Window: startTimestamp=1795500000 | endTimestamp=1795502600',
+  '   Duration: 43:07',
+  ' | Avg HR: 90 bpm | Calories: 210 kcal',
+  '   LabelId: 100000000000000004 | SportType: 1001',
+  '',
+  '3. Hike — 2026-11-23',
+  '   Location: Sample Hill Hike',
+  '   Start Coordinates: 10.000000, 10.000000',
+  '   Time Window: startTimestamp=1795420000 | endTimestamp=1795421100',
+  '   Duration: 17:06 | Distance: 979 m',
+  '   Average Speed: 3.4 km/h | Avg HR: 78 bpm | Calories: 60 kcal',
+  '   LabelId: 100000000000000003 | SportType: 104',
+  '',
+  '4. Trail Run — 2026-11-22',
+  '   Location: Sample Forest Trail Run',
+  '   Start Coordinates: 10.000000, 10.000000',
+  '   Time Window: startTimestamp=1795330000 | endTimestamp=1795338000',
+  '   Duration: 2:03:41 | Distance: 22.06 km',
+  '   Average Pace: 5:36 /km | Avg HR: 128 bpm | Calories: 1100 kcal',
+  '   LabelId: 100000000000000002 | SportType: 102',
+  '',
+  '5. Gravel Bike — 2026-11-21',
+  '   Location: Sample Valley Gravel Bike',
+  '   Start Coordinates: 10.000000, 10.000000',
+  '   Time Window: startTimestamp=1795250000 | endTimestamp=1795255000',
+  '   Duration: 1:10:42 | Distance: 25.55 km',
+  '   Average Speed: 21.7 km/h',
+  '   LabelId: 100000000000000001 | SportType: 203',
+].join('\n');
+
+export const RESTING_HR = [
+  'Resting Heart Rate — Last 30 days',
+  '========================',
+  '',
+  '2026-11-25: 45 bpm',
+  '2026-11-24: 43 bpm',
+  '2026-11-23: 47 bpm',
+  '2026-11-22: 52 bpm',
+].join('\n');
+
+export const USER_INFO = [
+  'User Profile Information',
+  '========================',
+  '',
+  'Height: 175.0 cm',
+  'Weight: 70.0 kg',
+  'Birthday: 1990-01-01 (Age: 36)',
+  'Gender: Female',
+  'Nickname: Sample Runner',
+].join('\n');

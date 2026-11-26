@@ -4,7 +4,7 @@
  * is no client secret and no server step; PKCE protects the code exchange.
  * Every endpoint answers the browser directly (CORS), so all of this runs here.
  *
- * Spike: tokens and the registered client stay in this browser's localStorage.
+ * Tokens and the registered client stay in this browser's localStorage; Forma never sends them anywhere but COROS.
  */
 const DISCOVERY = 'https://mcp.coros.com/.well-known/oauth-protected-resource/mcp';
 const SCOPE = 'openid mcp.tools offline_access';
