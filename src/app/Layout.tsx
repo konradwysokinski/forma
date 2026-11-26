@@ -74,6 +74,7 @@ function SourceStatus() {
 }
 
 export const SETTINGS_PATH = '/settings';
+export const ACTIVITIES_PATH = '/activities';
 
 /**
  * Tinted sidebar plus one white content panel, as in Kilometr. Settings open
@@ -96,12 +97,16 @@ export function Layout() {
             <Icon name="form" className={s.navIcon} />
             {t.nav.form}
           </NavLink>
+          <NavLink to={ACTIVITIES_PATH} className={({ isActive }) => `${s.navRow} ${isActive ? s.active : ''}`}>
+            <Icon name="activities" className={s.navIcon} />
+            {t.nav.activities}
+          </NavLink>
         </div>
         <div className={s.footer}>
           <SourceStatus />
           <NavLink
             to={SETTINGS_PATH}
-            state={{ fromApp: true }}
+            state={{ fromApp: true, from: location.pathname }}
             className={({ isActive }) => `${s.navRow} ${isActive ? s.active : ''}`}
           >
             <Icon name="settings" className={s.navIcon} />

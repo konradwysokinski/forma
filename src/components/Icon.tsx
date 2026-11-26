@@ -3,6 +3,8 @@ import type { SVGProps } from 'react';
 /** Thin-stroke icons on a 17×17 grid, as in the designs. */
 const PATHS = {
   form: <path d="M1.5 12.5c2-5 4-7 6-4s4.5 1 8-6" />,
+  // A pulse line (Kilometr's, moved onto the 17px grid).
+  activities: <path transform="translate(0.5 0.5)" d="M1.5 8h3l1.5-4 3 8 1.5-4h4" />,
   // A cog: eight teeth round a ring (Kilometr's, moved onto the 17px grid).
   settings: (
     <g transform="translate(0.5 0.5)">

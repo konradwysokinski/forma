@@ -15,6 +15,7 @@ export const pl: Messages = {
   nav: {
     label: 'Główne',
     form: 'Forma',
+    activities: 'Aktywności',
     settings: 'Ustawienia',
   },
 
@@ -237,6 +238,26 @@ export const pl: Messages = {
     isNew: (date) => `Nowy · ${date}`,
     none: 'Brak w tym okresie',
     heartRateLabel: 'Średnie tętno',
+  },
+
+  activities: {
+    title: 'Aktywności',
+    lead: 'Ile obciążenia dodał każdy trening.',
+    filterLabel: 'Sport',
+    filters: { all: 'Wszystkie', run: 'Biegi', ride: 'Rower', other: 'Inne' },
+    sports: { run: 'Bieg', ride: 'Rower', other: 'Inne' },
+    older: 'Pokaż starsze miesiące',
+    empty: 'Nie ma jeszcze aktywności.',
+    details: (name, date) => `${name}, ${date}`,
+    distance: 'Dystans',
+    movingTime: 'Czas ruchu',
+    pace: 'Tempo',
+    speed: 'Prędkość',
+    heartRate: 'Średnie tętno',
+    load: 'Obciążenie',
+    loadFrom: (time, bpm) => `Obciążenie z czasu ${time} przy tętnie ${bpm}.`,
+    loadNoHr: (time) => `Obciążenie z czasu ${time}; bez tętna, więc liczone jak spokojny wysiłek.`,
+    formThatDay: 'Forma tego dnia',
   },
 
   easyHr: {

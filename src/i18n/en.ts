@@ -1,5 +1,7 @@
 import type { Zone } from '../domain/training';
+import type { ActivityFilter } from '../domain/activities';
 import type { WeekFeel } from '../domain/formSummary';
+import type { Sport } from '../domain/types';
 import type { Locale } from './types';
 
 const MONTHS = [
@@ -16,6 +18,7 @@ export const en = {
   nav: {
     label: 'Main',
     form: 'Form',
+    activities: 'Activities',
     settings: 'Settings',
   },
 
@@ -242,6 +245,27 @@ export const en = {
     isNew: (date: string) => `New · ${date}`,
     none: 'None in this period',
     heartRateLabel: 'Average heart rate',
+  },
+
+  activities: {
+    title: 'Activities',
+    lead: 'What each session added to your load.',
+    filterLabel: 'Sport',
+    filters: { all: 'All', run: 'Runs', ride: 'Rides', other: 'Other' } satisfies Record<ActivityFilter, string>,
+    sports: { run: 'Run', ride: 'Ride', other: 'Other' } satisfies Record<Sport, string>,
+    older: 'Show more months',
+    empty: 'No activities yet.',
+    /** Names an opened row's details for screen readers. */
+    details: (name: string, date: string) => `${name}, ${date}`,
+    distance: 'Distance',
+    movingTime: 'Moving time',
+    pace: 'Pace',
+    speed: 'Speed',
+    heartRate: 'Average heart rate',
+    load: 'Load',
+    loadFrom: (time: string, bpm: string) => `Load from ${time} at ${bpm}.`,
+    loadNoHr: (time: string) => `Load from ${time}; no heart rate, so counted as an easy effort.`,
+    formThatDay: 'Form that day',
   },
 
   easyHr: {
