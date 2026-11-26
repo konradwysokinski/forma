@@ -96,6 +96,9 @@ describe('formSummary on the sample', () => {
     expect(sum.records['10k']).toMatchObject({ time: 2772, date: '2026-09-14' });
     expect(sum.records.half).toMatchObject({ date: '2026-10-05' });
     expect(sum.records.longest).toMatchObject({ distance: 28400, date: '2026-10-26' });
+    // All of history holds at least the period's records.
+    expect(sum.recordsAll.longest!.distance!).toBeGreaterThanOrEqual(28400);
+    expect(sum.historyFrom < sum.days[0]!.date).toBe(true);
     expect(sum.easyHrNow).toMatchObject({ bpm: 142, comparedMonth: '2026-09' });
     expect(sum.easyHrNow!.change).toBeLessThan(0);
   });

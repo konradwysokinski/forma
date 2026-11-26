@@ -21,10 +21,11 @@
   --ink: #17191c;
   --ink-muted: #5b616b;
 
-  /* brand: moss */
-  --accent: #2f6b4f;
-  --accent-hover: #1f4d38;
-  --accent-soft: rgba(47, 107, 79, 0.1);
+  /* brand */
+  /* brand: deep navy, darker and greyer than --fitness so it never reads as a chart colour */
+  --accent: #1f3a6e;
+  --accent-hover: #162b54;
+  --accent-soft: #e7ecf6;
   --on-accent: #ffffff;
 
   /* states */
@@ -43,8 +44,8 @@
   --sidebar-ink-muted: #5c5952; /* warm muted, 5.9:1 on the ground */
   --sidebar-hover: rgba(60, 46, 25, 0.05);
   --sidebar-selected: rgba(60, 46, 25, 0.08);
-  --sidebar-accent: #2f6b4f;
-  --sidebar-accent-soft: #e3eee7;
+  --sidebar-accent: #1f3a6e;
+  --sidebar-accent-soft: #e7ecf6;
 
   /* training: only for these measures, nothing else */
   --fitness: #2563eb;
@@ -122,10 +123,10 @@
   --ink: #eceef1;
   --ink-muted: #a2a8b1;
 
-  --accent: #7fc29e;
-  --accent-hover: #9fd4b7;
-  --accent-soft: #23362b;
-  --on-accent: #10231a;
+  --accent: #9fb6e6;
+  --accent-hover: #bccdf0;
+  --accent-soft: #1e2a40;
+  --on-accent: #0f1a30;
 
   --warn: #e8a55a;
   --warn-ink: #e8a55a;
@@ -137,8 +138,8 @@
   --sidebar-ink-muted: #a2a8b1;
   --sidebar-hover: rgba(236, 238, 241, 0.05);
   --sidebar-selected: rgba(236, 238, 241, 0.09);
-  --sidebar-accent: #7fc29e;
-  --sidebar-accent-soft: #23362b;
+  --sidebar-accent: #9fb6e6;
+  --sidebar-accent-soft: #1e2a40;
 
   --fitness: #6b9bff;
   --fitness-ink: #6b9bff;

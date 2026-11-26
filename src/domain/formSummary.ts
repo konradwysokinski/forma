@@ -36,6 +36,9 @@ export interface FormSummary {
   trend: { month: string; change: number } | null;
   /** Best runs within the period. */
   records: Partial<Record<RecordId, RunRecord>>;
+  /** Best runs in everything Forma holds (about 14 months from COROS), and where that starts. */
+  recordsAll: Partial<Record<RecordId, RunRecord>>;
+  historyFrom: DayKey;
   easyHr: EasyHrMonth[];
   /** The latest easy-pace month against two months before it. */
   easyHrNow: { bpm: number; month: string; change: number | null; comparedMonth: string } | null;
@@ -80,6 +83,8 @@ export function formSummary(data: Dataset, period: Period): FormSummary {
         }
       : null,
     records: records(activities, asOf, days[0]!.date),
+    recordsAll: records(activities, asOf),
+    historyFrom: firstDay(activities, asOf),
     easyHr,
     easyHrNow: latest
       ? {

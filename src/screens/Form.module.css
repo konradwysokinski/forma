@@ -396,3 +396,17 @@
   color: var(--heart);
   fill: color-mix(in srgb, var(--heart) 14%, transparent);
 }
+
+/* Title and note on the left, the period-or-all switch on the right; wraps on narrow cards. */
+.recordsHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+}
+
+.recordsHead > .headingBlock {
+  flex: 1 1 220px;
+  min-width: 0;
+}

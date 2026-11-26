@@ -26,7 +26,10 @@ export function FormScreen() {
   const { data, t, f } = useApp();
   const [period, setPeriod] = useState<Period>('3m');
   const [guide, setGuide] = useState<Zone | null>(null);
+  // Records for the period above, or for everything Forma holds.
+  const [recordScope, setRecordScope] = useState<'period' | 'all'>('period');
   const sum = useMemo(() => formSummary(data, period), [data, period]);
+  const shownRecords = recordScope === 'all' ? sum.recordsAll : sum.records;
   const easyPaceMid = (data.easyPace.from + data.easyPace.to) / 2;
 
   return (
@@ -140,15 +143,31 @@ export function FormScreen() {
 
       <div className={s.pair}>
         <section aria-labelledby="records-heading" className={`${s.card} ${s.records}`}>
-          <div className={s.headingBlock}>
-            <h2 id="records-heading" className={s.heading}>
-              {t.records.title}
-            </h2>
-            <p className={s.muted}>{t.records.note[period]}</p>
+          <div className={s.recordsHead}>
+            <div className={s.headingBlock}>
+              <h2 id="records-heading" className={s.heading}>
+                {t.records.title}
+              </h2>
+              <p className={s.muted}>
+                {recordScope === 'all'
+                  ? t.records.noteAll(`${f.dayMonth(dateOf(sum.historyFrom))} ${sum.historyFrom.slice(0, 4)}`)
+                  : t.records.note[period]}
+              </p>
+            </div>
+            <Segmented<'period' | 'all'>
+              label={t.records.scope}
+              size="sm"
+              value={recordScope}
+              onChange={setRecordScope}
+              options={[
+                { value: 'period', label: t.period[period] },
+                { value: 'all', label: t.records.all },
+              ]}
+            />
           </div>
           <ul className={s.recordList}>
             {RECORD_ORDER.map((id) => {
-              const r = sum.records[id];
+              const r = shownRecords[id];
               const date = r && f.dayMonth(dateOf(r.date));
               return (
                 <li key={id} className={s.record}>
