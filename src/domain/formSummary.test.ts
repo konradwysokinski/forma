@@ -59,11 +59,13 @@ describe('easyHrByMonth', () => {
       '2026-11-25',
       3,
     );
-    expect(months).toEqual([
-      { month: '2026-09', bpm: 150, runs: 1 },
-      { month: '2026-10', bpm: null, runs: 0 },
-      { month: '2026-11', bpm: 144, runs: 2 },
+    expect(months).toMatchObject([
+      { month: '2026-09', bpm: 150, runs: 1, pace: 345 },
+      { month: '2026-10', bpm: null, runs: 0, pace: null, list: [] },
+      { month: '2026-11', bpm: 144, runs: 2, pace: 345 },
     ]);
+    // Newest first, for the month's tooltip.
+    expect(months[2]!.list.map((a) => a.id)).toEqual(['b', 'a']);
   });
 });
 

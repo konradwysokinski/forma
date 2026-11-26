@@ -17,7 +17,7 @@ import { ZONES, type Zone } from '../domain/training';
 import { dateOf } from '../lib/days';
 import s from './Form.module.css';
 
-const PERIODS: readonly Period[] = ['6w', '3m', 'year'];
+const PERIODS: readonly Period[] = ['6w', '3m', '6m', 'year'];
 /** Whether the sleep strip is on; unset means on. */
 const KEY_SHOW_SLEEP = 'forma.showSleep';
 

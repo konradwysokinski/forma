@@ -6,8 +6,8 @@ import { records, type RecordId, type RunRecord } from './records';
 import { FITNESS_DAYS, trainingDays, zoneOf, type TrainingDay, type Zone } from './training';
 import type { Dataset, DayKey } from './types';
 
-export type Period = '6w' | '3m' | 'year';
-export const PERIOD_DAYS: Record<Period, number> = { '6w': 42, '3m': 91, year: 365 };
+export type Period = '6w' | '3m' | '6m' | 'year';
+export const PERIOD_DAYS: Record<Period, number> = { '6w': 42, '3m': 91, '6m': 182, year: 365 };
 
 /** The zones where training does what it should: building fitness, or ready to use it. */
 const GOOD_ZONES: ReadonlySet<Zone> = new Set(['optimal', 'fresh']);

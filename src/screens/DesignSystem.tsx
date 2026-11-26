@@ -294,7 +294,7 @@ export function DesignSystem() {
                   size="box"
                   value={period}
                   onChange={setPeriod}
-                  options={(['6w', '3m', 'year'] as const).map((p) => ({ value: p, label: t.period[p] }))}
+                  options={(['6w', '3m', '6m', 'year'] as const).map((p) => ({ value: p, label: t.period[p] }))}
                 />
               </Specimen>
             </div>

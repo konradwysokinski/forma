@@ -134,8 +134,9 @@ export const pl: Messages = {
     label: 'Okres',
     '6w': '6 tygodni',
     '3m': '3 miesiące',
+    '6m': '6 miesięcy',
     year: 'Rok',
-    over: { '6w': 'w ciągu 6 tygodni', '3m': 'w ciągu 3 miesięcy', year: 'w ciągu roku' },
+    over: { '6w': 'w ciągu 6 tygodni', '3m': 'w ciągu 3 miesięcy', '6m': 'w ciągu 6 miesięcy', year: 'w ciągu roku' },
   },
 
   zones: {
@@ -249,6 +250,7 @@ export const pl: Messages = {
     note: {
       '6w': 'Najlepsze biegi, ostatnie 6 tygodni',
       '3m': 'Najlepsze biegi, ostatnie 3 miesiące',
+      '6m': 'Najlepsze biegi, ostatnie 6 miesięcy',
       year: 'Najlepsze biegi, ostatni rok',
     },
     isNew: (date) => `Nowy · ${date}`,
@@ -282,7 +284,7 @@ export const pl: Messages = {
   easyHr: {
     title: 'Tętno w spokojnym tempie',
     note: (from, to) =>
-      `Średnie tętno z biegów w tempie ${from}–${to} /km i ich liczba w każdym miesiącu. Niższe przy tym samym tempie to lepsza kondycja.`,
+      `Biegi ${from}–${to} /km, ich liczba pod słupkiem. Niższe znaczy lepiej.`,
     aria: (first, from, last, to) => `Tętno w spokojnym tempie: ${first} bpm (${from}), ${last} bpm (${to}).`,
     empty: 'Brak spokojnych biegów z tętnem w tych miesiącach.',
     unit: (month) => `bpm ${inMonth(month)}`,
@@ -297,6 +299,10 @@ export const pl: Messages = {
       const few = n % 10 >= 2 && n % 10 <= 4 && (tens < 12 || tens > 14);
       return `${n} ${n === 1 ? 'bieg' : few ? 'biegi' : 'biegów'}`;
     },
+    average: (bpm) => `Śr. ${bpm}`,
+    heartRate: 'Tętno',
+    pace: 'Tempo',
+    barLabel: (month, bpm, runs) => `${month}: ${bpm}, ${runs}`,
   },
 
   ds: {

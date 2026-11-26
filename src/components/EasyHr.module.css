@@ -3,7 +3,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   min-width: 0;
 }
 
@@ -23,7 +23,7 @@
 
 /* line-height 1 puts the box's bottom just under the baseline, so the chip's bottom edge lines up with it. */
 .number {
-  font-size: 48px;
+  font-size: 34px;
   line-height: 1;
   font-weight: 400;
   letter-spacing: -0.03em;
@@ -31,7 +31,7 @@
 }
 
 .unit {
-  font-size: 16px;
+  font-size: 14px;
   color: var(--ink-muted);
 }
 
@@ -44,41 +44,146 @@
   line-height: 24px;
   font-weight: 500;
   white-space: nowrap;
-  margin-bottom: 6.5px;
+  margin-bottom: 5px;
 }
 
+/* Room on the right for the average's label, past the last bar. */
 .bars,
 .labels {
   display: grid;
   grid-template-columns: repeat(var(--months), minmax(0, 1fr));
   gap: 10px;
+  padding-right: 44px;
 }
 
 .bars {
+  position: relative;
   flex: 1;
   align-items: end;
-  min-height: 110px;
+  min-height: 72px;
   border-bottom: 1px solid var(--line);
 }
 
+/* Each month is a button: hover, tap or Tab opens its tooltip. */
 .col {
+  position: relative;
+  align-self: stretch;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-bar-seg);
+  background: transparent;
+  color: inherit;
+  font: inherit;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
   gap: 6px;
-  height: 100%;
+  cursor: default;
+}
+
+button.col:hover .bar,
+button.col:focus-visible .bar {
+  background: color-mix(in srgb, var(--heart) 34%, transparent);
+}
+
+button.col[data-latest]:hover .bar,
+button.col[data-latest]:focus-visible .bar {
+  background: linear-gradient(180deg, var(--heart), color-mix(in srgb, var(--heart) 80%, transparent));
+}
+
+/* The months' average, dashed, behind the bars. */
+.average {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px dashed color-mix(in srgb, var(--heart) 55%, transparent);
+  pointer-events: none;
+}
+
+.averageLabel {
+  position: absolute;
+  right: 0;
+  bottom: -7px;
+  padding-left: 4px;
+  background: var(--surface);
+  font-size: 11px;
+  line-height: 14px;
+  color: var(--heart-ink);
+}
+
+.tip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  z-index: 5;
+  width: max-content;
+  max-width: 260px;
+  padding: 10px 12px;
+  border-radius: var(--radius-tile);
+  background: var(--surface);
+  box-shadow: var(--shadow-float);
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  line-height: 16px;
+  text-align: left;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.col[data-edge='start'] .tip {
+  left: 0;
+  transform: none;
+}
+
+.col[data-edge='end'] .tip {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+
+button.col:hover .tip,
+button.col:focus-visible .tip {
+  display: flex;
+}
+
+.tipTitle {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.tipRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.tipLabel {
+  color: var(--ink-muted);
+}
+
+.tipRuns {
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px solid var(--line-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .value {
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 11px;
+  line-height: 14px;
   font-weight: 500;
   color: var(--ink-muted);
 }
 
+/* Narrow bars keep the card light; the column stays wide for its labels. */
 .bar {
-  width: 100%;
+  width: min(100%, 32px);
   border-radius: var(--radius-bar-seg) var(--radius-bar-seg) 2px 2px;
   background: color-mix(in srgb, var(--heart) 20%, transparent);
 }

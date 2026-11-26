@@ -13,6 +13,10 @@ export interface EasyHrMonth {
   /** null when no easy run with heart rate that month. */
   bpm: number | null;
   runs: number;
+  /** Seconds per km over those runs (total time ÷ total distance); null without runs. */
+  pace: number | null;
+  /** The runs it rests on, newest first. */
+  list: Activity[];
 }
 
 export function easyHrByMonth(
@@ -23,22 +27,29 @@ export function easyHrByMonth(
 ): EasyHrMonth[] {
   const last = monthOf(asOf);
   const first = addMonths(last, -(months - 1));
-  const sums = new Map<string, { beats: number; time: number; runs: number }>();
+  const sums = new Map<string, { beats: number; time: number; metres: number; list: Activity[] }>();
   for (const a of activities) {
     if (a.sport !== 'run' || !a.averageHeartrate || a.distance <= 0 || dayOf(a.start) > asOf) continue;
     const secondsPerKm = a.movingTime / (a.distance / 1000);
     if (secondsPerKm < pace.from || secondsPerKm > pace.to) continue;
     const m = monthOf(dayOf(a.start));
     if (m < first) continue;
-    const s = sums.get(m) ?? { beats: 0, time: 0, runs: 0 };
+    const s = sums.get(m) ?? { beats: 0, time: 0, metres: 0, list: [] };
     s.beats += a.averageHeartrate * a.movingTime;
     s.time += a.movingTime;
-    s.runs += 1;
+    s.metres += a.distance;
+    s.list.push(a);
     sums.set(m, s);
   }
   return Array.from({ length: months }, (_, i) => {
     const month = addMonths(first, i);
     const s = sums.get(month);
-    return { month, bpm: s ? Math.round(s.beats / s.time) : null, runs: s?.runs ?? 0 };
+    return {
+      month,
+      bpm: s ? Math.round(s.beats / s.time) : null,
+      runs: s?.list.length ?? 0,
+      pace: s ? s.time / (s.metres / 1000) : null,
+      list: s ? [...s.list].sort((a, b) => b.start.localeCompare(a.start)) : [],
+    };
   });
 }

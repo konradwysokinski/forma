@@ -138,9 +138,10 @@ export const en = {
     label: 'Period',
     '6w': '6 weeks',
     '3m': '3 months',
+    '6m': '6 months',
     year: 'Year',
     /** For chart descriptions. */
-    over: { '6w': 'over 6 weeks', '3m': 'over 3 months', year: 'over the year' },
+    over: { '6w': 'over 6 weeks', '3m': 'over 3 months', '6m': 'over 6 months', year: 'over the year' },
   },
 
   zones: {
@@ -260,7 +261,7 @@ export const en = {
     marathon: 'Marathon',
     longest: 'Longest run',
     /** Under the title: which runs the records come from. */
-    note: { '6w': 'Best whole runs, last 6 weeks', '3m': 'Best whole runs, last 3 months', year: 'Best whole runs, last year' },
+    note: { '6w': 'Best whole runs, last 6 weeks', '3m': 'Best whole runs, last 3 months', '6m': 'Best whole runs, last 6 months', year: 'Best whole runs, last year' },
     isNew: (date: string) => `New · ${date}`,
     noteAll: (since: string) => `Best whole runs since ${since}`,
     scope: 'Records from',
@@ -293,7 +294,7 @@ export const en = {
   easyHr: {
     title: 'Heart rate at easy pace',
     note: (from: string, to: string) =>
-      `Average heart rate on runs at ${from}–${to} /km, and how many there were each month. Lower at the same pace means fitter.`,
+      `Runs at ${from}–${to} /km, how many under each bar. Lower means fitter.`,
     aria: (first: string, from: string, last: string, to: string) =>
       `Easy-pace heart rate went from ${first} bpm in ${from} to ${last} bpm in ${to}.`,
     empty: 'No easy runs with heart rate in these months.',
@@ -307,6 +308,12 @@ export const en = {
           ? `${change} bpm higher than ${inMonth(month)}`
           : `The same as ${inMonth(month)}`,
     runs: (n: number) => (n === 1 ? '1 run' : `${n} runs`),
+    /** The dashed line across the bars. */
+    average: (bpm: string) => `Avg ${bpm}`,
+    heartRate: 'Heart rate',
+    pace: 'Pace',
+    /** A bar's accessible name, before its tooltip is read. */
+    barLabel: (month: string, bpm: string, runs: string) => `${month}: ${bpm}, ${runs}`,
   },
 
   ds: {
