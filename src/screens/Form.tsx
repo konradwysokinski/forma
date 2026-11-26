@@ -133,27 +133,7 @@ export function FormScreen() {
           )}
         </DayExplorer>
         <div className={s.zonesBlock}>
-          <ul aria-label={t.form.zonesLabel} className={`${s.legendRow} ${s.zones}`}>
-            {ZONES.map(({ id }) => (
-              <li key={id} className={s.zone} style={zoneStyle(id)}>
-                <span className={s.zoneBar} aria-hidden="true" />
-                <span className={s.zoneText}>
-                  <button
-                    type="button"
-                    className={s.zoneName}
-                    aria-haspopup="dialog"
-                    title={t.zoneGuide.open(t.zones[id].name)}
-                    onClick={() => setGuide(id)}
-                  >
-                    {t.zones[id].name}
-                    <Icon name="info" size={14} className={s.zoneInfo} />
-                  </button>
-                  <span className={s.zoneRange}>{t.zones[id].range}</span>
-                  <span className={s.zoneNote}>{t.zones[id].note}</span>
-                </span>
-              </li>
-            ))}
-          </ul>
+          <ZoneLegend onOpen={setGuide} />
         </div>
         <ZoneGuide zone={guide} onClose={() => setGuide(null)} />
       </section>
@@ -219,7 +199,7 @@ export function FormScreen() {
 }
 
 /** What the chart's lines and bars are, in one row under the chart; today's values are in the tiles above. */
-function ChartLegend() {
+export function ChartLegend() {
   const { t } = useApp();
   const items = [
     { key: 'fitness', label: t.form.fitness, note: t.form.fitnessNote },
@@ -233,6 +213,34 @@ function ChartLegend() {
           <span className={`${s.key} ${s[`key_${item.key}`]}`} aria-hidden="true" />
           <span className={s.legendName}>{item.label}</span>
           <span className={s.legendNote}>{item.note}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** The five zones under the form bars: name (opens the zone guide), range and what it means. */
+export function ZoneLegend({ onOpen }: { onOpen: (zone: Zone) => void }) {
+  const { t } = useApp();
+  return (
+    <ul aria-label={t.form.zonesLabel} className={`${s.legendRow} ${s.zones}`}>
+      {ZONES.map(({ id }) => (
+        <li key={id} className={s.zone} style={zoneStyle(id)}>
+          <span className={s.zoneBar} aria-hidden="true" />
+          <span className={s.zoneText}>
+            <button
+              type="button"
+              className={s.zoneName}
+              aria-haspopup="dialog"
+              title={t.zoneGuide.open(t.zones[id].name)}
+              onClick={() => onOpen(id)}
+            >
+              {t.zones[id].name}
+              <Icon name="info" size={14} className={s.zoneInfo} />
+            </button>
+            <span className={s.zoneRange}>{t.zones[id].range}</span>
+            <span className={s.zoneNote}>{t.zones[id].note}</span>
+          </span>
         </li>
       ))}
     </ul>

@@ -1,7 +1,8 @@
-import { BrowserRouter, Route, Routes, useLocation } from 'react-router';
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router';
 import { COROS_CALLBACK_PATH } from '../coros/oauth';
 import { ActivitiesScreen } from '../screens/Activities';
 import { CorosCallback } from '../screens/CorosCallback';
+import { DesignSystem } from '../screens/DesignSystem';
 import { FirstSync } from '../screens/FirstSync';
 import { FormScreen } from '../screens/Form';
 import { Start } from '../screens/Start';
@@ -33,6 +34,9 @@ export function App() {
     <BrowserRouter>
       <Routes>
         <Route path={COROS_CALLBACK_PATH} element={<CorosCallback />} />
+        {/* Needs no data source: opens from Start, the sample or COROS alike. */}
+        <Route path="/design-system" element={<DesignSystem />} />
+        <Route path="/ds" element={<Navigate to="/design-system" replace />} />
         {source === 'none' ? (
           <Route path="*" element={<Start />} />
         ) : source === 'loading' ? (

@@ -10,7 +10,7 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run --exclude '.claude/**' --exclude 'node_modules/**'"
   },
   "dependencies": {
     "@fontsource/instrument-serif": "^5.3.0",
