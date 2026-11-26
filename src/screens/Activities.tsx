@@ -1,4 +1,4 @@
-import { useId, useMemo, useState, type CSSProperties } from 'react';
+import { useId, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import { useApp } from '../app/context';
 import {
   ACTIVITY_FILTERS,
@@ -15,8 +15,8 @@ import type { Activity } from '../domain/types';
 import { dateOf, dayOf } from '../lib/days';
 import s from './Activities.module.css';
 
-/** Months shown at first, and added by "Show more months". */
-const MONTHS_STEP = 3;
+/** Months listed at first, and added by "Show older months". Only the newest starts open. */
+const MONTHS_STEP = 6;
 
 const zoneStyle = (zone: Zone) =>
   ({ '--zone': `var(--zone-${zone})`, '--zone-ink': `var(--zone-${zone}-ink)` }) as CSSProperties;
@@ -28,6 +28,8 @@ export function ActivitiesScreen() {
   const [shown, setShown] = useState(MONTHS_STEP);
   // One activity open at a time: opening another closes the last.
   const [open, setOpen] = useState<string | null>(null);
+  // Months the athlete opened or closed; the rest follow the default (only the newest open).
+  const [monthOpen, setMonthOpen] = useState<Record<string, boolean>>({});
 
   const counts = useMemo(() => countBySport(data.activities), [data.activities]);
   const months = useMemo(() => groupByMonth(filterActivities(data.activities, filter)), [data.activities, filter]);
@@ -66,30 +68,27 @@ export function ActivitiesScreen() {
             </div>
           )}
 
-          {months.slice(0, shown).map((m) => {
-            const label = f.monthYear(dateOf(`${m.month}-01`));
-            return (
-              <section key={m.month} aria-label={label} className={s.month}>
-                <div className={s.monthHead}>
-                  <h2 className={s.monthTitle}>{label}</h2>
-                  <span className={s.muted}>
-                    {[m.distance > 0 && f.km(m.distance), f.hours(m.movingTime)].filter(Boolean).join(' · ')}
-                  </span>
-                </div>
-                <ul className={s.rows}>
-                  {m.activities.map((a) => (
-                    <ActivityRow
-                      key={a.id}
-                      activity={a}
-                      zone={zoneOn(zones, a)}
-                      open={open === a.id}
-                      onToggle={() => setOpen((id) => (id === a.id ? null : a.id))}
-                    />
-                  ))}
-                </ul>
-              </section>
-            );
-          })}
+          {months.slice(0, shown).map((m, i) => (
+            <Month
+              key={m.month}
+              label={f.monthYear(dateOf(`${m.month}-01`))}
+              totals={[m.distance > 0 && f.km(m.distance), f.hours(m.movingTime)].filter(Boolean).join(' · ')}
+              open={monthOpen[m.month] ?? i === 0}
+              onToggle={(next) => setMonthOpen((o) => ({ ...o, [m.month]: next }))}
+            >
+              <ul className={s.rows}>
+                {m.activities.map((a) => (
+                  <ActivityRow
+                    key={a.id}
+                    activity={a}
+                    zone={zoneOn(zones, a)}
+                    open={open === a.id}
+                    onToggle={() => setOpen((id) => (id === a.id ? null : a.id))}
+                  />
+                ))}
+              </ul>
+            </Month>
+          ))}
 
           {months.length > shown && (
             <div>
@@ -101,6 +100,46 @@ export function ActivitiesScreen() {
         </div>
       )}
     </>
+  );
+}
+
+/** A month as an accordion: its name and totals are the button; the rows show only while open. */
+function Month({
+  label,
+  totals,
+  open,
+  onToggle,
+  children,
+}: {
+  label: string;
+  totals: string;
+  open: boolean;
+  onToggle: (open: boolean) => void;
+  children: ReactNode;
+}) {
+  const panelId = useId();
+  return (
+    <section aria-label={label} className={`${s.month} ${open ? s.monthOpen : ''}`}>
+      <h2 className={s.monthTitle}>
+        <button
+          type="button"
+          className={s.monthHead}
+          aria-expanded={open}
+          aria-controls={panelId}
+          onClick={() => onToggle(!open)}
+        >
+          <span className={s.monthName}>{label}</span>
+          <span className="visually-hidden">, </span>
+          <span className={s.muted}>{totals}</span>
+          <svg className={s.chevron} width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+            <path d="M4 5.5l3 3 3-3" />
+          </svg>
+        </button>
+      </h2>
+      <div id={panelId} hidden={!open}>
+        {open && children}
+      </div>
+    </section>
   );
 }
 
@@ -139,6 +178,7 @@ function ActivityRow({
         </button>
         {/* Without a distance, the time stays on phones too, in the distance's place. */}
         <span className={`${s.time} ${a.distance > 0 ? '' : s.timeOnly}`}>{f.duration(a.movingTime)}</span>
+        <span className={s.hr}>{a.averageHeartrate ? f.bpm(a.averageHeartrate) : <span aria-hidden="true">–</span>}</span>
         <span className={s.km}>{a.distance > 0 ? f.kmPrecise(a.distance) : ''}</span>
         <svg className={s.chevron} width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
           <path d="M4 5.5l3 3 3-3" />
@@ -177,10 +217,8 @@ function ActivityDetails({ id, activity: a, zone }: { id: string; activity: Acti
           </div>
         ))}
       </dl>
+      {/* Form that day first: it is what Forma adds to the numbers; where the load comes from, quieter, after it. */}
       <div className={s.detailFoot}>
-        <span className={s.muted}>
-          {d.heartRate !== null ? t.activities.loadFrom(time, f.bpm(d.heartRate)) : t.activities.loadNoHr(time)}
-        </span>
         {zone && (
           <span className={s.formDay}>
             {t.activities.formThatDay}
@@ -189,6 +227,9 @@ function ActivityDetails({ id, activity: a, zone }: { id: string; activity: Acti
             </span>
           </span>
         )}
+        <span className={s.loadNote}>
+          {d.heartRate !== null ? t.activities.loadFrom(time, f.bpm(d.heartRate)) : t.activities.loadNoHr(time)}
+        </span>
       </div>
     </div>
   );

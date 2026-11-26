@@ -86,24 +86,62 @@
 
 /* Months */
 
+/* Each month is an accordion; closed ones stack as one line each. */
 .month {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-top: 8px;
 }
 
-.monthHead {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
+.monthOpen {
+  margin-bottom: 12px;
 }
 
 .monthTitle {
+  margin: 0;
+  font: inherit;
+}
+
+/* The header is the month's button: name, km · hours, chevron. */
+.monthHead {
+  position: relative;
+  width: 100%;
+  min-height: 48px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 0;
+  border-bottom: 1px solid var(--line-soft);
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.monthOpen .monthHead {
+  border-bottom-color: transparent;
+}
+
+.monthHead:hover {
+  background: linear-gradient(90deg, transparent, var(--hover) 8%, var(--hover) 92%, transparent);
+}
+
+.monthHead:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  border-radius: var(--radius-nav);
+}
+
+.monthName {
+  flex: 1;
   font-size: 16px;
   line-height: 22px;
   font-weight: 500;
+}
+
+.monthOpen .monthHead .chevron {
+  transform: rotate(180deg);
 }
 
 .rows {
@@ -119,7 +157,7 @@
 .row {
   position: relative;
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr) 72px 72px 14px;
+  grid-template-columns: 56px minmax(0, 1fr) 72px 64px 72px 14px;
   align-items: center;
   gap: 12px;
   min-height: 44px;
@@ -185,6 +223,13 @@
 }
 
 .time {
+  color: var(--ink-muted);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Average heart rate, quiet like the time; a dash when the activity has none. */
+.hr {
   color: var(--ink-muted);
   text-align: right;
   white-space: nowrap;
@@ -273,6 +318,14 @@
   border-top: 1px solid var(--line-soft);
 }
 
+.loadNote {
+  margin-left: auto;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ink-muted);
+  text-align: right;
+}
+
 .formDay {
   display: inline-flex;
   align-items: center;
@@ -300,11 +353,17 @@
   }
 
   .time:not(.timeOnly),
+  .hr,
   .km:empty {
     display: none;
   }
 
   .details {
     margin-left: 0;
+  }
+
+  .loadNote {
+    margin-left: 0;
+    text-align: left;
   }
 }

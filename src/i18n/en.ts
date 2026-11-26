@@ -258,7 +258,7 @@ export const en = {
     filterLabel: 'Sport',
     filters: { all: 'All', run: 'Runs', ride: 'Rides', other: 'Other' } satisfies Record<ActivityFilter, string>,
     sports: { run: 'Run', ride: 'Ride', other: 'Other' } satisfies Record<Sport, string>,
-    older: 'Show more months',
+    older: 'Show older months',
     empty: 'No activities yet.',
     /** Names an opened row's details for screen readers. */
     details: (name: string, date: string) => `${name}, ${date}`,
