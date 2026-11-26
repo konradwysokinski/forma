@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { addDays, dayOf } from '../lib/days';
 import type { Activity } from '../domain/types';
-import { HISTORY_DAYS, merge, PAGE_LIMIT, syncActivities, syncFrom, windows, type CorosSource, type DateWindow } from './sync';
+import type { SleepNight } from '../domain/types';
+import { HISTORY_DAYS, merge, PAGE_LIMIT, syncActivities, syncFrom, syncSleep, windows, type CorosSource, type DateWindow } from './sync';
 
 const run = (id: string, day: string): Activity => ({
   id,
@@ -23,6 +24,9 @@ function fakeSource(all: Activity[]) {
         .filter((a) => dayOf(a.start) >= w.from && dayOf(a.start) <= w.to)
         .sort((a, b) => (a.start < b.start ? 1 : -1))
         .slice(0, PAGE_LIMIT);
+    },
+    async sleep() {
+      return [];
     },
   };
   return { source, calls };
@@ -89,5 +93,39 @@ describe('syncActivities', () => {
     const all = Array.from({ length: PAGE_LIMIT }, (_, i) => run(`r${i}`, '2026-11-26'));
     const { source } = fakeSource(all);
     await expect(syncActivities(source, [run('x', '2026-11-25')], '2026-11-26')).rejects.toThrow(/one day/);
+  });
+});
+
+describe('syncSleep', () => {
+  const night = (date: string, minutes = 420, score: number | null = 80): SleepNight => ({ date, minutes, score });
+
+  function fakeSleep(all: SleepNight[]) {
+    const calls: DateWindow[] = [];
+    const source: CorosSource = {
+      async activities() {
+        return [];
+      },
+      async sleep(w) {
+        calls.push(w);
+        return all.filter((n) => n.date >= w.from && n.date <= w.to);
+      },
+    };
+    return { source, calls };
+  }
+
+  it('fetches the whole history in one call the first time', async () => {
+    const { source, calls } = fakeSleep([night('2025-01-01'), night('2026-11-01'), night('2026-11-25')]);
+    const out = await syncSleep(source, [], '2026-11-26');
+    expect(calls).toEqual([{ from: addDays('2026-11-26', -(HISTORY_DAYS - 1)), to: '2026-11-26' }]);
+    expect(out.map((n) => n.date)).toEqual(['2026-11-01', '2026-11-25']);
+  });
+
+  it('re-fetches from a few days before the newest night and replaces those days', async () => {
+    const stored = [night('2026-11-10'), night('2026-11-22', 400, null), night('2026-11-23')];
+    // COROS now has a score for the 22nd and no longer has the 23rd.
+    const { source, calls } = fakeSleep([night('2026-11-10'), night('2026-11-22', 400, 77), night('2026-11-26')]);
+    const out = await syncSleep(source, stored, '2026-11-26');
+    expect(calls).toEqual([{ from: '2026-11-20', to: '2026-11-26' }]);
+    expect(out).toEqual([night('2026-11-10'), night('2026-11-22', 400, 77), night('2026-11-26')]);
   });
 });

@@ -30,8 +30,20 @@ export interface Dataset {
   athlete: Athlete;
   /** Runs averaging a pace in this band count toward heart rate at easy pace. */
   easyPace: PaceBand;
+  /** Nights of sleep, by wake-up day, oldest first; absent when the source has none. */
+  sleep?: SleepNight[];
   /** "Today" for this data, "2026-11-25". Sample data is pinned to a date; real data uses the real day. */
   asOf: string;
+}
+
+/** One night's sleep, filed under the day it ended (the day it affects). */
+export interface SleepNight {
+  /** Wake-up day. */
+  date: DayKey;
+  /** Minutes asleep that day, naps included. */
+  minutes: number;
+  /** COROS's sleep score, 0–100, when it has one. */
+  score: number | null;
 }
 
 /** A pace range in seconds per km, `from` the faster end. */

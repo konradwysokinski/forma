@@ -55,6 +55,7 @@
   --load: #e3e5e9;
   --heart: #d7263d; /* heart rate: the easy-pace line and its gradient */
   --heart-ink: #b01f33;
+  --sleep: #0e95a6; /* sleep: the night bars and their key; teal, 3.6:1 on the panel */
 
   /* form zones: bar, label text, background band */
   --zone-transition: #e5a500;
@@ -148,6 +149,7 @@
   --load: #33383e;
   --heart: #ff6b7d;
   --heart-ink: #ff8c9a;
+  --sleep: #3fc1d0;
 
   --zone-transition: #ffc633;
   --zone-transition-ink: #ffc633;

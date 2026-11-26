@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import { corosAthlete, corosSource } from '../coros/client';
 import { corosTokens, finishCorosSignIn, forgetCoros, startCorosSignIn } from '../coros/oauth';
 import { clearCorosData, loadCorosData, saveCorosData, type CorosData } from '../coros/store';
-import { syncActivities } from '../coros/sync';
+import { syncActivities, syncSleep } from '../coros/sync';
 import { SAMPLE } from '../data/sample';
 import { estimateAthlete } from '../domain/load';
 import { athleteWith, DEFAULT_EASY_PACE, readSettings, type TrainingSettings } from '../domain/settings';
@@ -104,16 +104,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
     try {
       const tokens = await corosTokens();
       if (!tokens) throw new SignedOutError('Not signed in to COROS.');
-      const [activities, athlete] = await Promise.all([
+      const source = corosSource(tokens);
+      const [activities, sleep, athlete] = await Promise.all([
         syncActivities(
-          corosSource(tokens),
+          source,
           stored?.activities ?? [],
           todayKey(),
           first ? (progress) => setSync({ status: 'syncing', progress }) : undefined,
         ),
+        syncSleep(source, stored?.sleep ?? [], todayKey()),
         corosAthlete(tokens),
       ]);
-      const next: CorosData = { activities, lastSync: Date.now(), ...athlete };
+      const next: CorosData = { activities, sleep, lastSync: Date.now(), ...athlete };
       await saveCorosData(next);
       corosRef.current = next;
       setCoros(next);
@@ -180,7 +182,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const athlete = athleteWith(base, training);
     const easyPace = training.easyPace ?? DEFAULT_EASY_PACE;
     if (source !== 'coros') return { ...SAMPLE, athlete, easyPace };
-    return { source: 'coros', activities: coros?.activities ?? [], athlete, easyPace, asOf: todayKey() };
+    return {
+      source: 'coros',
+      activities: coros?.activities ?? [],
+      sleep: coros?.sleep ?? [],
+      athlete,
+      easyPace,
+      asOf: todayKey(),
+    };
   }, [source, coros, estimate, training]);
 
   const disconnectCoros = useCallback(async () => {

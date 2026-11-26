@@ -235,6 +235,23 @@ export const en = {
     moreActivities: (n: number) => `+${n} more`,
   },
 
+  sleep: {
+    /** The chart card's switch for extra strips. */
+    alsoShow: 'Also show',
+    toggle: 'Sleep',
+    heading: 'Sleep',
+    headingNote: 'hours a night, darker for a better sleep score',
+    average: (hours: string) => `Average ${hours}`,
+    none: 'No sleep recorded in this period',
+    aria: (over: string, average: string) => `Hours of sleep each night ${over}, shaded by sleep score. Average ${average}.`,
+    /** Gridline labels on the strip. */
+    axis: (hours: number) => `${hours} h`,
+    /** Day tooltip and its spoken sentence. */
+    label: 'Sleep',
+    score: (n: number) => `score ${n}`,
+    noNight: 'No sleep recorded',
+  },
+
   records: {
     title: 'Records',
     '5k': '5 km',
@@ -315,7 +332,7 @@ export const en = {
     sidebar: 'Sidebar',
     sidebarHint: 'The warm ground behind the sidebar and panel. The sidebar redefines ink, muted ink, hover, selected and accent to these, so its rows need no rules of their own.',
     training: 'Training',
-    trainingHint: 'Fitness, fatigue, daily load and heart rate. Used for these measures only; -ink for text.',
+    trainingHint: 'Fitness, fatigue, daily load, heart rate and sleep. Used for these measures only; -ink for text.',
     zones: 'Form zones',
     zonesHint: 'Each zone has a bar colour, an -ink for text and a -tint for its band on the chart.',
     type: 'Type',
@@ -348,7 +365,7 @@ export const en = {
     kpis: 'KPI tiles',
     kpisHint: "Today's value in the colour of its line or zone, one line under it. The heart marks heart rate.",
     segmented: 'Segmented control',
-    segmentedHint: 'A radiogroup: one tab stop, arrow keys move. sm for language, md for settings, box for the period.',
+    segmentedHint: 'A radiogroup: one tab stop, arrow keys move. sm for language, md for settings, box for the period. A toggle (aria-pressed) uses the same box for extras on a card, like the sleep strip.',
     buttons: 'Buttons',
     buttonsHint: '40px, radius 12; 44px for the main call to action. Primary in navy, secondary outlined, text for quiet actions.',
     primary: 'Save',
@@ -358,7 +375,7 @@ export const en = {
     legends: 'Legends',
     legendsHint: "The chart's key in one row; the zones in three lines each. A zone's name opens the zone guide.",
     charts: 'Charts',
-    chartsHint: 'Hand-drawn SVG sized to the card. Fitness and form share their x positions, so they line up day for day. Every chart has an aria-label sentence.',
+    chartsHint: 'Hand-drawn SVG sized to the card. Fitness and form share their x positions, so they line up day for day; so does the sleep strip. Every chart has an aria-label sentence.',
     tooltip: 'Day tooltip',
     tooltipHint: 'Follows the pointer or the arrow keys over the charts. Screen readers hear the same as one sentence.',
     dialog: 'Confirm dialog',

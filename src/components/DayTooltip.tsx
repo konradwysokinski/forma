@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react';
 import { useApp } from '../app/context';
 import { zoneOf, type TrainingDay } from '../domain/training';
-import type { Activity } from '../domain/types';
+import type { Activity, SleepNight } from '../domain/types';
 import { dateOf } from '../lib/days';
 import s from './DayTooltip.module.css';
 
@@ -15,15 +15,23 @@ export function activityLine(a: Activity, f: ReturnType<typeof useApp>['f']) {
     .join(' · ');
 }
 
+/** A night in a line: hours asleep · score. */
+export function sleepLine(night: SleepNight, t: ReturnType<typeof useApp>['t'], f: ReturnType<typeof useApp>['f']) {
+  return [f.hours(night.minutes * 60), night.score !== null && t.sleep.score(night.score)].filter(Boolean).join(' · ');
+}
+
 /** What a day on the charts holds: form, fitness, fatigue, load and its activities. */
 export function DayTooltip({
   day,
   activities,
+  night,
   style,
   side,
 }: {
   day: TrainingDay;
   activities: readonly Activity[];
+  /** The night that ended this day; undefined while the sleep strip is off, null when there is none. */
+  night?: SleepNight | null;
   style: CSSProperties;
   /** Which side of the guide line the card sits on. */
   side: 'left' | 'right';
@@ -31,11 +39,12 @@ export function DayTooltip({
   const { t, f } = useApp();
   const zone = day.form === null ? null : zoneOf(day.form);
   const shown = activities.slice(0, MAX_ACTIVITIES);
-  const rows = [
+  const rows: { key: 'fitness' | 'fatigue' | 'load' | 'sleep'; label: string; value: string }[] = [
     { key: 'fitness', label: t.form.fitness, value: f.int(day.fitness) },
     { key: 'fatigue', label: t.form.fatigue, value: f.int(day.fatigue) },
     { key: 'load', label: t.form.dayLoad, value: f.int(day.load) },
-  ] as const;
+  ];
+  if (night !== undefined) rows.push({ key: 'sleep', label: t.sleep.label, value: night ? sleepLine(night, t, f) : '–' });
 
   return (
     <div className={s.tip} data-side={side} style={style} aria-hidden="true">

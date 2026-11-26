@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { RESTING_HR, SPORT_RECORDS, USER_INFO, wrap } from './fixtures';
-import { CorosFormatError, parseRestingHr, parseSex, parseSportRecords, sportOfCode, toolText } from './parse';
+import { RESTING_HR, SLEEP, SPORT_RECORDS, USER_INFO, wrap } from './fixtures';
+import { CorosFormatError, parseRestingHr, parseSex, parseSleep, parseSportRecords, sportOfCode, toolText } from './parse';
 
 const TZ = 'Europe/Warsaw';
 
@@ -97,5 +97,37 @@ describe('parseSex', () => {
     expect(parseSex(USER_INFO)).toBe('female');
     expect(parseSex(USER_INFO.replace('Female', 'Male'))).toBe('male');
     expect(parseSex(USER_INFO.replace('Gender: Female\n', ''))).toBeUndefined();
+  });
+});
+
+describe('parseSleep', () => {
+  const nights = parseSleep(SLEEP);
+
+  it('keeps the days with sleep, oldest first, by wake-up day', () => {
+    expect(nights.map((n) => n.date)).toEqual(['2026-11-19', '2026-11-20', '2026-11-21', '2026-11-22', '2026-11-23']);
+  });
+
+  it('takes COROS’s daily total, naps included, when it gives one', () => {
+    expect(nights[1]).toEqual({ date: '2026-11-20', minutes: 7 * 60 + 12, score: 84 });
+    expect(nights[2]).toEqual({ date: '2026-11-21', minutes: 8 * 60 + 1, score: 62 });
+  });
+
+  it('adds naps to main sleep on older days without a daily total', () => {
+    expect(nights[0]).toEqual({ date: '2026-11-19', minutes: 6 * 60 + 40 + 20, score: 71 });
+  });
+
+  it('reads a nap-only day and a day without a score', () => {
+    expect(nights[3]).toEqual({ date: '2026-11-22', minutes: 45, score: 55 });
+    expect(nights[4]).toEqual({ date: '2026-11-23', minutes: 6 * 60 + 30, score: null });
+  });
+
+  it('is empty when COROS has no sleep for the range', () => {
+    expect(parseSleep('No sleep overview data found.')).toEqual([]);
+  });
+
+  it('throws on a line it doesn’t know', () => {
+    expect(() => parseSleep(SLEEP.replace('Sleep Score: 84', 'Sleep Quality: good'))).toThrow(CorosFormatError);
+    expect(() => parseSleep(SLEEP.replace('7h 12min (incl. naps)', 'seven hours'))).toThrow(CorosFormatError);
+    expect(() => parseSleep('Sleep summary')).toThrow(CorosFormatError);
   });
 });

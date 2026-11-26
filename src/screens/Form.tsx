@@ -7,14 +7,27 @@ import { Icon } from '../components/Icon';
 import { KpiCard } from '../components/KpiCard';
 import { DayExplorer } from './DayExplorer';
 import { Segmented } from '../components/Segmented';
+import { SleepChart } from '../components/SleepChart';
+import { Toggle } from '../components/Toggle';
 import { ZoneGuide } from '../components/ZoneGuide';
 import { formSummary, type Period } from '../domain/formSummary';
 import { RECORD_DISTANCES, type RecordId } from '../domain/records';
+import { averageSleep, sleepByDay } from '../domain/sleep';
 import { ZONES, type Zone } from '../domain/training';
 import { dateOf } from '../lib/days';
 import s from './Form.module.css';
 
 const PERIODS: readonly Period[] = ['6w', '3m', 'year'];
+/** Whether the sleep strip is on; unset means on. */
+const KEY_SHOW_SLEEP = 'forma.showSleep';
+
+function readShowSleep() {
+  try {
+    return localStorage.getItem(KEY_SHOW_SLEEP) !== '0';
+  } catch {
+    return true;
+  }
+}
 const RECORD_ORDER: readonly RecordId[] = [...RECORD_DISTANCES.map((r) => r.id), 'longest'];
 
 /** Zone colour for chips and the legend, from the zone tokens. */
@@ -31,6 +44,20 @@ export function FormScreen() {
   const sum = useMemo(() => formSummary(data, period), [data, period]);
   const shownRecords = recordScope === 'all' ? sum.recordsAll : sum.records;
   const easyPaceMid = (data.easyPace.from + data.easyPace.to) / 2;
+  // Sleep: the switch shows only when the source has any; the strip follows the period.
+  const [showSleep, setShowSleepState] = useState(readShowSleep);
+  const hasSleep = Boolean(data.sleep?.length);
+  const sleepOn = hasSleep && showSleep;
+  const nights = useMemo(() => sleepByDay(data.sleep ?? [], sum.days), [data.sleep, sum.days]);
+  const sleepAverage = averageSleep(nights);
+  const setShowSleep = (on: boolean) => {
+    setShowSleepState(on);
+    try {
+      localStorage.setItem(KEY_SHOW_SLEEP, on ? '1' : '0');
+    } catch {
+      /* remembered for this visit only */
+    }
+  };
 
   return (
     <>
@@ -118,10 +145,20 @@ export function FormScreen() {
       </div>
 
       <section aria-labelledby="fitness-heading" className={s.card}>
-        <h2 id="fitness-heading" className={s.heading}>
-          {t.form.chartTitle}
-        </h2>
-        <DayExplorer key={period} days={sum.days}>
+        <div className={s.cardHead}>
+          <h2 id="fitness-heading" className={s.heading}>
+            {t.form.chartTitle}
+          </h2>
+          {hasSleep && (
+            <div role="group" aria-label={t.sleep.alsoShow} className={s.alsoShow}>
+              <span className={s.alsoShowLabel} aria-hidden="true">
+                {t.sleep.alsoShow}
+              </span>
+              <Toggle label={t.sleep.toggle} pressed={showSleep} onChange={setShowSleep} swatch="var(--sleep)" />
+            </div>
+          )}
+        </div>
+        <DayExplorer key={period} days={sum.days} sleep={sleepOn ? nights : undefined}>
           {(active) => (
             <>
               <FitnessChart days={sum.days} period={period} active={active} />
@@ -131,13 +168,30 @@ export function FormScreen() {
                   {t.form.formHeading} <span className={s.titleMuted}>{t.form.formHeadingNote}</span>
                 </h3>
                 <FormChart days={sum.days} period={period} active={active} />
+                <div className={s.zonesBlock}>
+                  <ZoneLegend onOpen={setGuide} />
+                </div>
               </div>
+              {sleepOn && (
+                <div className={s.formRow}>
+                  <div className={s.stripHead}>
+                    <h3 className={s.subheading}>
+                      {t.sleep.heading} <span className={s.titleMuted}>{t.sleep.headingNote}</span>
+                    </h3>
+                    {sleepAverage !== null && (
+                      <span className={s.small}>{t.sleep.average(f.hours(sleepAverage * 60))}</span>
+                    )}
+                  </div>
+                  {sleepAverage === null ? (
+                    <p className={s.small}>{t.sleep.none}</p>
+                  ) : (
+                    <SleepChart nights={nights} average={sleepAverage} period={period} active={active} />
+                  )}
+                </div>
+              )}
             </>
           )}
         </DayExplorer>
-        <div className={s.zonesBlock}>
-          <ZoneLegend onOpen={setGuide} />
-        </div>
         <ZoneGuide zone={guide} onClose={() => setGuide(null)} />
       </section>
 
