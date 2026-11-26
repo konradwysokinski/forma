@@ -1,0 +1,148 @@
+/* Forma design tokens. Source of truth: CLAUDE.md §4. Ground, type and spacing come from Kilometr. */
+
+:root {
+  color-scheme: light;
+
+  /* ground */
+  --canvas: #f2f3f5;
+  --canvas-gradient: linear-gradient(180deg, #f1f2f4 0%, #e8eaed 100%);
+  --surface: #ffffff;
+  --surface-sunken: #f6f7f9;
+  --line: #e3e5e9;
+  --line-soft: #edeef1;
+  --line-strong: #d5d8de;
+  --track: #eff0f3;
+  --grid: #f1f2f4;
+  --hover: rgba(23, 25, 28, 0.04);
+  --selected: rgba(23, 25, 28, 0.07);
+  --neutral-chip: #f2f3f5;
+
+  /* text */
+  --ink: #17191c;
+  --ink-muted: #5b616b;
+
+  /* brand: moss */
+  --accent: #2f6b4f;
+  --accent-hover: #1f4d38;
+  --accent-soft: rgba(47, 107, 79, 0.1);
+  --on-accent: #ffffff;
+
+  /* states */
+  --warn: #a8590b;
+  --warn-ink: #8a4a09;
+  --warn-soft: rgba(168, 89, 11, 0.12);
+  --danger: #b23a2a;
+
+  /* training: only for these measures, nothing else */
+  --fitness: #2563eb;
+  --fitness-ink: #1a44a8;
+  --fatigue: #8b5cf6;
+  --fatigue-ink: #5b2fc9;
+  --load: #e3e5e9;
+  --trend: #17191c; /* easy-pace heart rate line */
+
+  /* form zones: bar, label text, background band */
+  --zone-transition: #e5a500;
+  --zone-transition-ink: #845f00;
+  --zone-transition-tint: rgba(229, 165, 0, 0.08);
+  --zone-fresh: #2563eb;
+  --zone-fresh-ink: #1a44a8;
+  --zone-fresh-tint: rgba(37, 99, 235, 0.07);
+  --zone-grey: #8a9099;
+  --zone-grey-ink: #5b616b;
+  --zone-grey-tint: rgba(138, 144, 153, 0.06);
+  --zone-optimal: #16a05a;
+  --zone-optimal-ink: #0b6b3a;
+  --zone-optimal-tint: rgba(22, 160, 90, 0.08);
+  --zone-risk: #e5484d;
+  --zone-risk-ink: #b4232a;
+  --zone-risk-tint: rgba(229, 72, 77, 0.08);
+
+  /* type */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-serif: 'Instrument Serif', Georgia, serif;
+
+  /* spacing (4px grid) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* radii */
+  --radius-nav: 10px;
+  --radius-control: 12px;
+  --radius-tile: 14px;
+  --radius-card: 18px;
+  --radius-pill: 999px;
+  --radius-bar-seg: 6px;
+
+  /* shadows */
+  --shadow-panel: 0 0 0 1px rgba(16, 24, 40, 0.04), 0 1px 2px rgba(16, 24, 40, 0.04),
+    0 8px 28px rgba(16, 24, 40, 0.06);
+  --shadow-float: 0 0 0 1px rgba(16, 24, 40, 0.06), 0 8px 28px rgba(16, 24, 40, 0.08);
+  --shadow-modal: 0 0 0 1px rgba(16, 24, 40, 0.04), 0 2px 4px rgba(16, 24, 40, 0.06),
+    0 24px 56px rgba(16, 24, 40, 0.22);
+  --scrim: rgba(23, 25, 28, 0.36);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --canvas: #141618;
+  --canvas-gradient: linear-gradient(180deg, #16181b 0%, #111315 100%);
+  --surface: #1c1f22;
+  --surface-sunken: #17191c;
+  --line: #2c3035;
+  --line-soft: #262a2e;
+  --line-strong: #3a3f45;
+  --track: #2a2e33;
+  --grid: #24272b;
+  --hover: rgba(236, 238, 241, 0.05);
+  --selected: rgba(236, 238, 241, 0.09);
+  --neutral-chip: #2a2e33;
+
+  --ink: #eceef1;
+  --ink-muted: #a2a8b1;
+
+  --accent: #7fc29e;
+  --accent-hover: #9fd4b7;
+  --accent-soft: #23362b;
+  --on-accent: #10231a;
+
+  --warn: #e8a55a;
+  --warn-ink: #e8a55a;
+  --warn-soft: #3a2b1a;
+  --danger: #f08a78;
+
+  --fitness: #6b9bff;
+  --fitness-ink: #6b9bff;
+  --fatigue: #b196ff;
+  --fatigue-ink: #b196ff;
+  --load: #33383e;
+  --trend: #eceef1;
+
+  --zone-transition: #ffc633;
+  --zone-transition-ink: #ffc633;
+  --zone-transition-tint: rgba(255, 198, 51, 0.07);
+  --zone-fresh: #6b9bff;
+  --zone-fresh-ink: #6b9bff;
+  --zone-fresh-tint: rgba(107, 155, 255, 0.07);
+  --zone-grey: #6e747d;
+  --zone-grey-ink: #b4b9c1;
+  --zone-grey-tint: rgba(110, 116, 125, 0.08);
+  --zone-optimal: #4ed08a;
+  --zone-optimal-ink: #4ed08a;
+  --zone-optimal-tint: rgba(78, 208, 138, 0.07);
+  --zone-risk: #ff7a7e;
+  --zone-risk-ink: #ff7a7e;
+  --zone-risk-tint: rgba(255, 122, 126, 0.08);
+
+  --shadow-panel: 0 0 0 1px rgba(255, 255, 255, 0.04), 0 8px 28px rgba(0, 0, 0, 0.35);
+  --shadow-float: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 8px 28px rgba(0, 0, 0, 0.4);
+  --shadow-modal: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 24px 56px rgba(0, 0, 0, 0.6);
+  --scrim: rgba(0, 0, 0, 0.55);
+}

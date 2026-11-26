@@ -1,0 +1,123 @@
+import type { Zone } from '../domain/training';
+import type { WeekFeel } from '../domain/formSummary';
+import type { Locale } from './types';
+
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+/** "in October"; month is 0–11. */
+const inMonth = (month: number) => `in ${MONTHS[month]}`;
+
+export const en = {
+  locale: 'en' as Locale,
+  languageName: 'English',
+
+  nav: {
+    label: 'Main',
+    form: 'Form',
+    language: 'Language',
+  },
+
+  sidebar: {
+    sampleData: 'Sample data',
+  },
+
+  period: {
+    label: 'Period',
+    '6w': '6 weeks',
+    '3m': '3 months',
+    year: 'Year',
+    /** For chart descriptions. */
+    over: { '6w': 'over 6 weeks', '3m': 'over 3 months', year: 'over the year' },
+  },
+
+  zones: {
+    transition: { name: 'Transition', range: '+20% and up', note: 'Rested so long that fitness slips' },
+    fresh: { name: 'Fresh', range: '+5 to +20%', note: 'Ready to race or run hard' },
+    grey: { name: 'Grey zone', range: '−10 to +5%', note: 'Holding fitness, not building it' },
+    optimal: { name: 'Optimal', range: '−30 to −10%', note: 'Tired in the right way: fitness grows' },
+    risk: { name: 'High risk', range: 'below −30%', note: 'Rest soon: injury and illness risk' },
+  } satisfies Record<Zone, { name: string; range: string; note: string }>,
+
+  form: {
+    /** The title's first, strong part. */
+    state: {
+      transition: 'Well rested',
+      fresh: 'Fresh',
+      grey: 'Holding steady',
+      optimal: 'Building',
+      risk: 'Overreaching',
+    } satisfies Record<Zone, string>,
+    noData: 'Not enough training yet',
+    /** The title's quiet part: fitness today against last month's average. */
+    trend: (change: number, month: number) =>
+      change >= 1
+        ? `and fitter than ${inMonth(month)}`
+        : change <= -1
+          ? `and less fit than ${inMonth(month)}`
+          : `and as fit as ${inMonth(month)}`,
+
+    kpiForm: 'Form',
+    formSub: (zone: Zone, gap: string) =>
+      ({
+        transition: `Fatigue ${gap} below fitness: time to train again`,
+        fresh: `Fatigue ${gap} below fitness: room for a hard run`,
+        grey: 'Fatigue close to fitness: holding steady',
+        optimal: `Fatigue ${gap} above fitness: building, as planned`,
+        risk: `Fatigue ${gap} above fitness: time to rest`,
+      })[zone],
+    kpiFitness: 'Fitness',
+    fitnessSub: (change: string) => `${change} in 6 weeks, from 42 days of training`,
+    kpiFatigue: 'Fatigue',
+    fatigueSub: (week: WeekFeel) =>
+      ({ easy: 'From the last 7 days, an easy week', steady: 'From the last 7 days, a steady week', hard: 'From the last 7 days, a hard week' })[week],
+    kpiEasyHr: 'Easy-pace heart rate',
+    bpm: 'bpm',
+    easyHrSub: (pace: string, change: number | null, month: number) =>
+      change === null
+        ? `At ${pace}`
+        : change < 0
+          ? `At ${pace}, ${-change} bpm lower than ${inMonth(month)}`
+          : change > 0
+            ? `At ${pace}, ${change} bpm higher than ${inMonth(month)}`
+            : `At ${pace}, the same as ${inMonth(month)}`,
+    easyHrNone: 'No easy runs with heart rate yet',
+
+    chartTitle: 'Fitness, fatigue and form',
+    today: (date: string) => `Today, ${date}`,
+    fitness: 'Fitness',
+    fitnessNote: 'Average load, last 42 days',
+    fatigue: 'Fatigue',
+    fatigueNote: 'Average load, last 7 days',
+    load7: 'Load, 7 days',
+    load7Note: 'From time and heart rate per activity',
+    chartAria: (from: string, to: string, fatigue: string, over: string) =>
+      `Fitness went from ${from} to ${to} ${over}; fatigue is ${fatigue} today. Grey bars show each day's load.`,
+
+    formHeading: 'Form',
+    formHeadingNote: '% of fitness, per day',
+    formAria: (over: string, today: string, zone: string) => `Daily form ${over}, by zone. Today ${today}%, ${zone}.`,
+    zonesLabel: 'Form zones',
+  },
+
+  records: {
+    title: 'Records',
+    '5k': '5 km',
+    '10k': '10 km',
+    half: 'Half marathon',
+    longest: 'Longest run',
+    isNew: (date: string) => `New · ${date}`,
+    none: 'No run yet',
+  },
+
+  easyHr: {
+    title: 'Heart rate at easy pace',
+    note: (from: string, to: string) => `Average on runs at ${from}–${to} /km. Lower at the same pace means fitter.`,
+    aria: (first: string, from: string, last: string, to: string) =>
+      `Easy-pace heart rate went from ${first} bpm in ${from} to ${last} bpm in ${to}.`,
+    empty: 'No easy runs with heart rate in these months.',
+  },
+};
+
+export type Messages = typeof en;

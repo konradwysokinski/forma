@@ -1,0 +1,68 @@
+import type { Locale } from './types';
+
+const NBSP = ' ';
+const MINUS = '−';
+
+/** 3214 → "3 214" in both languages. */
+export function formatInt(n: number): string {
+  const rounded = Math.round(n);
+  const digits = Math.abs(rounded)
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, NBSP);
+  return rounded < 0 ? `${MINUS}${digits}` : digits;
+}
+
+const capitalise = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+export interface Format {
+  int: (n: number) => string;
+  /** +12 / −3 / 0, with a real minus sign. */
+  signed: (n: number) => string;
+  /** "24 Nov" / "24 lis" */
+  dayMonth: (d: Date) => string;
+  /** "November" / "listopad" */
+  monthName: (d: Date) => string;
+  /** "Nov" / "Lis", for chart labels */
+  monthShort: (d: Date) => string;
+  /** 28.4 km / 28,4 km */
+  kmPrecise: (metres: number) => string;
+  /** Seconds as "52:30" or "1:04:12". */
+  duration: (seconds: number) => string;
+  /** Seconds per km as "5:45 /km". */
+  pace: (secondsPerKm: number) => string;
+  /** "5:30" for a range's ends */
+  paceShort: (secondsPerKm: number) => string;
+  bpm: (n: number) => string;
+}
+
+/** 3125 → "52:05", 3852 → "1:04:12". */
+function clock(seconds: number): string {
+  const total = Math.round(seconds);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const sec = String(total % 60).padStart(2, '0');
+  return h > 0 ? `${h}:${String(m).padStart(2, '0')}:${sec}` : `${m}:${sec}`;
+}
+
+export function createFormat(locale: Locale): Format {
+  const tag = locale === 'pl' ? 'pl-PL' : 'en-GB';
+  const month = new Intl.DateTimeFormat(tag, { month: 'long' });
+  const dayMonth = new Intl.DateTimeFormat(tag, { day: 'numeric', month: 'short' });
+  // en-GB writes "Sept"; chart labels want three letters.
+  const monthShort = new Intl.DateTimeFormat(locale === 'pl' ? tag : 'en-US', { month: 'short' });
+  const oneDecimal = (n: number) => (locale === 'pl' ? n.toFixed(1).replace('.', ',') : n.toFixed(1));
+
+  return {
+    int: formatInt,
+    signed: (n) => (Math.round(n) > 0 ? `+${formatInt(n)}` : formatInt(n)),
+    // en-GB writes "14 Sept"; three letters like every other month.
+    dayMonth: (d) => dayMonth.format(d).replace('.', '').replace('Sept', 'Sep'),
+    monthName: (d) => month.format(d),
+    monthShort: (d) => capitalise(monthShort.format(d).replace('.', '')),
+    kmPrecise: (metres) => `${oneDecimal(metres / 1000)}${NBSP}km`,
+    duration: clock,
+    pace: (secondsPerKm) => `${clock(secondsPerKm)}${NBSP}/km`,
+    paceShort: clock,
+    bpm: (n) => `${formatInt(n)}${NBSP}bpm`,
+  };
+}

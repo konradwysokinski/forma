@@ -1,0 +1,288 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px 20px;
+}
+
+.title {
+  font-size: 30px;
+  line-height: 36px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.titleMuted {
+  font-weight: 400;
+  color: var(--ink-muted);
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.valueRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.unit {
+  font-size: 18px;
+  letter-spacing: 0;
+  color: var(--ink-muted);
+}
+
+.zoneChip {
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--zone) 12%, transparent);
+  color: var(--zone-ink);
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.card {
+  padding: 24px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-card);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.heading {
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 500;
+}
+
+.subheading {
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 500;
+}
+
+.muted {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--ink-muted);
+}
+
+.small {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ink-muted);
+}
+
+/* Chart on the left, a 220px column of values or the legend on the right. */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 28px;
+  align-items: start;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-left: 20px;
+  border-left: 1px solid var(--line-soft);
+}
+
+.formRow {
+  padding-top: 20px;
+  border-top: 1px solid var(--line-soft);
+}
+
+.formChart {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.todayRow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--ink-muted);
+}
+
+.key {
+  flex: none;
+  border-radius: 2px;
+}
+
+.key_fitness {
+  width: 14px;
+  height: 3px;
+  background: var(--fitness);
+}
+
+.key_fatigue {
+  width: 14px;
+  height: 2px;
+  background: var(--fatigue);
+}
+
+.key_load {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  background: var(--load);
+}
+
+.todayValue {
+  font-size: 22px;
+  line-height: 28px;
+  letter-spacing: -0.02em;
+}
+
+.zones {
+  margin: 0;
+  list-style: none;
+  gap: 10px;
+}
+
+.zone {
+  display: grid;
+  grid-template-columns: 4px minmax(0, 1fr);
+  gap: 10px;
+}
+
+.zoneBar {
+  border-radius: 2px;
+  background: var(--zone);
+}
+
+.zoneText {
+  display: flex;
+  flex-direction: column;
+}
+
+.zoneTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.zoneName {
+  font-weight: 500;
+  color: var(--zone-ink);
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 14px;
+}
+
+.records {
+  gap: 6px;
+}
+
+.records .heading {
+  margin-bottom: 8px;
+}
+
+.recordList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.record {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  font-size: 14px;
+}
+
+.record + .record {
+  border-top: 1px solid var(--line-soft);
+}
+
+.newChip {
+  padding: 0 10px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 12px;
+  line-height: 22px;
+  font-weight: 500;
+}
+
+.recordValue {
+  min-width: 72px;
+  text-align: right;
+  font-size: 22px;
+  line-height: 28px;
+  letter-spacing: -0.02em;
+}
+
+.easyHr {
+  gap: 14px;
+}
+
+.headingBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Narrow cards: the right column drops under its chart. */
+@media (max-width: 1080px) {
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .side {
+    padding-left: 0;
+    padding-top: 16px;
+    border-left: 0;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  .split > .side:not(.zones) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 14px 28px;
+  }
+
+  .split > .side:not(.zones) > .muted {
+    flex-basis: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: 20px 16px;
+  }
+
+  .title {
+    font-size: 26px;
+    line-height: 32px;
+  }
+}
