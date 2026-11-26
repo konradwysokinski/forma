@@ -93,6 +93,11 @@
   font-weight: 500;
 }
 
+/* The quiet part of a sub-title ("% of fitness, per day") uses the same 12px note size as the card notes. */
+.subheading .titleMuted {
+  font-size: 12px;
+}
+
 .muted {
   font-size: 12px;
   line-height: 16px;
