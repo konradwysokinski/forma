@@ -57,6 +57,13 @@
   --heart-ink: #b01f33;
   --sleep: #0e95a6; /* sleep: the night bars and their key; teal, 3.6:1 on the panel */
 
+  /* sports on the Activities week calendar: pastel blocks (11%) with the -ink text, as in Focus */
+  --sport-run: #e0457b; /* rose */
+  --sport-run-ink: #a3204f;
+  --sport-ride: #f2602c; /* tangerine */
+  --sport-ride-ink: #a73a12;
+  --sport-other: #f3f1ec; /* quiet: the warm ground */
+
   /* form zones: bar, label text, background band */
   --zone-transition: #e5a500;
   --zone-transition-ink: #845f00;
@@ -150,6 +157,12 @@
   --heart: #ff6b7d;
   --heart-ink: #ff8c9a;
   --sleep: #3fc1d0;
+
+  --sport-run: #ff7aa5;
+  --sport-run-ink: #ff9cbb;
+  --sport-ride: #ff8a5c;
+  --sport-ride-ink: #ffa47f;
+  --sport-other: #24272b;
 
   --zone-transition: #ffc633;
   --zone-transition-ink: #ffc633;

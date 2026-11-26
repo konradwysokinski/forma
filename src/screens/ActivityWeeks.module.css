@@ -1,0 +1,425 @@
+/* Weeks on Activities: one card per week, seven day columns, pastel blocks as in Focus. */
+
+.weeks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.muted {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--ink-muted);
+}
+
+.secondary {
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.secondary:hover {
+  background: var(--surface-sunken);
+}
+
+/* Sport colours: the block tint and its text, set once per sport. */
+.run {
+  --c: var(--sport-run);
+  --c-ink: var(--sport-run-ink);
+}
+
+.ride {
+  --c: var(--sport-ride);
+  --c-ink: var(--sport-ride-ink);
+}
+
+.other {
+  --c: var(--ink-muted);
+  --c-ink: var(--ink-muted);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ink-muted);
+}
+
+.key {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swatch {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  background: var(--c);
+}
+
+.swatch.other {
+  background: var(--line-strong);
+}
+
+/* A week */
+
+.week {
+  padding: 20px 20px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+}
+
+.range {
+  margin: 0;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 500;
+}
+
+.head .muted {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.zone {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--ink-muted);
+}
+
+/* Zone chip: 12% of the zone colour with the zone's ink, as on Form. */
+.chip {
+  padding: 0 8px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--zone) 12%, transparent);
+  color: var(--zone-ink);
+  font-size: 12px;
+  line-height: 22px;
+  font-weight: 500;
+}
+
+/* Days: seven columns parted by hairlines, no boxes. */
+
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  border-top: 1px solid var(--line-soft);
+}
+
+.day {
+  min-width: 0;
+  min-height: 180px;
+  padding: 10px 6px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 5px;
+  border: 0;
+  border-left: 1px solid var(--line-soft);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.day:first-child {
+  border-left: 0;
+}
+
+.day:hover:not(:disabled) {
+  background: var(--hover);
+}
+
+.day.open {
+  background: var(--selected);
+}
+
+.day:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  border-radius: var(--radius-nav);
+}
+
+/* Days still ahead stay plain: only their date is greyed. */
+.ahead {
+  cursor: default;
+}
+
+.ahead .num,
+.ahead .dow {
+  color: var(--line-strong);
+}
+
+.dayHead {
+  padding: 0 4px 6px;
+}
+
+.date {
+  display: flex;
+  flex-direction: column;
+}
+
+.dow {
+  font-size: 11px;
+  line-height: 14px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.num {
+  font-size: 22px;
+  line-height: 28px;
+  letter-spacing: -0.02em;
+}
+
+.today .dow,
+.today .num {
+  color: var(--accent);
+}
+
+.today .num {
+  font-weight: 500;
+}
+
+/* A run or a ride: pastel tint of its sport, text in the sport's ink, taller with load. */
+.block {
+  min-height: var(--h);
+  padding: 7px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--c) 11%, transparent);
+  color: var(--c-ink);
+  overflow: hidden;
+}
+
+.block.other {
+  background: var(--sport-other);
+}
+
+/* Up to two lines, so "Recovery run" fits a narrow column. */
+.blockName {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: 13px;
+  line-height: 17px;
+  font-weight: 500;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.blockKm {
+  margin-top: auto;
+  font-size: 13px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.blockKmLarge {
+  font-size: 18px;
+  line-height: 22px;
+  letter-spacing: -0.01em;
+}
+
+/* Walks, gym and the rest, beside runs and rides: one quiet line at the foot of the day. */
+.quiet {
+  margin-top: auto;
+  padding: 3px 8px;
+  border-radius: 8px;
+  background: var(--sport-other);
+  color: var(--ink-muted);
+  font-size: 11px;
+  line-height: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rest {
+  margin: auto;
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+/* An open day, under its week */
+
+.panel {
+  margin: 4px 0 12px;
+  padding: 14px 16px 16px;
+  border-radius: var(--radius-tile);
+  background: var(--hover);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: reveal 0.18s ease-out;
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    animation: none;
+  }
+
+  .day {
+    transition: none;
+  }
+}
+
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+}
+
+.panelActivity {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-soft);
+}
+
+.panelName {
+  display: inline-flex;
+  align-items: center;
+  align-self: start;
+  gap: 8px;
+  min-width: 0;
+  padding-top: 2px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+}
+
+.panelNumbers {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* Phones: seven columns don't fit, so the days stack as rows with blocks side by side. */
+@media (max-width: 640px) {
+  .week {
+    padding: 16px 14px 6px;
+  }
+
+  .zone {
+    margin-left: 0;
+  }
+
+  .days {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .day {
+    min-height: 44px;
+    padding: 6px 4px;
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr);
+    align-items: center;
+    border-left: 0;
+    gap: 4px 8px;
+    border-top: 1px solid var(--line-soft);
+  }
+
+  .day:first-child {
+    border-top: 0;
+  }
+
+  .ahead {
+    display: none;
+  }
+
+  .dayHead {
+    grid-row: 1;
+    padding: 8px 0 0;
+    align-self: start;
+  }
+
+  .date {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 5px;
+  }
+
+  .num {
+    font-size: 15px;
+    line-height: 20px;
+  }
+
+  /* Each run or ride becomes a slim row of its own. */
+  .block {
+    grid-column: 2;
+    height: 36px;
+    min-height: 0;
+    padding: 0 10px;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .blockKm,
+  .blockKmLarge {
+    margin: 0 0 0 auto;
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  .quiet,
+  .rest {
+    grid-column: 2;
+    margin: 0;
+    justify-self: start;
+  }
+
+  .panelActivity {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+}

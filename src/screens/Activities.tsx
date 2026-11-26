@@ -1,8 +1,7 @@
-import { useId, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
+import { useId, useMemo, useState, type ReactNode } from 'react';
 import { useApp } from '../app/context';
 import {
   ACTIVITY_FILTERS,
-  activityDetail,
   countBySport,
   filterActivities,
   groupByMonth,
@@ -12,19 +11,23 @@ import {
 } from '../domain/activities';
 import type { Zone } from '../domain/training';
 import type { Activity } from '../domain/types';
+import { Segmented } from '../components/Segmented';
 import { dateOf, dayOf } from '../lib/days';
+import { ActivityNumbers, FormThatDay, LoadNote } from './ActivityParts';
+import { ActivityWeeks } from './ActivityWeeks';
+import { readView, saveView, type ActivitiesView } from './activitiesView';
 import s from './Activities.module.css';
 
 /** Months listed at first, and added by "Show older months". Only the newest starts open. */
 const MONTHS_STEP = 6;
 
-const zoneStyle = (zone: Zone) =>
-  ({ '--zone': `var(--zone-${zone})`, '--zone-ink': `var(--zone-${zone}-ink)` }) as CSSProperties;
+const VIEWS: readonly ActivitiesView[] = ['list', 'weeks'];
 
 /** Every activity by month, newest first; a row opens in place to show its numbers and load. */
 export function ActivitiesScreen() {
   const { data, t, f } = useApp();
   const [filter, setFilter] = useState<ActivityFilter>('all');
+  const [view, setView] = useState<ActivitiesView>(readView);
   const [shown, setShown] = useState(MONTHS_STEP);
   // One activity open at a time: opening another closes the last.
   const [open, setOpen] = useState<string | null>(null);
@@ -32,7 +35,8 @@ export function ActivitiesScreen() {
   const [monthOpen, setMonthOpen] = useState<Record<string, boolean>>({});
 
   const counts = useMemo(() => countBySport(data.activities), [data.activities]);
-  const months = useMemo(() => groupByMonth(filterActivities(data.activities, filter)), [data.activities, filter]);
+  const shownActivities = useMemo(() => filterActivities(data.activities, filter), [data.activities, filter]);
+  const months = useMemo(() => groupByMonth(shownActivities), [shownActivities]);
   const zones = useMemo(() => zonesByDay(data), [data]);
   // Filters only when there is more than one sport to tell apart.
   const filters = ACTIVITY_FILTERS.filter((k) => k === 'all' || counts[k] > 0);
@@ -40,8 +44,22 @@ export function ActivitiesScreen() {
   return (
     <>
       <header className={s.header}>
-        <h1 className={s.title}>{t.activities.title}</h1>
-        <p className={s.lead}>{t.activities.lead}</p>
+        <div className={s.titleBlock}>
+          <h1 className={s.title}>{t.activities.title}</h1>
+          <p className={s.lead}>{t.activities.lead}</p>
+        </div>
+        {data.activities.length > 0 && (
+          <Segmented<ActivitiesView>
+            label={t.activities.view}
+            size="box"
+            value={view}
+            onChange={(v) => {
+              setView(v);
+              saveView(v);
+            }}
+            options={VIEWS.map((v) => ({ value: v, label: t.activities.views[v] }))}
+          />
+        )}
       </header>
 
       {!data.activities.length ? (
@@ -68,7 +86,9 @@ export function ActivitiesScreen() {
             </div>
           )}
 
-          {months.slice(0, shown).map((m, i) => (
+          {view === 'weeks' && <ActivityWeeks activities={shownActivities} />}
+
+          {view === 'list' && months.slice(0, shown).map((m, i) => (
             <Month
               key={m.month}
               label={f.monthYear(dateOf(`${m.month}-01`))}
@@ -90,7 +110,7 @@ export function ActivitiesScreen() {
             </Month>
           ))}
 
-          {months.length > shown && (
+          {view === 'list' && months.length > shown && (
             <div>
               <button type="button" className={s.secondary} onClick={() => setShown((n) => n + MONTHS_STEP)}>
                 {t.activities.older}
@@ -190,18 +210,7 @@ function ActivityRow({
 }
 
 function ActivityDetails({ id, activity: a, zone }: { id: string; activity: Activity; zone: Zone | null }) {
-  const { data, t, f } = useApp();
-  const d = activityDetail(a, data.athlete);
-  const stats = [
-    { label: t.activities.load, value: f.int(d.load) },
-    a.distance > 0 && { label: t.activities.distance, value: f.kmPrecise(a.distance) },
-    d.movingTime !== null && { label: t.activities.movingTime, value: f.duration(d.movingTime) },
-    d.pace !== null && { label: t.activities.pace, value: f.pace(d.pace) },
-    d.speed !== null && { label: t.activities.speed, value: f.speed(d.speed) },
-    d.heartRate !== null && { label: t.activities.heartRate, value: f.bpm(d.heartRate) },
-  ].filter((x): x is { label: string; value: string } => !!x);
-  const time = f.duration(a.movingTime);
-
+  const { t, f } = useApp();
   return (
     <div
       id={id}
@@ -209,27 +218,11 @@ function ActivityDetails({ id, activity: a, zone }: { id: string; activity: Acti
       aria-label={t.activities.details(a.name, f.dayMonth(dateOf(dayOf(a.start))))}
       className={s.details}
     >
-      <dl className={s.stats}>
-        {stats.map((x) => (
-          <div key={x.label} className={s.stat}>
-            <dt>{x.label}</dt>
-            <dd>{x.value}</dd>
-          </div>
-        ))}
-      </dl>
+      <ActivityNumbers activity={a} />
       {/* Form that day first: it is what Forma adds to the numbers; where the load comes from, quieter, after it. */}
       <div className={s.detailFoot}>
-        {zone && (
-          <span className={s.formDay}>
-            {t.activities.formThatDay}
-            <span className={s.chip} style={zoneStyle(zone)}>
-              {t.zones[zone].name}
-            </span>
-          </span>
-        )}
-        <span className={s.loadNote}>
-          {d.heartRate !== null ? t.activities.loadFrom(time, f.bpm(d.heartRate)) : t.activities.loadNoHr(time)}
-        </span>
+        {zone && <FormThatDay zone={zone} />}
+        <LoadNote activity={a} />
       </div>
     </div>
   );

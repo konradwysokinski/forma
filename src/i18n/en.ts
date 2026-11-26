@@ -1,6 +1,7 @@
 import type { Zone } from '../domain/training';
 import type { ActivityFilter } from '../domain/activities';
 import type { WeekFeel } from '../domain/formSummary';
+import type { ActivitiesView } from '../screens/activitiesView';
 import type { Sport } from '../domain/types';
 import type { Locale } from './types';
 
@@ -289,6 +290,25 @@ export const en = {
     loadFrom: (time: string, bpm: string) => `Load from ${time} at ${bpm}.`,
     loadNoHr: (time: string) => `Load from ${time}; no heart rate, so counted as an easy effort.`,
     formThatDay: 'Form that day',
+
+    view: 'View',
+    views: { list: 'List', weeks: 'Weeks' } satisfies Record<ActivitiesView, string>,
+    olderWeeks: 'Show older weeks',
+    legendRun: 'Runs',
+    legendRide: 'Rides',
+    legendOther: 'Other: walks, gym and the rest',
+    legendHeight: 'Taller block, more load',
+    /** Week header: "Load 653, a hard week"; the running week "Load 120 so far". */
+    weekLoad: (load: string, feel: WeekFeel | null) =>
+      feel ? `Load ${load}, ${{ easy: 'an easy week', steady: 'a steady week', hard: 'a hard week' }[feel]}` : `Load ${load} so far`,
+    formOnSunday: 'Form on Sunday',
+    formToday: 'Form today',
+    sleep: (time: string) => `Sleep ${time} a night`,
+    rest: 'Rest',
+    restDay: 'No activities',
+    /** A day's button for screen readers: "Tuesday 18 November, Intervals, Easy run". */
+    dayLabel: (date: string, names: string[]) => (names.length ? `${date}, ${names.join(', ')}` : `${date}, rest`),
+    dayDetails: (date: string) => `Activities on ${date}`,
   },
 
   easyHr: {
