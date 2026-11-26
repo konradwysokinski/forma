@@ -33,13 +33,23 @@
   --warn-soft: rgba(168, 89, 11, 0.12);
   --danger: #b23a2a;
 
+  /* sidebar: deep navy, a dark shade of --fitness, with light text on it */
+  --sidebar-bg: #13234a;
+  --sidebar-ink: #eef2fb;
+  --sidebar-ink-muted: rgba(226, 232, 246, 0.68);
+  --sidebar-hover: rgba(255, 255, 255, 0.07);
+  --sidebar-selected: rgba(255, 255, 255, 0.13);
+  --sidebar-accent: #7fc29e;
+  --sidebar-accent-soft: rgba(127, 194, 158, 0.22);
+
   /* training: only for these measures, nothing else */
   --fitness: #2563eb;
   --fitness-ink: #1a44a8;
   --fatigue: #8b5cf6;
   --fatigue-ink: #5b2fc9;
   --load: #e3e5e9;
-  --trend: #17191c; /* easy-pace heart rate line */
+  --heart: #d7263d; /* heart rate: the easy-pace line and its gradient */
+  --heart-ink: #b01f33;
 
   /* form zones: bar, label text, background band */
   --zone-transition: #e5a500;
@@ -118,12 +128,15 @@
   --warn-soft: #3a2b1a;
   --danger: #f08a78;
 
+  --sidebar-bg: #0e1830;
+
   --fitness: #6b9bff;
   --fitness-ink: #6b9bff;
   --fatigue: #b196ff;
   --fatigue-ink: #b196ff;
   --load: #33383e;
-  --trend: #eceef1;
+  --heart: #ff6b7d;
+  --heart-ink: #ff8c9a;
 
   --zone-transition: #ffc633;
   --zone-transition-ink: #ffc633;

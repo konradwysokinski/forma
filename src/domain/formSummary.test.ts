@@ -32,6 +32,15 @@ describe('records', () => {
     expect(r.longest).toMatchObject({ activityId: 'd', distance: 24000, isNew: false });
   });
 
+  it('keeps to the period and carries the run\'s heart rate', () => {
+    const all = [run('a', '2026-06-01', 10, 2700, 160), run('b', '2026-11-01', 10, 3000, 150), run('m', '2026-10-01', 42.5, 12000)];
+    const r = records(all, '2026-11-25', '2026-09-01');
+    expect(r['10k']).toMatchObject({ activityId: 'b', time: 3000, heartRate: 150 });
+    expect(r.marathon).toMatchObject({ activityId: 'm' });
+    expect(r.marathon!.heartRate).toBeUndefined();
+    expect(records(all, '2026-11-25')['10k']).toMatchObject({ activityId: 'a' });
+  });
+
   it('ignores rides and future days', () => {
     const ride: Activity = { ...run('r', '2026-10-01', 50, 5000), sport: 'ride' };
     expect(records([ride, run('f', '2026-12-01', 5, 1200)], '2026-11-25')).toEqual({});

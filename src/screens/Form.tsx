@@ -3,9 +3,11 @@ import { useApp } from '../app/context';
 import { EasyHrChart } from '../components/EasyHrChart';
 import { FitnessChart } from '../components/FitnessChart';
 import { FormChart } from '../components/FormChart';
+import { Icon } from '../components/Icon';
 import { KpiCard } from '../components/KpiCard';
 import { DayExplorer } from './DayExplorer';
 import { Segmented } from '../components/Segmented';
+import { ZoneGuide } from '../components/ZoneGuide';
 import { formSummary, type Period } from '../domain/formSummary';
 import { RECORD_DISTANCES, type RecordId } from '../domain/records';
 import { ZONES, type Zone } from '../domain/training';
@@ -23,18 +25,24 @@ const zoneStyle = (zone: Zone) =>
 export function FormScreen() {
   const { data, t, f } = useApp();
   const [period, setPeriod] = useState<Period>('3m');
+  const [guide, setGuide] = useState<Zone | null>(null);
   const sum = useMemo(() => formSummary(data, period), [data, period]);
   const easyPaceMid = (data.easyPace.from + data.easyPace.to) / 2;
 
   return (
     <>
       <header className={s.header}>
-        <h1 className={s.title}>
-          {sum.zone ? t.form.state[sum.zone] : t.form.noData}
-          {sum.zone && sum.trend && (
-            <span className={s.titleMuted}> {t.form.trend(sum.trend.change, +sum.trend.month.slice(5) - 1)}</span>
-          )}
-        </h1>
+        <div className={s.titleBlock}>
+          <h1 className={s.title}>{t.form.title}</h1>
+          <p className={s.lead}>
+            {sum.zone
+              ? t.form.summary(
+                  t.form.state[sum.zone],
+                  sum.trend && t.form.trend(sum.trend.change, +sum.trend.month.slice(5) - 1),
+                )
+              : t.form.noData}
+          </p>
+        </div>
         <Segmented<Period>
           label={t.period.label}
           size="box"
@@ -44,6 +52,8 @@ export function FormScreen() {
         />
       </header>
 
+      {/* Tiles and cards sit as close together as the tiles do. */}
+      <div className={s.stack}>
       <div className={s.kpis}>
         <KpiCard
           label={t.form.kpiForm}
@@ -77,7 +87,12 @@ export function FormScreen() {
           color="var(--fatigue-ink)"
         />
         <KpiCard
-          label={t.form.kpiEasyHr}
+          label={
+            <span className={s.labelRow}>
+              {t.form.kpiEasyHr}
+              <Icon name="heart" size={15} className={s.heartIcon} />
+            </span>
+          }
           value={
             sum.easyHrNow ? (
               <>
@@ -123,7 +138,16 @@ export function FormScreen() {
               <li key={id} className={s.zone} style={zoneStyle(id)}>
                 <span className={s.zoneBar} aria-hidden="true" />
                 <span className={s.zoneText}>
-                  <span className={s.zoneName}>{t.zones[id].name}</span>
+                  <button
+                    type="button"
+                    className={s.zoneName}
+                    aria-haspopup="dialog"
+                    title={t.zoneGuide.open(t.zones[id].name)}
+                    onClick={() => setGuide(id)}
+                  >
+                    {t.zones[id].name}
+                    <Icon name="info" size={14} className={s.zoneInfo} />
+                  </button>
                   <span className={s.zoneRange}>{t.zones[id].range}</span>
                   <span className={s.zoneNote}>{t.zones[id].note}</span>
                 </span>
@@ -131,31 +155,47 @@ export function FormScreen() {
             ))}
           </ul>
         </div>
+        <ZoneGuide zone={guide} onClose={() => setGuide(null)} />
       </section>
 
       <div className={s.pair}>
         <section aria-labelledby="records-heading" className={`${s.card} ${s.records}`}>
-          <h2 id="records-heading" className={s.heading}>
-            {t.records.title}
-          </h2>
+          <div className={s.headingBlock}>
+            <h2 id="records-heading" className={s.heading}>
+              {t.records.title}
+            </h2>
+            <p className={s.muted}>{t.records.note[period]}</p>
+          </div>
           <ul className={s.recordList}>
             {RECORD_ORDER.map((id) => {
               const r = sum.records[id];
               const date = r && f.dayMonth(dateOf(r.date));
               return (
                 <li key={id} className={s.record}>
-                  <span>{t.records[id]}</span>
-                  {r ? (
-                    r.isNew ? (
-                      <span className={s.newChip}>{t.records.isNew(date!)}</span>
-                    ) : (
-                      <span className={s.muted}>{date}</span>
-                    )
-                  ) : (
-                    <span className={s.muted}>{t.records.none}</span>
-                  )}
+                  <span className={r ? s.recordName : `${s.recordName} ${s.recordEmpty}`}>{t.records[id]}</span>
+                  <span className={s.recordMeta}>
+                    {r?.isNew ? <span className={s.newChip}>{t.records.isNew(date!)}</span> : date}
+                  </span>
+                  <span className={s.recordHr}>
+                    {r?.heartRate !== undefined && (
+                      <>
+                        <span className="visually-hidden">{t.records.heartRateLabel} </span>
+                        {f.bpm(r.heartRate)}
+                      </>
+                    )}
+                  </span>
                   <span className={s.recordValue}>
-                    {r ? (r.time !== undefined ? f.duration(r.time) : f.kmPrecise(r.distance!)) : '–'}
+                    {r ? (
+                      r.time !== undefined ? (
+                        f.duration(r.time)
+                      ) : (
+                        f.kmPrecise(r.distance!)
+                      )
+                    ) : (
+                      <span className={s.recordEmpty}>
+                        –<span className="visually-hidden">{t.records.none}</span>
+                      </span>
+                    )}
                   </span>
                 </li>
               );
@@ -173,11 +213,12 @@ export function FormScreen() {
           <EasyHrChart months={sum.easyHr} />
         </section>
       </div>
+      </div>
     </>
   );
 }
 
-/** What the chart's lines and bars are, under the chart; today's values are in the tiles above. */
+/** What the chart's lines and bars are, in one row under the chart; today's values are in the tiles above. */
 function ChartLegend() {
   const { t } = useApp();
   const items = [
@@ -186,14 +227,12 @@ function ChartLegend() {
     { key: 'load', label: t.form.load, note: t.form.loadNote },
   ] as const;
   return (
-    <ul className={s.legendRow}>
+    <ul className={s.chartLegend}>
       {items.map((item) => (
         <li key={item.key} className={s.legendItem}>
-          <span className={s.legend}>
-            <span className={`${s.key} ${s[`key_${item.key}`]}`} aria-hidden="true" />
-            {item.label}
-          </span>
-          <span className={s.small}>{item.note}</span>
+          <span className={`${s.key} ${s[`key_${item.key}`]}`} aria-hidden="true" />
+          <span className={s.legendName}>{item.label}</span>
+          <span className={s.legendNote}>{item.note}</span>
         </li>
       ))}
     </ul>

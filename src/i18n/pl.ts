@@ -21,8 +21,8 @@ export const pl: Messages = {
   sidebar: {
     sampleData: 'Przykładowe dane',
     connect: 'Połącz COROS',
-    synced: (ago) => `Zsynchronizowano ${ago}`,
-    syncedJustNow: 'Zsynchronizowano teraz',
+    synced: (ago) => `Sync ${ago}`,
+    syncedJustNow: 'Sync przed chwilą',
     syncing: 'Synchronizacja…',
     syncNow: 'Synchronizuj z COROS teraz',
     syncFailed: 'Błąd synchronizacji',
@@ -143,7 +143,30 @@ export const pl: Messages = {
     risk: { name: 'Wysokie ryzyko', range: 'poniżej −30%', note: 'Pora odpocząć: ryzyko kontuzji i choroby' },
   },
 
+  zoneGuide: {
+    title: 'Strefy formy',
+    open: (zone) => `Co oznacza strefa ${zone}`,
+    close: 'Zamknij',
+    intro: [
+      'Forma porównuje kondycję ze zmęczeniem. Kondycja to średnie dzienne obciążenie z ostatnich 42 dni, zmęczenie to samo z ostatnich 7. Forma to różnica między nimi jako procent kondycji: kiedy ostatnie treningi są cięższe niż zwykle, zmęczenie przerasta kondycję i forma spada poniżej zera.',
+      'To starszy pomysł niż jakakolwiek aplikacja: model impuls–odpowiedź, który fizjolog sportu Eric Banister opisał w latach 70., spopularyzowany w sportach wytrzymałościowych przez Performance Manager Andrew Coggana. Granice stref to reguła kciuka, nie diagnoza; samopoczucie nadal się liczy.',
+    ],
+    zones: {
+      transition:
+        'Zmęczenie prawie zniknęło, a razem z nim zaczyna ubywać kondycji. Tydzień lub dwa tutaj po zawodach albo mocnym bloku robi dobrze: organizm się regeneruje i wraca chęć do biegania. Dłużej, a kondycja spada z tygodnia na tydzień; jeśli to nie jest plan, dołóż treningu.',
+      fresh:
+        'Wypoczęcie przy zachowanej większości kondycji. Tu warto być w dniu zawodów, zwykle po tygodniu lub dwóch lżejszego treningu. Dobre na start albo mocny trening; całe tygodnie tutaj oznaczają, że trening jest za mały, żeby robić postępy.',
+      grey:
+        'Trening i regeneracja mniej więcej się równoważą. Kondycja się trzyma, ale prawie nie rośnie. W porządku na lżejszy tydzień albo między blokami; żeby robić postępy, obciążenie musi trochę wzrosnąć.',
+      optimal:
+        'Ostatnie treningi są trochę cięższe niż zwykle i właśnie dlatego kondycja rośnie. Lekkie zmęczenie jest tu normalne. Łatwe dni niech zostaną łatwe, a co trzy, cztery tygodnie zaplanuj lżejszy tydzień, żeby praca się utrwaliła.',
+      risk:
+        'Obciążenie rośnie dużo szybciej niż kondycja. Dzień lub dwa tutaj po zawodach albo bardzo długim biegu to nic złego; dłuższy pobyt zwiększa ryzyko kontuzji, choroby i słabego snu. Zwolnij, aż forma wróci powyżej −30%.',
+    },
+  },
+
   form: {
+    title: 'Forma',
     state: {
       transition: 'Długi odpoczynek',
       fresh: 'Świeżość',
@@ -154,10 +177,11 @@ export const pl: Messages = {
     noData: 'Za mało treningów',
     trend: (change, month) =>
       change >= 1
-        ? `i kondycja lepsza niż ${inMonth(month)}`
+        ? `kondycja lepsza niż ${inMonth(month)}`
         : change <= -1
-          ? `i kondycja słabsza niż ${inMonth(month)}`
-          : `i kondycja taka jak ${inMonth(month)}`,
+          ? `kondycja słabsza niż ${inMonth(month)}`
+          : `kondycja taka jak ${inMonth(month)}`,
+    summary: (state, trend) => (trend ? `${state}, ${trend}.` : `${state}.`),
 
     kpiForm: 'Forma',
     goodDays: (count, of) => `Optymalnie lub Świeżość przez ${count} z ${of} ${of === 1 ? 'dnia' : 'dni'}`,
@@ -203,9 +227,16 @@ export const pl: Messages = {
     '5k': '5 km',
     '10k': '10 km',
     half: 'Półmaraton',
+    marathon: 'Maraton',
     longest: 'Najdłuższy bieg',
+    note: {
+      '6w': 'Najlepsze całe biegi z ostatnich 6 tygodni',
+      '3m': 'Najlepsze całe biegi z ostatnich 3 miesięcy',
+      year: 'Najlepsze całe biegi z ostatniego roku',
+    },
     isNew: (date) => `Nowy · ${date}`,
-    none: 'Jeszcze brak',
+    none: 'Brak w tym okresie',
+    heartRateLabel: 'Średnie tętno',
   },
 
   easyHr: {

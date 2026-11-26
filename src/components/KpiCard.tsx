@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import s from './KpiCard.module.css';
 
 interface Props {
-  label: string;
+  label: ReactNode;
   value: ReactNode;
   sub: ReactNode;
   tone?: 'default' | 'warn';

@@ -1,0 +1,163 @@
+/* The modal pattern of Settings and ConfirmDialog: radius 18, modal shadow, scrim. */
+.dialog {
+  width: min(580px, calc(100vw - 32px));
+  max-height: min(720px, calc(100dvh - 32px));
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-modal);
+  overflow: hidden;
+  flex-direction: column;
+}
+
+.dialog[open] {
+  display: flex;
+  animation: enter 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dialog::backdrop {
+  background: var(--scrim);
+}
+
+.dialog[open]::backdrop {
+  animation: fade 0.22s ease;
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog[open] {
+    animation-name: fade;
+  }
+}
+
+.head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 16px 10px 28px;
+}
+
+.title {
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 500;
+}
+
+.close {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--ink-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.close:hover {
+  background: var(--hover);
+  color: var(--ink);
+}
+
+.body {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 28px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.intro {
+  font-size: 14px;
+  line-height: 21px;
+  color: var(--ink-muted);
+  text-wrap: pretty;
+}
+
+.zones {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.zone {
+  display: grid;
+  grid-template-columns: 4px minmax(0, 1fr);
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: var(--radius-tile);
+  scroll-margin: 12px;
+  transition: background 0.2s ease;
+}
+
+/* The zone whose info button opened the guide. */
+.zone[data-current] {
+  background: color-mix(in srgb, var(--zone) 9%, transparent);
+}
+
+.bar {
+  border-radius: 2px;
+  background: var(--zone);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.name {
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 500;
+  color: var(--zone-ink);
+}
+
+.range {
+  margin-left: 6px;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.about {
+  font-size: 14px;
+  line-height: 21px;
+  text-wrap: pretty;
+}
+
+@media (max-width: 480px) {
+  .head {
+    padding-left: 20px;
+  }
+
+  .body {
+    padding: 0 20px 22px;
+  }
+
+  .zone {
+    padding: 12px;
+  }
+}

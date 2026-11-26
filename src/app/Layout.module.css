@@ -1,10 +1,21 @@
+/* The app sits on deep navy (--sidebar-bg); the white content panel floats on it. */
 .app {
   min-height: 100vh;
   display: flex;
   align-items: flex-start;
+  background: var(--sidebar-bg);
 }
 
+/* The sidebar redefines the text tokens it uses, so rows, icons and status follow without rules of their own. */
 .sidebar {
+  --ink: var(--sidebar-ink);
+  --ink-muted: var(--sidebar-ink-muted);
+  --hover: var(--sidebar-hover);
+  --selected: var(--sidebar-selected);
+  --accent: var(--sidebar-accent);
+  --accent-soft: var(--sidebar-accent-soft);
+  --neutral-chip: var(--sidebar-hover);
+  color: var(--ink);
   flex: 0 0 250px;
   width: 250px;
   padding: 24px 14px 18px;
@@ -102,6 +113,16 @@
   background: var(--hover);
 }
 
+/* Where the data comes from, after the time; a plain wordmark until there is an official COROS logo. */
+.source {
+  margin-left: auto;
+  flex: none;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+}
+
 .statusText {
   min-width: 0;
   overflow: hidden;
@@ -155,13 +176,13 @@
   min-width: 0;
   min-height: calc(100vh - 20px);
   margin: 10px 10px 10px 0;
-  padding: 40px 44px;
+  padding: 32px 44px 40px;
   background: var(--surface);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-panel);
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 24px;
 }
 
 /* Narrow windows: the sidebar becomes a top bar (wordmark, nav, language). */
@@ -215,3 +236,4 @@
     white-space: nowrap;
   }
 }
+

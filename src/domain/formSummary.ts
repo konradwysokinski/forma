@@ -34,6 +34,7 @@ export interface FormSummary {
   load7: number;
   /** Fitness now against last month's average, for the title. */
   trend: { month: string; change: number } | null;
+  /** Best runs within the period. */
   records: Partial<Record<RecordId, RunRecord>>;
   easyHr: EasyHrMonth[];
   /** The latest easy-pace month against two months before it. */
@@ -78,7 +79,7 @@ export function formSummary(data: Dataset, period: Period): FormSummary {
           change: today.fitness - lastMonthDays.reduce((sum, d) => sum + d.fitness, 0) / lastMonthDays.length,
         }
       : null,
-    records: records(activities, asOf),
+    records: records(activities, asOf, days[0]!.date),
     easyHr,
     easyHrNow: latest
       ? {

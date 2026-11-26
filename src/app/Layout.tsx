@@ -67,6 +67,7 @@ function SourceStatus() {
     <button type="button" className={`${s.status} ${s.statusButton}`} onClick={syncNow} title={t.sidebar.syncNow}>
       <span className={s.dot} aria-hidden="true" />
       <span className={s.statusText}>{synced}</span>
+      <span className={s.source}>COROS</span>
       <span className="visually-hidden">, {t.sidebar.syncNow}</span>
     </button>
   );

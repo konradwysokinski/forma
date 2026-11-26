@@ -22,8 +22,9 @@ export const en = {
   sidebar: {
     sampleData: 'Sample data',
     connect: 'Connect COROS',
-    synced: (ago: string) => `Synced ${ago}`,
-    syncedJustNow: 'Synced just now',
+    /** Short, to fit beside "COROS" in the sidebar. */
+    synced: (ago: string) => `Sync ${ago}`,
+    syncedJustNow: 'Sync just now',
     syncing: 'Syncing…',
     syncNow: 'Sync with COROS now',
     syncFailed: 'Sync failed',
@@ -145,8 +146,31 @@ export const en = {
     risk: { name: 'High risk', range: 'below −30%', note: 'Rest soon: injury and illness risk' },
   } satisfies Record<Zone, { name: string; range: string; note: string }>,
 
+  zoneGuide: {
+    title: 'Form zones',
+    open: (zone: string) => `What ${zone} means`,
+    close: 'Close',
+    intro: [
+      'Form compares how fit you are with how tired you are. Fitness is your average daily load over the last 42 days, fatigue the same over the last 7. Form is the gap between them as a share of fitness: when recent training is heavier than usual, fatigue rises above fitness and form goes below zero.',
+      'The idea is older than any app: the impulse-response model the sports scientist Eric Banister described in the 1970s, later made common in endurance training by Andrew Coggan\'s Performance Manager. The zone boundaries are a rule of thumb, not a diagnosis; how you feel still counts.',
+    ],
+    zones: {
+      transition:
+        'Fatigue has almost gone, and fitness is starting to go with it. A week or two here after a race or a hard block does good: the body repairs and you come back wanting to run. Stay longer and fitness drops week by week; if that is not the plan, add some training.',
+      fresh:
+        'Rested, with most of your fitness still there. This is where you want to be on race day, usually after easing off for one or two weeks. Good for a race or a hard session; weeks on end here mean you are not training enough to improve.',
+      grey:
+        'Training and recovery are about even. Fitness holds but hardly grows. Fine for an easy week or between blocks; to improve, the load needs to go up a little.',
+      optimal:
+        'Recent training is a bit heavier than you are used to, which is what makes fitness grow. Some tiredness here is normal. Keep easy days easy and plan a lighter week every three or four weeks so the work sinks in.',
+      risk:
+        'Load has climbed much faster than fitness. A day or two here after a race or a very long run is fine; staying here raises the risk of injury, illness and poor sleep. Ease off until form is back above −30%.',
+    } satisfies Record<Zone, string>,
+  },
+
   form: {
-    /** The title's first, strong part. */
+    title: 'Form',
+    /** Today's zone in words, the start of the line under the title. */
     state: {
       transition: 'Well rested',
       fresh: 'Fresh',
@@ -155,13 +179,15 @@ export const en = {
       risk: 'Overreaching',
     } satisfies Record<Zone, string>,
     noData: 'Not enough training yet',
-    /** The title's quiet part: fitness today against last month's average. */
+    /** Fitness today against last month's average. */
     trend: (change: number, month: number) =>
       change >= 1
-        ? `and fitter than ${inMonth(month)}`
+        ? `fitter than ${inMonth(month)}`
         : change <= -1
-          ? `and less fit than ${inMonth(month)}`
-          : `and as fit as ${inMonth(month)}`,
+          ? `less fit than ${inMonth(month)}`
+          : `as fit as ${inMonth(month)}`,
+    /** The line under the title: "Holding steady, less fit than in October." */
+    summary: (state: string, trend: string | null) => (trend ? `${state}, ${trend}.` : `${state}.`),
 
     kpiForm: 'Form',
     /** Days of the period in a good zone, e.g. "Optimal or Fresh on 34 of 91 days". */
@@ -209,9 +235,13 @@ export const en = {
     '5k': '5 km',
     '10k': '10 km',
     half: 'Half marathon',
+    marathon: 'Marathon',
     longest: 'Longest run',
+    /** Under the title: which runs the records come from. */
+    note: { '6w': 'Best whole runs in the last 6 weeks', '3m': 'Best whole runs in the last 3 months', year: 'Best whole runs in the last year' },
     isNew: (date: string) => `New · ${date}`,
-    none: 'No run yet',
+    none: 'None in this period',
+    heartRateLabel: 'Average heart rate',
   },
 
   easyHr: {

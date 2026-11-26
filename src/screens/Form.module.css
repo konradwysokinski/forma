@@ -6,6 +6,28 @@
   gap: 16px 20px;
 }
 
+/* The screen's name and, on the same line, where the athlete stands. */
+.titleBlock {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+  min-width: 0;
+}
+
+.lead {
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--ink-muted);
+  text-wrap: balance;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .title {
   font-size: 30px;
   line-height: 36px;
@@ -50,7 +72,7 @@
 
 .card {
   padding: 24px;
-  border: 1px solid var(--line-soft);
+  border: 1px solid var(--line);
   border-radius: var(--radius-card);
   display: flex;
   flex-direction: column;
@@ -82,7 +104,40 @@
   color: var(--ink-muted);
 }
 
-/* Charts take the card's full width; what their marks mean sits underneath, in one row. */
+/* The fitness chart's key: one row of key, name (500) and what it is (12px, quiet); wraps when narrow. */
+.chartLegend {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 32px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.legendItem .key {
+  align-self: center;
+}
+
+.legendName {
+  font-weight: 500;
+}
+
+.legendNote {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ink-muted);
+}
+
+/* The zones under the form bars. */
 .legendRow {
   margin: 0;
   padding: 0;
@@ -90,12 +145,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 12px 28px;
-}
-
-.legendItem {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
 }
 
 .formRow {
@@ -110,15 +159,6 @@
 /* The zones under the form bars, outside the area the pointer explores. */
 .zonesBlock {
   margin-top: -6px;
-}
-
-.legend {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  line-height: 18px;
-  color: var(--ink-muted);
 }
 
 .key {
@@ -170,9 +210,32 @@
   line-height: 18px;
 }
 
+/* The name opens the zone guide: a quiet text button with an info icon. */
 .zoneName {
+  align-self: flex-start;
+  margin: -4px -6px;
+  padding: 4px 6px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font: inherit;
   font-weight: 500;
   color: var(--zone-ink);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.zoneName:hover {
+  background: color-mix(in srgb, var(--zone) 10%, transparent);
+}
+
+.zoneInfo {
+  flex: none;
+  opacity: 0.75;
 }
 
 .zoneRange {
@@ -191,30 +254,82 @@
 .pair {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 14px;
+  gap: 12px;
 }
 
 .records {
-  gap: 6px;
+  gap: 10px;
+  container: records / inline-size;
 }
 
-.records .heading {
-  margin-bottom: 8px;
-}
-
+/* A table in one line per record: distance, date, heart rate (all left-aligned columns), time on the right. */
 .recordList {
   margin: 0;
   padding: 0;
   list-style: none;
+  display: grid;
+  grid-template-columns: minmax(max-content, 1fr) max-content max-content max-content;
+  column-gap: 16px;
+}
+
+/* Too narrow for four columns (phones): the date goes under the distance. */
+@container records (max-width: 400px) {
+  .recordList {
+    grid-template-columns: minmax(0, 1fr) max-content max-content;
+    column-gap: 16px;
+  }
+
+  .record {
+    row-gap: 2px;
+  }
+
+  .recordName {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .recordMeta {
+    grid-column: 1;
+    grid-row: 2;
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .recordHr {
+    grid-column: 2;
+    grid-row: 1 / 3;
+  }
+
+  .recordValue {
+    grid-column: 3;
+    grid-row: 1 / 3;
+  }
 }
 
 .record {
+  grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: subgrid;
   align-items: center;
-  gap: 12px;
   padding: 10px 0;
   font-size: 14px;
+  line-height: 20px;
+}
+
+.recordName {
+  min-width: 0;
+}
+
+.recordMeta {
+  font-size: 13px;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.recordHr {
+  font-size: 13px;
+  color: var(--ink-muted);
+  white-space: nowrap;
 }
 
 .record + .record {
@@ -227,12 +342,11 @@
   background: var(--accent-soft);
   color: var(--accent);
   font-size: 12px;
-  line-height: 22px;
+  line-height: 18px;
   font-weight: 500;
 }
 
 .recordValue {
-  min-width: 72px;
   text-align: right;
   font-size: 22px;
   line-height: 28px;
@@ -258,4 +372,27 @@
     font-size: 26px;
     line-height: 32px;
   }
+
+  .lead {
+    font-size: 15px;
+    line-height: 22px;
+  }
+}
+
+/* A distance without a run in the period: quiet name, a dash for the time. */
+.recordEmpty {
+  color: var(--ink-muted);
+}
+
+/* The easy-pace tile: a small heart in the heart colour; the number itself stays ink. */
+.labelRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.heartIcon {
+  flex: none;
+  color: var(--heart);
+  fill: color-mix(in srgb, var(--heart) 14%, transparent);
 }

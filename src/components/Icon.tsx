@@ -10,6 +10,14 @@ const PATHS = {
       <circle cx="8" cy="8" r="1.9" />
     </g>
   ),
+  heart: <path d="M8.5 14.2s-5.8-3.4-5.8-7.6a3.1 3.1 0 0 1 5.8-1.6 3.1 3.1 0 0 1 5.8 1.6c0 4.2-5.8 7.6-5.8 7.6z" />,
+  info: (
+    <>
+      <circle cx="8.5" cy="8.5" r="6.5" />
+      <path d="M8.5 7.6v4" />
+      <circle cx="8.5" cy="5.4" r="0.4" fill="currentColor" />
+    </>
+  ),
   close: <path d="M4.5 4.5l8 8M12.5 4.5l-8 8" />,
   external: <path d="M7 4h6v6M13 4 4.5 12.5" />,
 } as const;

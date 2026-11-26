@@ -6,8 +6,8 @@ import { useWidth } from '../lib/useWidth';
 import { barWidth, dayX, niceStep, timeLabels } from './chartAxis';
 import s from './Charts.module.css';
 
-const HEIGHT = 220;
-const BASE = 200; // baseline y; labels sit below it
+const HEIGHT = 200;
+const BASE = HEIGHT - 20; // baseline y; labels sit below it
 const TOP = 6;
 /** The tallest load bar reaches this share of the plot, so bars stay a quiet background. */
 const LOAD_SHARE = 0.55;
