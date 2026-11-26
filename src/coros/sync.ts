@@ -111,3 +111,15 @@ export async function syncSleep(source: CorosSource, stored: readonly SleepNight
   for (const n of fresh) if (n.date >= from && n.date <= today) byDay.set(n.date, n);
   return [...byDay.values()].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
 }
+
+/** Data older than this is refreshed when Forma opens or comes back into view. */
+export const RESYNC_AFTER_MS = 60 * 60 * 1000;
+
+/**
+ * Whether stored COROS data should be synced now: when it is over an hour
+ * old, or when it was saved before Forma read sleep, so an update brings
+ * sleep on the first open instead of an hour later.
+ */
+export function needsSync(stored: { lastSync: number; sleep?: unknown }, now: number): boolean {
+  return stored.sleep === undefined || now - stored.lastSync > RESYNC_AFTER_MS;
+}

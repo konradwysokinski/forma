@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { addDays, dayOf } from '../lib/days';
 import type { Activity } from '../domain/types';
 import type { SleepNight } from '../domain/types';
-import { HISTORY_DAYS, merge, PAGE_LIMIT, syncActivities, syncFrom, syncSleep, windows, type CorosSource, type DateWindow } from './sync';
+import { HISTORY_DAYS, merge, needsSync, PAGE_LIMIT, RESYNC_AFTER_MS, syncActivities, syncFrom, syncSleep, windows, type CorosSource, type DateWindow } from './sync';
 
 const run = (id: string, day: string): Activity => ({
   id,
@@ -127,5 +127,18 @@ describe('syncSleep', () => {
     const out = await syncSleep(source, stored, '2026-11-26');
     expect(calls).toEqual([{ from: '2026-11-20', to: '2026-11-26' }]);
     expect(out).toEqual([night('2026-11-10'), night('2026-11-22', 400, 77), night('2026-11-26')]);
+  });
+});
+
+describe('needsSync', () => {
+  const now = Date.UTC(2026, 10, 26, 12);
+
+  it('waits an hour between syncs', () => {
+    expect(needsSync({ lastSync: now - 10 * 60_000, sleep: [] }, now)).toBe(false);
+    expect(needsSync({ lastSync: now - RESYNC_AFTER_MS - 1, sleep: [] }, now)).toBe(true);
+  });
+
+  it('syncs at once data saved before Forma read sleep', () => {
+    expect(needsSync({ lastSync: now - 60_000 }, now)).toBe(true);
   });
 });

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import { corosAthlete, corosSource } from '../coros/client';
 import { corosTokens, finishCorosSignIn, forgetCoros, startCorosSignIn } from '../coros/oauth';
 import { clearCorosData, loadCorosData, saveCorosData, type CorosData } from '../coros/store';
-import { syncActivities, syncSleep } from '../coros/sync';
+import { needsSync, syncActivities, syncSleep } from '../coros/sync';
 import { SAMPLE } from '../data/sample';
 import { estimateAthlete } from '../domain/load';
 import { athleteWith, DEFAULT_EASY_PACE, readSettings, type TrainingSettings } from '../domain/settings';
@@ -19,8 +19,6 @@ const KEY_THEME = 'forma.theme';
 /** Heart rate and easy pace set in Settings. */
 const KEY_TRAINING = 'forma.training';
 const DARK_QUERY = '(prefers-color-scheme: dark)';
-/** Data older than this is refreshed when Forma opens or comes back into view. */
-const RESYNC_AFTER_MS = 60 * 60 * 1000;
 
 const storage = {
   get: (key: string) => {
@@ -73,7 +71,7 @@ const isSignedOut = (e: unknown) =>
 /**
  * App-wide state: the language, the data source and the data. COROS data
  * lives in IndexedDB (src/coros/store.ts) and is brought up to date in the
- * background when it is more than an hour old.
+ * background when it is more than an hour old, or has no sleep yet.
  */
 export function AppProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(readLocale);
@@ -129,7 +127,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const syncIfStale = useCallback(() => {
     const stored = corosRef.current;
-    if (stored && Date.now() - stored.lastSync > RESYNC_AFTER_MS) void runSync();
+    if (stored && needsSync(stored, Date.now())) void runSync();
   }, [runSync]);
 
   // Where the data comes from: stored COROS data, the remembered sample, a sign-in without data yet, or Start.
