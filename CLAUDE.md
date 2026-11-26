@@ -60,6 +60,8 @@ Built:
 
 2. **Settings** (`src/components/SettingsDialog.tsx`, Kilometr's pattern): a modal at `/settings` over the current screen (mounted by `Layout`), side nav (tabs on phones), Esc / X / scrim close. General: theme, language. Heart rate: max and resting heart rate (hint says estimated / from COROS / set by you, "Use estimate" to go back), easy-pace band (m:ss – m:ss /km, "Reset"); a field saves on Enter or blur, errors in words under the hint. Data: COROS source + Sync now, Disconnect COROS (heart-rate settings stay), or on sample Connect COROS (to Start); Remove all data with a confirm dialog (activities, sign-in, heart-rate settings; theme and language stay). About: version, MIT, GitHub, author, "Data from COROS".
 
+3. **Design system** (`src/screens/DesignSystem.tsx`, at `/design-system`, `/ds` redirects there): outside the data flow, so it opens with no source chosen; linked from Settings → About. Colour tokens read live from `tokens.css` (light and dark side by side), type scale, spacing, radii, shadows, and the app's own components on the sample data (KPI tiles, `Segmented`, buttons, chips, legends, the three charts, day tooltip, confirm dialog, settings row, sidebar rows), plus §4's content and accessibility rules. Theme and EN | PL switches on the page. New components and tokens go on it too; an "Activities" placeholder waits for that screen.
+
 Next (not designed yet), roughly in this order, to agree with Konrad:
 2. ~~COROS sync~~ done 2026-11-26 (see §1). Strava as the fallback source later.
 3. ~~Settings~~ done 2026-11-26 (see Settings above).

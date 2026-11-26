@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { version } from '../../package.json';
 import { useApp, type ThemePref } from '../app/context';
 import {
@@ -405,11 +405,16 @@ function About() {
         </a>
       </Row>
       <Row title={t.settings.corosData} hint={t.settings.corosDataHint} />
+      <Row title={t.ds.title} hint={t.settings.designSystemHint}>
+        <Link className={s.button} to="/design-system">
+          {t.settings.designSystemOpen}
+        </Link>
+      </Row>
     </div>
   );
 }
 
-function Row({
+export function Row({
   title,
   hint,
   error,
