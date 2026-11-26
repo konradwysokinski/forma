@@ -67,6 +67,15 @@ describe('formSummary on the sample', () => {
     expect(sum.trend!.change).toBeGreaterThan(1);
   });
 
+  it('measures the fitness change and the good days over the chosen period', () => {
+    expect(sum.fitnessChange).toBeCloseTo(sum.today.fitness - sum.days[0]!.fitness);
+    const year = formSummary(SAMPLE, 'year');
+    expect(year.fitnessChange).not.toBeCloseTo(sum.fitnessChange);
+    expect(sum.goodDays.of).toBe(91);
+    expect(sum.goodDays.count).toBeGreaterThan(0);
+    expect(sum.goodDays.count).toBeLessThanOrEqual(91);
+  });
+
   it('covers the period, ending today', () => {
     expect(sum.days).toHaveLength(91);
     expect(sum.days.at(-1)!.date).toBe('2026-11-25');

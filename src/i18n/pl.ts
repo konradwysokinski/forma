@@ -15,21 +15,85 @@ export const pl: Messages = {
   nav: {
     label: 'Główne',
     form: 'Forma',
-    language: 'Język',
+    settings: 'Ustawienia',
   },
 
   sidebar: {
     sampleData: 'Przykładowe dane',
     connect: 'Połącz COROS',
     synced: (ago) => `Zsynchronizowano ${ago}`,
-    syncedJustNow: 'Zsynchronizowano przed chwilą',
+    syncedJustNow: 'Zsynchronizowano teraz',
     syncing: 'Synchronizacja…',
     syncNow: 'Synchronizuj z COROS teraz',
     syncFailed: 'Błąd synchronizacji',
     retry: 'Spróbuj ponownie',
     reconnect: 'Połącz ponownie',
-    disconnect: 'Odłącz',
-    disconnectHint: 'Wyloguj z COROS i usuń jego dane z tej przeglądarki',
+  },
+
+  settings: {
+    title: 'Ustawienia',
+    close: 'Zamknij ustawienia',
+    sections: 'Sekcje ustawień',
+    general: 'Ogólne',
+    heartRate: 'Tętno',
+    data: 'Dane',
+    about: 'O Formie',
+    theme: 'Motyw',
+    themeHint: 'Systemowy idzie za jasnym lub ciemnym trybem komputera.',
+    themes: { light: 'Jasny', dark: 'Ciemny', system: 'Systemowy' },
+    language: 'Język',
+    languageHint: 'Forma mówi po angielsku i po polsku.',
+    heartRateLead:
+      'Z tych wartości liczone są obciążenie, kondycja, zmęczenie i forma. Dopóki nie ustawisz własnych, Forma je szacuje.',
+    maxHr: 'Tętno maksymalne',
+    maxHrEstimated: (bpm) =>
+      `Szacowane na ${bpm} z najmocniejszych wysiłków. Ustaw własne, jeśli znasz je z testu albo zawodów.`,
+    maxHrSet: (bpm) => `Ustawione przez Ciebie. Szacunek z aktywności to ${bpm}.`,
+    restHr: 'Tętno spoczynkowe',
+    restHrCoros: (bpm) => `${bpm}, mediana z ostatnich 30 dni w COROS.`,
+    restHrTypical: (bpm) => `Typowe ${bpm}, dopóki nie ustawisz własnego.`,
+    restHrSet: (estimate) => `Ustawione przez Ciebie. Bez tego Forma bierze ${estimate}.`,
+    easyPace: 'Łatwe tempo',
+    easyPaceHint:
+      'Biegi ze średnim tempem w tym przedziale liczą się do tętna przy łatwym tempie. Wybierz tempo, w którym często biegasz spokojnie.',
+    easyPaceFrom: 'Łatwe tempo od',
+    easyPaceTo: 'Łatwe tempo do',
+    perKm: '/km',
+    useEstimate: 'Użyj szacunku',
+    useDefault: 'Przywróć',
+    errors: {
+      maxHrRange: 'Wpisz liczbę całkowitą od 140 do 230.',
+      restHrRange: 'Wpisz liczbę całkowitą od 30 do 100.',
+      reserve: 'Tętno spoczynkowe powinno być co najmniej o 40 niższe od maksymalnego.',
+      paceFormat: 'Wpisz tempo jako minuty i sekundy, np. 5:30.',
+      paceRange: 'Wpisz tempo od 2:30 do 12:00 na km.',
+      paceOrder: 'Pierwsze tempo powinno być szybsze od drugiego.',
+    },
+    sourceSample: 'Przykładowe dane',
+    sourceSampleHint: 'Zmyślone treningi do rozejrzenia się.',
+    sourceCoros: 'Połączono z COROS',
+    sourceCorosHint: (ago) =>
+      `Zsynchronizowano ${ago}. Forma szuka nowych aktywności przy otwarciu i potem co godzinę.`,
+    sourceCorosFirst: 'Pierwsze pobieranie aktywności.',
+    syncNow: 'Synchronizuj',
+    connect: 'Połącz COROS',
+    disconnect: 'Odłącz COROS',
+    disconnectHint: 'Wylogowuje z COROS i usuwa jego aktywności z tej przeglądarki. Ustawienia tętna zostają.',
+    disconnectButton: 'Odłącz',
+    remove: 'Usuń wszystkie dane',
+    removeHint: 'Usuwa wszystko, co Forma trzyma w tej przeglądarce. W COROS nic się nie zmienia.',
+    removeTitle: 'Usunąć wszystkie dane?',
+    removeBody:
+      'Aktywności, logowanie do COROS i ustawienia tętna znikną z tej przeglądarki. W COROS nic się nie zmienia i w każdej chwili możesz połączyć się ponownie.',
+    cancel: 'Anuluj',
+    aboutHint: (version) =>
+      `Wersja ${version}. Open source na licencji MIT. Dane zostają w tej przeglądarce: bez konta i bez serwera, który by je trzymał.`,
+    github: 'Zobacz na GitHubie',
+    author: 'Autor',
+    authorProfile: 'Profil na GitHubie',
+    corosData: 'Dane z COROS',
+    corosDataHint:
+      'Aktywności, tętno spoczynkowe i płeć pochodzą z Twojego konta COROS przez serwer MCP COROS. Forma to niezależna aplikacja, nie jest dziełem COROS.',
   },
 
   start: {
@@ -96,16 +160,9 @@ export const pl: Messages = {
           : `i kondycja taka jak ${inMonth(month)}`,
 
     kpiForm: 'Forma',
-    formSub: (zone, gap) =>
-      ({
-        transition: `Zmęczenie ${gap} poniżej kondycji: czas wrócić do treningu`,
-        fresh: `Zmęczenie ${gap} poniżej kondycji: jest miejsce na mocny bieg`,
-        grey: 'Zmęczenie blisko kondycji: bez zmian',
-        optimal: `Zmęczenie ${gap} powyżej kondycji: budujesz, zgodnie z planem`,
-        risk: `Zmęczenie ${gap} powyżej kondycji: czas odpocząć`,
-      })[zone],
+    goodDays: (count, of) => `Optymalnie lub Świeżość przez ${count} z ${of} ${of === 1 ? 'dnia' : 'dni'}`,
     kpiFitness: 'Kondycja',
-    fitnessSub: (change) => `${change} w 6 tygodni, z 42 dni treningu`,
+    fitnessSub: (change, over) => `${change} ${over}, z 42 dni treningu`,
     kpiFatigue: 'Zmęczenie',
     fatigueSub: (week) =>
       ({ easy: 'Z ostatnich 7 dni, lekki tydzień', steady: 'Z ostatnich 7 dni, równy tydzień', hard: 'Z ostatnich 7 dni, ciężki tydzień' })[week],
@@ -122,13 +179,12 @@ export const pl: Messages = {
     easyHrNone: 'Brak spokojnych biegów z tętnem',
 
     chartTitle: 'Kondycja, zmęczenie i forma',
-    today: (date) => `Dziś, ${date}`,
     fitness: 'Kondycja',
     fitnessNote: 'Średnie obciążenie, ostatnie 42 dni',
     fatigue: 'Zmęczenie',
     fatigueNote: 'Średnie obciążenie, ostatnie 7 dni',
-    load7: 'Obciążenie, 7 dni',
-    load7Note: 'Z czasu i tętna każdego treningu',
+    load: 'Obciążenie dzienne',
+    loadNote: 'Z czasu i tętna każdego treningu',
     chartAria: (from, to, fatigue, over) =>
       `Kondycja zmieniła się z ${from} na ${to} ${over}; zmęczenie dziś ${fatigue}. Szare słupki to obciążenie każdego dnia.`,
 
@@ -136,6 +192,10 @@ export const pl: Messages = {
     formHeadingNote: '% kondycji, dzień po dniu',
     formAria: (over, today, zone) => `Forma dzień po dniu ${over}, według stref. Dziś ${today}%, ${zone}.`,
     zonesLabel: 'Strefy formy',
+    exploreLabel: 'Kondycja, zmęczenie i forma dzień po dniu. Strzałki przesuwają o dzień, Escape zamyka.',
+    dayLoad: 'Obciążenie',
+    restDay: 'Bez treningu',
+    moreActivities: (n) => `+${n} więcej`,
   },
 
   records: {

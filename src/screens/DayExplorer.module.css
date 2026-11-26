@@ -1,0 +1,15 @@
+.explore {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+  border-radius: var(--radius-tile);
+  cursor: crosshair;
+  /* The page still scrolls under a finger; a tap picks the day. */
+  touch-action: pan-y;
+}
+
+.explore:focus-visible {
+  outline-offset: 6px;
+}

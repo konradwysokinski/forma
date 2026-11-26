@@ -16,7 +16,7 @@ export const en = {
   nav: {
     label: 'Main',
     form: 'Form',
-    language: 'Language',
+    settings: 'Settings',
   },
 
   sidebar: {
@@ -29,8 +29,72 @@ export const en = {
     syncFailed: 'Sync failed',
     retry: 'Try again',
     reconnect: 'Connect again',
-    disconnect: 'Disconnect',
-    disconnectHint: 'Sign out of COROS and remove its data from this browser',
+  },
+
+  settings: {
+    title: 'Settings',
+    close: 'Close settings',
+    sections: 'Settings sections',
+    general: 'General',
+    heartRate: 'Heart rate',
+    data: 'Data',
+    about: 'About',
+    theme: 'Theme',
+    themeHint: "System follows your computer's light or dark setting.",
+    themes: { light: 'Light', dark: 'Dark', system: 'System' },
+    language: 'Language',
+    languageHint: 'Forma speaks English and Polish.',
+    heartRateLead:
+      'Load, fitness, fatigue and form are worked out from these. Forma estimates them until you set your own.',
+    maxHr: 'Max heart rate',
+    maxHrEstimated: (bpm: string) =>
+      `Estimated at ${bpm} from your hardest efforts. Set yours if you know it from a test or a race.`,
+    maxHrSet: (bpm: string) => `Set by you. The estimate from your activities is ${bpm}.`,
+    restHr: 'Resting heart rate',
+    restHrCoros: (bpm: string) => `${bpm}, the median of the last 30 days on COROS.`,
+    restHrTypical: (bpm: string) => `A typical ${bpm} until you set yours.`,
+    restHrSet: (estimate: string) => `Set by you. Without it Forma uses ${estimate}.`,
+    easyPace: 'Easy pace',
+    easyPaceHint: 'Runs averaging a pace in this band count toward heart rate at easy pace. Pick a pace you often run easy.',
+    easyPaceFrom: 'Easy pace from',
+    easyPaceTo: 'Easy pace to',
+    perKm: '/km',
+    useEstimate: 'Use estimate',
+    useDefault: 'Reset',
+    errors: {
+      maxHrRange: 'Enter a whole number from 140 to 230.',
+      restHrRange: 'Enter a whole number from 30 to 100.',
+      reserve: 'Resting heart rate should be at least 40 below max.',
+      paceFormat: 'Enter the pace as minutes and seconds, like 5:30.',
+      paceRange: 'Enter a pace from 2:30 to 12:00 per km.',
+      paceOrder: 'The first pace should be faster than the second.',
+    },
+    sourceSample: 'Sample data',
+    sourceSampleHint: 'Made-up training to look around with.',
+    sourceCoros: 'Connected to COROS',
+    sourceCorosHint: (ago: string) =>
+      `Synced ${ago}. Forma looks for new activities when you open it and every hour after that.`,
+    sourceCorosFirst: 'Fetching your activities for the first time.',
+    syncNow: 'Sync now',
+    connect: 'Connect COROS',
+    disconnect: 'Disconnect COROS',
+    disconnectHint:
+      'Signs out of COROS and removes its activities from this browser. Your heart-rate settings stay.',
+    disconnectButton: 'Disconnect',
+    remove: 'Remove all data',
+    removeHint: "Deletes everything Forma keeps in this browser. COROS isn't touched.",
+    removeTitle: 'Remove all data?',
+    removeBody:
+      'Activities, the COROS sign-in and your heart-rate settings are deleted from this browser. Nothing changes in COROS, and you can connect again at any time.',
+    cancel: 'Cancel',
+    aboutHint: (version: string) =>
+      `Version ${version}. Open source under the MIT licence. Your data stays in this browser; there is no account and no server that keeps it.`,
+    github: 'View on GitHub',
+    author: 'Made by',
+    authorProfile: 'GitHub profile',
+    corosData: 'Data from COROS',
+    corosDataHint:
+      "Activities, resting heart rate and sex come from your COROS account through COROS's MCP server. Forma is an independent app, not made by COROS.",
   },
 
   start: {
@@ -100,16 +164,10 @@ export const en = {
           : `and as fit as ${inMonth(month)}`,
 
     kpiForm: 'Form',
-    formSub: (zone: Zone, gap: string) =>
-      ({
-        transition: `Fatigue ${gap} below fitness: time to train again`,
-        fresh: `Fatigue ${gap} below fitness: room for a hard run`,
-        grey: 'Fatigue close to fitness: holding steady',
-        optimal: `Fatigue ${gap} above fitness: building, as planned`,
-        risk: `Fatigue ${gap} above fitness: time to rest`,
-      })[zone],
+    /** Days of the period in a good zone, e.g. "Optimal or Fresh on 34 of 91 days". */
+    goodDays: (count: number, of: number) => `Optimal or Fresh on ${count} of ${of} ${of === 1 ? 'day' : 'days'}`,
     kpiFitness: 'Fitness',
-    fitnessSub: (change: string) => `${change} in 6 weeks, from 42 days of training`,
+    fitnessSub: (change: string, over: string) => `${change} ${over}, from 42 days of training`,
     kpiFatigue: 'Fatigue',
     fatigueSub: (week: WeekFeel) =>
       ({ easy: 'From the last 7 days, an easy week', steady: 'From the last 7 days, a steady week', hard: 'From the last 7 days, a hard week' })[week],
@@ -126,13 +184,12 @@ export const en = {
     easyHrNone: 'No easy runs with heart rate yet',
 
     chartTitle: 'Fitness, fatigue and form',
-    today: (date: string) => `Today, ${date}`,
     fitness: 'Fitness',
     fitnessNote: 'Average load, last 42 days',
     fatigue: 'Fatigue',
     fatigueNote: 'Average load, last 7 days',
-    load7: 'Load, 7 days',
-    load7Note: 'From time and heart rate per activity',
+    load: 'Daily load',
+    loadNote: 'From time and heart rate per activity',
     chartAria: (from: string, to: string, fatigue: string, over: string) =>
       `Fitness went from ${from} to ${to} ${over}; fatigue is ${fatigue} today. Grey bars show each day's load.`,
 
@@ -140,6 +197,11 @@ export const en = {
     formHeadingNote: '% of fitness, per day',
     formAria: (over: string, today: string, zone: string) => `Daily form ${over}, by zone. Today ${today}%, ${zone}.`,
     zonesLabel: 'Form zones',
+    /** The charts as one focusable area: arrow keys move a day. */
+    exploreLabel: 'Fitness, fatigue and form by day. Arrow keys move a day, Escape closes.',
+    dayLoad: 'Load',
+    restDay: 'No activities',
+    moreActivities: (n: number) => `+${n} more`,
   },
 
   records: {

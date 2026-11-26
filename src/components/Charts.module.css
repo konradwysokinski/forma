@@ -38,6 +38,16 @@
   fill: var(--load);
 }
 
+.loadOn {
+  fill: var(--ink-muted);
+}
+
+/* The day under the pointer, through both charts. */
+.guide {
+  stroke: var(--ink-muted);
+  stroke-width: 1;
+}
+
 .fitness,
 .fatigue,
 .trend {

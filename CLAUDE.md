@@ -33,37 +33,38 @@ Design references:
 - **COROS sync** (`src/coros/`, built 2026-11-26): `oauth.ts` (sign-in; tokens and the registered client in localStorage), `mcp.ts` (JSON-RPC over POST), `parse.ts`, `client.ts` (the three tools Forma calls), `sync.ts` (pure, tested), `store.ts` (IndexedDB key `coros`: activities, last sync, resting HR, sex).
   - First sync: 420 days back (42 for fitness to settle + the Year chart) in 31-day windows, newest first; a window that comes back with 100 records is halved until it fits. About 14 calls; ~720 activities for Konrad. Later syncs re-fetch from 3 days before the newest stored activity and replace those days (so deletions in COROS carry over).
   - Sync runs on opening Forma and on coming back to the tab when data is over an hour old, and on clicking the sidebar status. Sports: codes 100–103 run, 2xx ride, everything else `other` (all count as load).
-  - Athlete: resting HR = median of COROS's last 30 days; sex from the profile; max HR still `estimateAthlete`.
+  - Athlete: resting HR = median of COROS's last 30 days; sex from the profile; max HR from `estimateAthlete`. Settings can replace max and rest (see §2).
 - **Data budget:** everything comes from the source's activity list: moving time, average heart rate, distance, sport type, local start. No per-activity requests (COROS: `getActivityDetail`; Strava: streams and best efforts) unless Konrad agrees.
-- **Languages:** English and Polish. First visit follows the browser; the choice is remembered (`forma.locale`). For now the EN | PL switch sits in the sidebar footer; it moves to Settings when Settings exists.
-- **Theme:** follows the system until Settings exists. Light and dark tokens are both ready.
+- **Languages:** English and Polish. First visit follows the browser; the choice is remembered (`forma.locale`). Switched in Settings → General (and EN | PL on Start).
+- **Theme:** Light (default), Dark or System, in Settings → General, remembered as `forma.theme`. An inline script in `index.html` applies it before the first paint.
 - **Status now:** the Form screen runs on the athlete's COROS data (or on the sample, `src/data/sample.ts`, pinned to 25 Nov 2026, when chosen on Start). App state (source, sync, data) is in `src/app/AppProvider.tsx`. Strava sign-in (`src/strava/auth.ts`) and mapping (`src/strava/mapping.ts`) exist but are not wired in.
 
 ## 2. The model
 
 All in `src/domain/`, pure and tested.
 
-- **Load per activity** (`load.ts`): Banister TRIMP from moving time and average heart rate. `minutes × HRr × 0.64 × e^(1.92 × HRr)` (women 0.86, 1.67), `HRr = (avg − rest) / (max − rest)`. Without heart rate: the same time at an easy effort (HRr 0.55). Max and resting heart rate are estimated (`estimateAthlete`: hardest average ÷ 0.92, clamped 170–210; rest 50) until Settings lets the athlete set them. Daily load = sum over the day's activities, all sports.
+- **Load per activity** (`load.ts`): Banister TRIMP from moving time and average heart rate. `minutes × HRr × 0.64 × e^(1.92 × HRr)` (women 0.86, 1.67), `HRr = (avg − rest) / (max − rest)`. Without heart rate: the same time at an easy effort (HRr 0.55). Max and resting heart rate are estimated (`estimateAthlete`: hardest average ÷ 0.92, clamped 170–210; rest 50; COROS's median when connected). Settings → Heart rate can set either (`src/domain/settings.ts`, `athleteWith`; stored as `forma.training` in localStorage; rest must stay 40+ below max). Daily load = sum over the day's activities, all sports.
 - **Fitness** (CTL): `fitness += (load − fitness) / 42` per day. **Fatigue** (ATL): the same over 7 days. Both start at the average daily load of the first 42 days of history (`startingLoad`), because history never starts from zero training.
 - **Form** = (fitness − fatigue) / fitness × 100, from **yesterday's** values, so today's run doesn't change today's form. Not shown for the first 7 days of history.
 - **Zones** (`training.ts`): Transition above +20%, Fresh +5 to +20, Grey zone −10 to +5, Optimal −30 to −10, High risk below −30. Boundaries belong to the zone below (exactly +5% is Grey zone).
 - **Records** (`records.ts`): 5 km, 10 km, half marathon from whole runs of that distance up to 5% longer, time scaled to the exact distance; longest run. "New" for 30 days. (No best efforts inside longer runs: those need a request per activity.)
-- **Easy-pace heart rate** (`easyHr.ts`): per month, time-weighted average heart rate of runs averaging 5:30–6:00 /km. The KPI compares the latest month with two months before.
+- **Easy-pace heart rate** (`easyHr.ts`): per month, time-weighted average heart rate of runs averaging a pace in `Dataset.easyPace` (default 5:30–6:00 /km, editable in Settings → Heart rate). The KPI compares the latest month with two months before.
 - **Screen summary** (`formSummary.ts`): one call computes everything the Form screen shows for a period (6 weeks, 3 months, year). Title: today's zone in words plus fitness against last month's average ("Fresh *and fitter than in October*").
 
 ## 3. Screens
 
 Built:
 0. **Start** (`src/screens/Start.tsx`): wordmark, title, one card "Connect COROS" (what Forma reads, data stays in the browser), footer: "Look around with sample data" · Open source · MIT · EN | PL. COROS returns to `/coros/callback` (`CorosCallback.tsx`), then the Form route shows **First sync** (`FirstSync.tsx`, progress bar, error with Try again / Connect again) until data arrives.
-   Sidebar footer: source status ("Synced 12 min ago", a button that syncs now; "Syncing…"; "Sync failed" + Try again / Connect again; on sample "Sample data" + "Connect COROS"), language switch, "Disconnect" (signs out and removes COROS data from this browser; moves to Settings later).
-1. **Form** (`src/screens/Form.tsx`): title + period switch (6 weeks / 3 months / Year, a boxed segmented control); 4 KPI tiles (Form % with zone chip, Fitness, Fatigue, Easy-pace heart rate), each with one line that explains it; one chart card: fitness line (blue, soft gradient), fatigue line (violet), grey daily-load bars, a dashed line on today, a right column with today's fitness, fatigue and 7-day load; under it form as daily bars coloured by zone over faint zone bands, with the five zones listed on the right (name, range, one sentence); Records and Heart rate at easy pace cards.
+   Sidebar footer: source status ("Synced 12 min ago", a button that syncs now; "Syncing…"; "Sync failed" + Try again / Connect again; on sample "Sample data" + "Connect COROS"), then a "Settings" nav row (cog only on phones).
+1. **Form** (`src/screens/Form.tsx`): title + period switch (6 weeks / 3 months / Year, a boxed segmented control); 4 KPI tiles, each with one line that explains it. The values are today's; the lines follow the period: Form % in its zone's ink with the zone chip, "Optimal or Fresh on 34 of 91 days"; Fitness in `--fitness-ink`, change over the period; Fatigue in `--fatigue-ink`, the last 7 days (fixed by definition); Easy-pace heart rate in ink, against two months before. One chart card, everything full width: fitness line (blue, soft gradient), fatigue line (violet), grey daily-load bars, a dashed line on today, with a legend row underneath (key, name, one line); then form as daily bars coloured by zone over faint zone bands, with the five zones in a row underneath, each in three lines: name (zone ink, 500), range (ink, 500), what it means (12px, muted); wraps on narrow screens. **Day tooltip** (`src/screens/DayExplorer.tsx`, `src/components/DayTooltip.tsx`): one area over both charts; hover, tap or Tab + arrow keys (Home, End, Escape) picks a day: a guide line through both charts, dots on both lines, other form bars step back, and a card beside the line with the date, form % and zone chip, fitness, fatigue, the day's load and up to 4 activities (name · distance or time · bpm, then "+2 more"). Screen readers get the same as one sentence (`aria-live`). Records and Heart rate at easy pace cards. Month labels thin out on narrow charts (`timeLabels`).
+
+2. **Settings** (`src/components/SettingsDialog.tsx`, Kilometr's pattern): a modal at `/settings` over the current screen (mounted by `Layout`), side nav (tabs on phones), Esc / X / scrim close. General: theme, language. Heart rate: max and resting heart rate (hint says estimated / from COROS / set by you, "Use estimate" to go back), easy-pace band (m:ss – m:ss /km, "Reset"); a field saves on Enter or blur, errors in words under the hint. Data: COROS source + Sync now, Disconnect COROS (heart-rate settings stay), or on sample Connect COROS (to Start); Remove all data with a confirm dialog (activities, sign-in, heart-rate settings; theme and language stay). About: version, MIT, GitHub, author, "Data from COROS".
 
 Next (not designed yet), roughly in this order, to agree with Konrad:
 2. ~~COROS sync~~ done 2026-11-26 (see §1). Strava as the fallback source later.
-3. Settings: max and resting heart rate, easy-pace band, theme, language, remove data.
-4. Chart tooltips (hover, tap and arrow keys on a day), as in Kilometr's weekly chart.
-5. Records and Activities screens.
-6. Vercel project and README screenshots.
+3. ~~Settings~~ done 2026-11-26 (see Settings above).
+4. Records and Activities screens.
+5. Vercel project and README screenshots.
 
 ---
 

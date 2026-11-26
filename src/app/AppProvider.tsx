@@ -5,14 +5,19 @@ import { clearCorosData, loadCorosData, saveCorosData, type CorosData } from '..
 import { syncActivities } from '../coros/sync';
 import { SAMPLE } from '../data/sample';
 import { estimateAthlete } from '../domain/load';
+import { athleteWith, DEFAULT_EASY_PACE, readSettings, type TrainingSettings } from '../domain/settings';
 import type { Dataset } from '../domain/types';
 import { createFormat, detectLocale, LOCALES, MESSAGES, type Locale } from '../i18n';
 import { todayKey } from '../lib/days';
-import { AppContext, type AppState, type Source, type SyncState } from './context';
+import { AppContext, type AppState, type Source, type SyncState, type ThemePref } from './context';
 
 const KEY_LOCALE = 'forma.locale';
 /** Remembers that the athlete chose the sample on Start. */
 const KEY_SAMPLE = 'forma.sample';
+/** Light, dark or system; index.html reads it too, before the first paint. */
+const KEY_THEME = 'forma.theme';
+/** Heart rate and easy pace set in Settings. */
+const KEY_TRAINING = 'forma.training';
 const DARK_QUERY = '(prefers-color-scheme: dark)';
 /** Data older than this is refreshed when Forma opens or comes back into view. */
 const RESYNC_AFTER_MS = 60 * 60 * 1000;
@@ -40,6 +45,19 @@ function readLocale(): Locale {
   return saved && (LOCALES as string[]).includes(saved) ? (saved as Locale) : detectLocale();
 }
 
+function readThemePref(): ThemePref {
+  const saved = storage.get(KEY_THEME);
+  return saved === 'dark' || saved === 'system' ? saved : 'light';
+}
+
+function readTraining(): TrainingSettings {
+  try {
+    return readSettings(JSON.parse(storage.get(KEY_TRAINING) ?? 'null'));
+  } catch {
+    return {};
+  }
+}
+
 const subscribeDark = (onChange: () => void) => {
   const mq = window.matchMedia(DARK_QUERY);
   mq.addEventListener('change', onChange);
@@ -59,8 +77,10 @@ const isSignedOut = (e: unknown) =>
  */
 export function AppProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(readLocale);
-  // Until Settings exists, the theme follows the system.
-  const dark = useSyncExternalStore(subscribeDark, () => window.matchMedia(DARK_QUERY).matches);
+  const [themePref, setThemePrefState] = useState<ThemePref>(readThemePref);
+  const systemDark = useSyncExternalStore(subscribeDark, () => window.matchMedia(DARK_QUERY).matches);
+  const theme = themePref === 'system' ? (systemDark ? 'dark' : 'light') : themePref;
+  const [training, setTrainingState] = useState<TrainingSettings>(readTraining);
   const [source, setSource] = useState<Source>('loading');
   const [coros, setCoros] = useState<CorosData | null>(null);
   const [sync, setSync] = useState<SyncState>({ status: 'idle' });
@@ -68,8 +88,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const syncing = useRef(false);
 
   useEffect(() => {
-    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-  }, [dark]);
+    document.documentElement.dataset.theme = theme;
+  }, [theme]);
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -143,17 +163,34 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return () => document.removeEventListener('visibilitychange', onVisible);
   }, [syncIfStale]);
 
-  const data = useMemo<Dataset>(() => {
-    if (source !== 'coros') return SAMPLE;
-    const activities = coros?.activities ?? [];
-    const estimated = estimateAthlete(activities);
+  // The heart rates Forma works out by itself; Settings can replace them.
+  const estimate = useMemo(() => {
+    if (source !== 'coros') return { ...SAMPLE.athlete, restFromCoros: false };
+    const estimated = estimateAthlete(coros?.activities ?? []);
     return {
-      source: 'coros',
-      activities,
-      athlete: { ...estimated, restHr: coros?.restHr ?? estimated.restHr, sex: coros?.sex },
-      asOf: todayKey(),
+      ...estimated,
+      restHr: coros?.restHr ?? estimated.restHr,
+      sex: coros?.sex,
+      restFromCoros: coros?.restHr !== undefined,
     };
   }, [source, coros]);
+
+  const data = useMemo<Dataset>(() => {
+    const { restFromCoros: _, ...base } = estimate;
+    const athlete = athleteWith(base, training);
+    const easyPace = training.easyPace ?? DEFAULT_EASY_PACE;
+    if (source !== 'coros') return { ...SAMPLE, athlete, easyPace };
+    return { source: 'coros', activities: coros?.activities ?? [], athlete, easyPace, asOf: todayKey() };
+  }, [source, coros, estimate, training]);
+
+  const disconnectCoros = useCallback(async () => {
+    forgetCoros();
+    await clearCorosData();
+    corosRef.current = null;
+    setCoros(null);
+    setSync({ status: 'idle' });
+    setSource('none');
+  }, []);
 
   const value = useMemo<AppState>(
     () => ({
@@ -177,13 +214,26 @@ export function AppProvider({ children }: { children: ReactNode }) {
         void runSync();
       },
       syncNow: () => void runSync(),
-      disconnectCoros: async () => {
-        forgetCoros();
-        await clearCorosData();
-        corosRef.current = null;
-        setCoros(null);
-        setSync({ status: 'idle' });
-        setSource('none');
+      disconnectCoros,
+      removeAllData: async () => {
+        storage.set(KEY_SAMPLE, null);
+        storage.set(KEY_TRAINING, null);
+        setTrainingState({});
+        await disconnectCoros();
+      },
+      training,
+      setTraining: (patch) => {
+        // Unset values (back to the estimate) are dropped, not saved as undefined.
+        const next = Object.fromEntries(Object.entries(patch).filter(([, v]) => v !== undefined));
+        setTrainingState(next);
+        storage.set(KEY_TRAINING, Object.keys(next).length ? JSON.stringify(next) : null);
+      },
+      estimate,
+      theme,
+      themePref,
+      setThemePref: (next) => {
+        setThemePrefState(next);
+        storage.set(KEY_THEME, next);
       },
       locale,
       setLocale: (next) => {
@@ -193,7 +243,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       t: MESSAGES[locale],
       f: createFormat(locale),
     }),
-    [source, data, sync, coros, runSync, locale],
+    [source, data, sync, coros, runSync, disconnectCoros, training, estimate, theme, themePref, locale],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Your running fitness, fatigue and form, calm and easy to read." />
     <title>Forma</title>
+    <!-- The saved theme before anything paints, so a dark choice never flashes light (or the other way). -->
+    <script>
+      try {
+        var pref = localStorage.getItem('forma.theme') || 'light';
+        var dark = pref === 'dark' || (pref === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

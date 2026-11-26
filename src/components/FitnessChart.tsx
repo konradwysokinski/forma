@@ -13,7 +13,16 @@ const TOP = 6;
 const LOAD_SHARE = 0.55;
 
 /** Fitness as a blue line with a soft gradient, fatigue in violet, daily load as grey bars behind. */
-export function FitnessChart({ days, period }: { days: readonly TrainingDay[]; period: Period }) {
+export function FitnessChart({
+  days,
+  period,
+  active = null,
+}: {
+  days: readonly TrainingDay[];
+  period: Period;
+  /** The day the pointer or keyboard is on: a guide line and dots on both lines. */
+  active?: number | null;
+}) {
   const { t, f } = useApp();
   const [ref, width] = useWidth<HTMLDivElement>(630);
   const gradient = useId();
@@ -74,7 +83,7 @@ export function FitnessChart({ days, period }: { days: readonly TrainingDay[]; p
               width={bw}
               height={(d.load / maxLoad) * (BASE - TOP) * LOAD_SHARE}
               rx={Math.min(1.25, bw / 2)}
-              className={s.load}
+              className={i === active ? `${s.load} ${s.loadOn}` : s.load}
             />
           ) : null,
         )}
@@ -82,9 +91,20 @@ export function FitnessChart({ days, period }: { days: readonly TrainingDay[]; p
         <path d={line((d) => d.fatigue)} className={s.fatigue} />
         <path d={fitnessPath} className={s.fitness} />
         <line x1={x(n - 1)} x2={x(n - 1)} y1={TOP} y2={BASE} className={s.today} />
-        <circle cx={x(n - 1)} cy={y(last.fitness)} r={4.5} className={s.fitnessDot} />
-        <circle cx={x(n - 1)} cy={y(last.fatigue)} r={4} className={s.fatigueDot} />
-        {timeLabels(days, period, f).map(({ i, label }) => (
+        {active !== null && active !== n - 1 && (
+          <line x1={x(active)} x2={x(active)} y1={TOP} y2={BASE} className={s.guide} />
+        )}
+        {(() => {
+          const at = active ?? n - 1;
+          const d = days[at]!;
+          return (
+            <>
+              <circle cx={x(at)} cy={y(d.fatigue)} r={4} className={s.fatigueDot} />
+              <circle cx={x(at)} cy={y(d.fitness)} r={4.5} className={s.fitnessDot} />
+            </>
+          );
+        })()}
+        {timeLabels(days, period, f, width).map(({ i, label }) => (
           <text key={i} x={x(i)} y={HEIGHT - 2} className={s.label}>
             {label}
           </text>

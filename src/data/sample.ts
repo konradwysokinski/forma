@@ -5,6 +5,7 @@
  * easy-pace heart rate drifts down over the months, and four runs set the records.
  */
 import { addDays } from '../lib/days';
+import { DEFAULT_EASY_PACE } from '../domain/settings';
 import type { Activity, Dataset } from '../domain/types';
 
 export const SAMPLE_AS_OF = '2026-11-25';
@@ -71,5 +72,6 @@ export const SAMPLE: Dataset = {
   source: 'sample',
   activities: buildActivities(),
   athlete: { maxHr: 192, restHr: 50 },
+  easyPace: DEFAULT_EASY_PACE,
   asOf: SAMPLE_AS_OF,
 };

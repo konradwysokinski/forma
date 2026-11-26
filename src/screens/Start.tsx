@@ -54,7 +54,7 @@ export function Start() {
         <span aria-hidden="true">·</span>
         <span>{t.start.openSource}</span>
         <Segmented<Locale>
-          label={t.nav.language}
+          label={t.settings.language}
           value={locale}
           onChange={setLocale}
           options={LOCALES.map((l) => ({ value: l, label: l.toUpperCase(), ariaLabel: MESSAGES[l].languageName, lang: l }))}

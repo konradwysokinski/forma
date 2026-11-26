@@ -20,6 +20,8 @@ export interface Format {
   signed: (n: number) => string;
   /** "24 Nov" / "24 lis" */
   dayMonth: (d: Date) => string;
+  /** "Wed 19 Nov" / "śr. 19 lis" */
+  weekdayDate: (d: Date) => string;
   /** "November" / "listopad" */
   monthName: (d: Date) => string;
   /** "Nov" / "Lis", for chart labels */
@@ -49,6 +51,7 @@ function clock(seconds: number): string {
 export function createFormat(locale: Locale): Format {
   const tag = locale === 'pl' ? 'pl-PL' : 'en-GB';
   const month = new Intl.DateTimeFormat(tag, { month: 'long' });
+  const weekdayDate = new Intl.DateTimeFormat(tag, { weekday: 'short', day: 'numeric', month: 'short' });
   const dayMonth = new Intl.DateTimeFormat(tag, { day: 'numeric', month: 'short' });
   // en-GB writes "Sept"; chart labels want three letters.
   const monthShort = new Intl.DateTimeFormat(locale === 'pl' ? tag : 'en-US', { month: 'short' });
@@ -60,6 +63,7 @@ export function createFormat(locale: Locale): Format {
     signed: (n) => (Math.round(n) > 0 ? `+${formatInt(n)}` : formatInt(n)),
     // en-GB writes "14 Sept"; three letters like every other month.
     dayMonth: (d) => dayMonth.format(d).replace('.', '').replace('Sept', 'Sep'),
+    weekdayDate: (d) => capitalise(weekdayDate.format(d).replace(/,/g, '').replace('Sept', 'Sep')),
     monthName: (d) => month.format(d),
     monthShort: (d) => capitalise(monthShort.format(d).replace('.', '')),
     kmPrecise: (metres) => `${oneDecimal(metres / 1000)}${NBSP}km`,

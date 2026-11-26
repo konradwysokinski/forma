@@ -82,38 +82,34 @@
   color: var(--ink-muted);
 }
 
-/* Chart on the left, a 220px column of values or the legend on the right. */
-.split {
+/* Charts take the card's full width; what their marks mean sits underneath, in one row. */
+.legendRow {
+  margin: 0;
+  padding: 0;
+  list-style: none;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 220px;
-  gap: 28px;
-  align-items: start;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px 28px;
 }
 
-.side {
+.legendItem {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding-left: 20px;
-  border-left: 1px solid var(--line-soft);
+  gap: 2px;
 }
 
 .formRow {
   padding-top: 20px;
   border-top: 1px solid var(--line-soft);
-}
-
-.formChart {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   min-width: 0;
 }
 
-.todayRow {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+/* The zones under the form bars, outside the area the pointer explores. */
+.zonesBlock {
+  margin-top: -6px;
 }
 
 .legend {
@@ -149,16 +145,10 @@
   background: var(--load);
 }
 
-.todayValue {
-  font-size: 22px;
-  line-height: 28px;
-  letter-spacing: -0.02em;
-}
-
+/* Five zones side by side on wide cards, wrapping on narrow ones. */
 .zones {
-  margin: 0;
-  list-style: none;
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px 20px;
 }
 
 .zone {
@@ -172,15 +162,10 @@
   background: var(--zone);
 }
 
+/* Always three lines, in this order: name (zone ink), range (ink, 500), what it means (quiet). */
 .zoneText {
   display: flex;
   flex-direction: column;
-}
-
-.zoneTop {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
   font-size: 13px;
   line-height: 18px;
 }
@@ -188,6 +173,19 @@
 .zoneName {
   font-weight: 500;
   color: var(--zone-ink);
+}
+
+.zoneRange {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.zoneNote {
+  margin-top: 3px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ink-muted);
+  text-wrap: pretty;
 }
 
 .pair {
@@ -249,31 +247,6 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-}
-
-/* Narrow cards: the right column drops under its chart. */
-@media (max-width: 1080px) {
-  .split {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 20px;
-  }
-
-  .side {
-    padding-left: 0;
-    padding-top: 16px;
-    border-left: 0;
-    border-top: 1px solid var(--line-soft);
-  }
-
-  .split > .side:not(.zones) {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 14px 28px;
-  }
-
-  .split > .side:not(.zones) > .muted {
-    flex-basis: 100%;
-  }
 }
 
 @media (max-width: 640px) {

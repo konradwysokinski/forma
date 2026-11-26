@@ -19,7 +19,16 @@ const BANDS: readonly { id: Zone; from: number; to: number }[] = ZONES.map((z, i
 }));
 
 /** Form as daily bars around zero, each coloured by its zone, over faint zone bands. */
-export function FormChart({ days, period }: { days: readonly TrainingDay[]; period: Period }) {
+export function FormChart({
+  days,
+  period,
+  active = null,
+}: {
+  days: readonly TrainingDay[];
+  period: Period;
+  /** The day the pointer or keyboard is on: its bar stays strong, the rest step back. */
+  active?: number | null;
+}) {
   const { t, f } = useApp();
   const [ref, width] = useWidth<HTMLDivElement>(630);
   const n = days.length;
@@ -72,10 +81,14 @@ export function FormChart({ days, period }: { days: readonly TrainingDay[]; peri
               height={Math.max(1.5, Math.abs(y(pct) - y(0)))}
               rx={Math.min(1.25, bw / 2)}
               fill={`var(--zone-${zoneOf(d.form)})`}
+              opacity={active === null || i === active ? 1 : 0.4}
             />
           );
         })}
         <line x1={x(n - 1)} x2={x(n - 1)} y1={0} y2={HEIGHT} className={s.today} />
+        {active !== null && active !== n - 1 && (
+          <line x1={x(active)} x2={x(active)} y1={0} y2={HEIGHT} className={s.guide} />
+        )}
       </svg>
     </div>
   );

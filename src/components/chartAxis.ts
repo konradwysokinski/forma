@@ -12,22 +12,39 @@ export function dayX(i: number, n: number, width: number) {
   return AXIS_LEFT + (n > 1 ? i / (n - 1) : 1) * (width - AXIS_LEFT - AXIS_RIGHT);
 }
 
+/** The day under a pointer at `px` from the chart's left edge. */
+export function dayAt(px: number, n: number, width: number) {
+  const share = (px - AXIS_LEFT) / Math.max(1, width - AXIS_LEFT - AXIS_RIGHT);
+  return Math.min(n - 1, Math.max(0, Math.round(share * (n - 1))));
+}
+
 export function barWidth(n: number, width: number) {
   const step = (width - AXIS_LEFT - AXIS_RIGHT) / Math.max(1, n - 1);
   return Math.min(6, Math.max(1, step * 0.6));
 }
 
-/** Labels under the chart: months for 3 months and a year, a date a week for 6 weeks. */
-export function timeLabels(days: readonly TrainingDay[], period: Period, f: Format) {
+/** Space a label needs, in px: "Sep" or "24 Nov" at 12px plus a gap. */
+const LABEL_SPACE = { month: 34, date: 52 };
+
+/**
+ * Labels under the chart: months for 3 months and a year, a date a week for
+ * 6 weeks. On narrow charts every second (third…) one is kept, counting back
+ * from the newest, so they never run into each other.
+ */
+export function timeLabels(days: readonly TrainingDay[], period: Period, f: Format, width: number) {
   const n = days.length;
+  const all: { i: number; label: string }[] = [];
   if (period === '6w') {
-    const labels = [];
-    for (let i = n - 1; i >= 0; i -= 7) labels.unshift({ i, label: f.dayMonth(dateOf(days[i]!.date)) });
-    return labels;
+    for (let i = n - 1; i >= 0; i -= 7) all.unshift({ i, label: f.dayMonth(dateOf(days[i]!.date)) });
+  } else {
+    days.forEach((d, i) => {
+      if (d.date.endsWith('-01') && i < n - 4) all.push({ i, label: f.monthShort(dateOf(d.date)) });
+    });
   }
-  return days.flatMap((d, i) =>
-    d.date.endsWith('-01') && i < n - 4 ? [{ i, label: f.monthShort(dateOf(d.date)) }] : [],
-  );
+  if (all.length < 2) return all;
+  const gap = dayX(all[1]!.i, n, width) - dayX(all[0]!.i, n, width);
+  const every = Math.max(1, Math.ceil(LABEL_SPACE[period === '6w' ? 'date' : 'month'] / gap));
+  return all.filter((_, k) => (all.length - 1 - k) % every === 0);
 }
 
 /** A round step for value gridlines, about five lines up to max. */

@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import { NavLink, Outlet } from 'react-router';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router';
 import b from '../components/Button.module.css';
 import { Icon } from '../components/Icon';
-import { Segmented } from '../components/Segmented';
-import { LOCALES, MESSAGES, type Locale } from '../i18n';
+import { SettingsDialog } from '../components/SettingsDialog';
 import { useApp } from './context';
 import s from './Layout.module.css';
 
@@ -73,9 +72,18 @@ function SourceStatus() {
   );
 }
 
-/** Tinted sidebar plus one white content panel, as in Kilometr. */
+export const SETTINGS_PATH = '/settings';
+
+/**
+ * Tinted sidebar plus one white content panel, as in Kilometr. Settings open
+ * at /settings as a modal over the screen that was showing.
+ */
 export function Layout() {
-  const { t, locale, setLocale, source, disconnectCoros } = useApp();
+  const { t } = useApp();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const fromApp = (location.state as { fromApp?: boolean } | null)?.fromApp;
+  const closeSettings = () => (fromApp ? navigate(-1) : navigate('/', { replace: true }));
   return (
     <div className={s.app}>
       <nav aria-label={t.nav.label} className={s.sidebar}>
@@ -90,34 +98,20 @@ export function Layout() {
         </div>
         <div className={s.footer}>
           <SourceStatus />
-          <div className={s.footerRow}>
-            <Segmented<Locale>
-              label={t.nav.language}
-              value={locale}
-              onChange={setLocale}
-              options={LOCALES.map((l) => ({
-                value: l,
-                label: l.toUpperCase(),
-                ariaLabel: MESSAGES[l].languageName,
-                lang: l,
-              }))}
-            />
-            {source === 'coros' && (
-              <button
-                type="button"
-                className={`${b.text} ${s.quiet}`}
-                onClick={() => void disconnectCoros()}
-                title={t.sidebar.disconnectHint}
-              >
-                {t.sidebar.disconnect}
-              </button>
-            )}
-          </div>
+          <NavLink
+            to={SETTINGS_PATH}
+            state={{ fromApp: true }}
+            className={({ isActive }) => `${s.navRow} ${isActive ? s.active : ''}`}
+          >
+            <Icon name="settings" className={s.navIcon} />
+            <span className={s.navLabel}>{t.nav.settings}</span>
+          </NavLink>
         </div>
       </nav>
       <main className={s.panel}>
         <Outlet />
       </main>
+      {location.pathname === SETTINGS_PATH && <SettingsDialog onClose={closeSettings} />}
     </div>
   );
 }

@@ -4,10 +4,8 @@
  * means fitter.
  */
 import { addMonths, dayOf, monthOf } from '../lib/days';
-import type { Activity, DayKey } from './types';
-
-/** Seconds per km: 5:30 to 6:00 /km. Settings will let the athlete move it. */
-export const EASY_PACE = { from: 330, to: 360 } as const;
+import { DEFAULT_EASY_PACE } from './settings';
+import type { Activity, DayKey, PaceBand } from './types';
 
 export interface EasyHrMonth {
   /** "2026-11" */
@@ -21,7 +19,7 @@ export function easyHrByMonth(
   activities: readonly Activity[],
   asOf: DayKey,
   months = 6,
-  pace: { from: number; to: number } = EASY_PACE,
+  pace: PaceBand = DEFAULT_EASY_PACE,
 ): EasyHrMonth[] {
   const last = monthOf(asOf);
   const first = addMonths(last, -(months - 1));

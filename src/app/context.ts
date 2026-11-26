@@ -1,9 +1,14 @@
 import { createContext, useContext } from 'react';
-import type { Dataset } from '../domain/types';
+import type { TrainingSettings } from '../domain/settings';
+import type { Athlete, Dataset } from '../domain/types';
 import type { Format, Locale, Messages } from '../i18n';
 
 /** Where the data comes from: nothing chosen yet (Start), the sample, or the athlete's COROS account. */
 export type Source = 'loading' | 'none' | 'sample' | 'coros';
+
+export type Theme = 'light' | 'dark';
+/** 'system' follows the computer's light or dark setting. */
+export type ThemePref = Theme | 'system';
 
 export type SyncState =
   | { status: 'idle' }
@@ -27,6 +32,17 @@ export interface AppState {
   finishCorosSignIn: (search: string) => Promise<void>;
   syncNow: () => void;
   disconnectCoros: () => Promise<void>;
+  /** Deletes everything Forma keeps in this browser except theme and language, and goes back to Start. */
+  removeAllData: () => Promise<void>;
+  /** What the athlete set in Settings (heart rate, easy pace); the data above already uses it. */
+  training: TrainingSettings;
+  setTraining: (next: TrainingSettings) => void;
+  /** The heart rates Forma would use without settings; `restFromCoros` when rest is COROS's median. */
+  estimate: Athlete & { restFromCoros: boolean };
+  /** The theme in use, with 'system' resolved. */
+  theme: Theme;
+  themePref: ThemePref;
+  setThemePref: (pref: ThemePref) => void;
   locale: Locale;
   setLocale: (locale: Locale) => void;
   t: Messages;
