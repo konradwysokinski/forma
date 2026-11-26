@@ -1,35 +1,35 @@
 .card {
-  padding: 20px 22px;
+  padding: 16px 18px;
   border: 1px solid var(--line);
   border-radius: var(--radius-tile);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
   min-width: 0;
 }
 
 .label,
 .sub {
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 13px;
+  line-height: 18px;
   color: var(--ink-muted);
 }
 
 /* Caption size: the line under the number stays quieter than the label above it. */
 .sub {
-  font-size: 13px;
-  line-height: 18px;
+  font-size: 12px;
+  line-height: 16px;
 }
 
 .sub {
   /* No rule between the number and its line any more; a little more air instead. */
-  margin-top: 4px;
+  margin-top: 2px;
   text-wrap: pretty;
 }
 
 .value {
-  font-size: 34px;
-  line-height: 40px;
+  font-size: 32px;
+  line-height: 38px;
   font-weight: 400;
   letter-spacing: -0.02em;
   white-space: nowrap;

@@ -149,6 +149,7 @@ export function FormScreen() {
           <h2 id="fitness-heading" className={s.heading}>
             {t.form.chartTitle}
           </h2>
+          <ChartLegend />
           {hasSleep && (
             <div role="group" aria-label={t.sleep.alsoShow} className={s.alsoShow}>
               <span className={s.alsoShowLabel} aria-hidden="true">
@@ -162,15 +163,11 @@ export function FormScreen() {
           {(active) => (
             <>
               <FitnessChart days={sum.days} period={period} active={active} />
-              <ChartLegend />
               <div className={s.formRow}>
                 <h3 className={s.subheading}>
                   {t.form.formHeading} <span className={s.titleMuted}>{t.form.formHeadingNote}</span>
                 </h3>
                 <FormChart days={sum.days} period={period} active={active} />
-                <div className={s.zonesBlock}>
-                  <ZoneLegend onOpen={setGuide} />
-                </div>
               </div>
               {sleepOn && (
                 <div className={s.formRow}>
@@ -192,6 +189,8 @@ export function FormScreen() {
             </>
           )}
         </DayExplorer>
+        {/* Under all the charts: each zone's name, range and what it means; the name opens the full description. */}
+        <ZoneLegend onOpen={setGuide} />
         <ZoneGuide zone={guide} onClose={() => setGuide(null)} />
       </section>
 
@@ -271,7 +270,7 @@ export function FormScreen() {
   );
 }
 
-/** What the chart's lines and bars are, in one row under the chart; today's values are in the tiles above. */
+/** What the chart's lines and bars are, in the card's header; each one's meaning is its title (and read out). */
 export function ChartLegend() {
   const { t } = useApp();
   const items = [
@@ -282,10 +281,10 @@ export function ChartLegend() {
   return (
     <ul className={s.chartLegend}>
       {items.map((item) => (
-        <li key={item.key} className={s.legendItem}>
+        <li key={item.key} className={s.legendItem} title={item.note}>
           <span className={`${s.key} ${s[`key_${item.key}`]}`} aria-hidden="true" />
           <span className={s.legendName}>{item.label}</span>
-          <span className={s.legendNote}>{item.note}</span>
+          <span className="visually-hidden">{item.note}</span>
         </li>
       ))}
     </ul>

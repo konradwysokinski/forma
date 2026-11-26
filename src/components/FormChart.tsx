@@ -5,11 +5,11 @@ import { useWidth } from '../lib/useWidth';
 import { AXIS_LEFT, barWidth, dayX } from './chartAxis';
 import s from './Charts.module.css';
 
-const HEIGHT = 150;
+const HEIGHT = 110;
 /** Form shown from +40% down to −50%; days beyond are drawn at the edge. */
 const TOP_PCT = 40;
 const BOTTOM_PCT = -50;
-const PLOT = 148;
+const PLOT = HEIGHT - 2;
 
 /** Each zone's band on the chart: from its lower edge up to the next zone's. */
 const BANDS: readonly { id: Zone; from: number; to: number }[] = ZONES.map((z, i) => ({

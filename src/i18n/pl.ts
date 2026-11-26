@@ -194,7 +194,7 @@ export const pl: Messages = {
     kpiFatigue: 'Zmęczenie',
     fatigueSub: (week) =>
       ({ easy: 'Z ostatnich 7 dni, lekki tydzień', steady: 'Z ostatnich 7 dni, równy tydzień', hard: 'Z ostatnich 7 dni, ciężki tydzień' })[week],
-    kpiEasyHr: 'Tętno w spokojnym tempie',
+    kpiEasyHr: 'Tętno spokojne',
     bpm: 'bpm',
     easyHrSub: (pace, change, month) =>
       change === null

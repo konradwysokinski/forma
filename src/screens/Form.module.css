@@ -154,11 +154,11 @@
 }
 
 .formRow {
-  padding-top: 20px;
+  padding-top: 10px;
   border-top: 1px solid var(--line-soft);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 4px;
   min-width: 0;
 }
 
@@ -281,9 +281,9 @@
 }
 
 .zoneNote {
-  margin-top: 3px;
-  font-size: 12px;
-  line-height: 16px;
+  margin-top: 2px;
+  font-size: 11px;
+  line-height: 14px;
   color: var(--ink-muted);
   text-wrap: pretty;
 }
@@ -459,3 +459,18 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/*
+ * Compact chart card (branch compact-chart): the fitness key sits in the
+ * header, the zones sit under every chart, rows sit closer.
+ */
+.cardHead .chartLegend {
+  flex: 1;
+  gap: 4px 20px;
+  justify-content: flex-start;
+}
+
+.cardHead .legendItem {
+  cursor: help;
+}
+
