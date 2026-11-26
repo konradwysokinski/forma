@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
 import { useApp } from '../app/context';
 import { dayAt, dayX } from '../components/chartAxis';
-import { activityLine, DayTooltip } from '../components/DayTooltip';
+import { activityLine, DayTooltip, sleepLine } from '../components/DayTooltip';
 import { activitiesByDay } from '../domain/activitiesByDay';
 import { zoneOf, type TrainingDay } from '../domain/training';
+import type { SleepNight } from '../domain/types';
 import { dateOf } from '../lib/days';
 import { useWidth } from '../lib/useWidth';
 import s from './DayExplorer.module.css';
@@ -19,9 +20,12 @@ const TIP_GAP = 12;
  */
 export function DayExplorer({
   days,
+  sleep,
   children,
 }: {
   days: readonly TrainingDay[];
+  /** Nights per chart day while the sleep strip is on; the tooltip then gains a sleep row. */
+  sleep?: readonly (SleepNight | null)[];
   children: (active: number | null) => ReactNode;
 }) {
   const { t, f, data } = useApp();
@@ -50,7 +54,8 @@ export function DayExplorer({
   };
 
   const onKeyDown = (e: KeyboardEvent) => {
-    if (!n) return;
+    // Keys pressed on a control inside (the zone names) are that control's.
+    if (!n || e.target !== e.currentTarget) return;
     const moves: Record<string, number> = {
       ArrowLeft: (active ?? n) - 1,
       ArrowRight: (active ?? n - 2) + 1,
@@ -68,6 +73,7 @@ export function DayExplorer({
 
   const day = active === null ? null : days[active]!;
   const list = day ? (byDay.get(day.date) ?? []) : [];
+  const night = sleep && active !== null ? (sleep[active] ?? null) : undefined;
   const x = active === null ? 0 : dayX(active, n, width);
   const side = x > width / 2 ? 'left' : 'right';
 
@@ -79,6 +85,7 @@ export function DayExplorer({
         `${t.form.fitness} ${f.int(day.fitness)}`,
         `${t.form.fatigue} ${f.int(day.fatigue)}`,
         `${t.form.dayLoad} ${f.int(day.load)}`,
+        night !== undefined && (night ? `${t.sleep.label} ${sleepLine(night, t, f)}` : t.sleep.noNight),
         list.length ? list.map((a) => activityLine(a, f)).join('; ') : t.form.restDay,
       ]
         .filter(Boolean)
@@ -106,6 +113,7 @@ export function DayExplorer({
         <DayTooltip
           day={day}
           activities={list}
+          night={night}
           side={side}
           style={
             side === 'right'

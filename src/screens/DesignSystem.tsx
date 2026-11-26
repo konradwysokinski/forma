@@ -10,10 +10,13 @@ import { FormChart } from '../components/FormChart';
 import { Icon } from '../components/Icon';
 import { KpiCard } from '../components/KpiCard';
 import { Segmented } from '../components/Segmented';
+import { SleepChart } from '../components/SleepChart';
+import { Toggle } from '../components/Toggle';
 import { Row } from '../components/SettingsDialog';
 import { ZoneGuide } from '../components/ZoneGuide';
 import { SAMPLE } from '../data/sample';
 import { activitiesByDay } from '../domain/activitiesByDay';
+import { averageSleep, sleepByDay } from '../domain/sleep';
 import { formSummary, type Period } from '../domain/formSummary';
 import { ZONES, type Zone } from '../domain/training';
 import { LOCALES, MESSAGES, type Locale } from '../i18n';
@@ -41,8 +44,14 @@ export function DesignSystem() {
   const sum = useMemo(() => formSummary(SAMPLE, PERIOD), []);
   const tipDay = useMemo(() => {
     const day = sum.days.find((d) => d.date === TOOLTIP_DAY) ?? sum.today;
-    return { day, activities: activitiesByDay(SAMPLE.activities).get(day.date) ?? [] };
+    return {
+      day,
+      activities: activitiesByDay(SAMPLE.activities).get(day.date) ?? [],
+      night: SAMPLE.sleep?.find((n) => n.date === day.date) ?? null,
+    };
   }, [sum]);
+  const nights = useMemo(() => sleepByDay(SAMPLE.sleep ?? [], sum.days), [sum]);
+  const [sleepOn, setSleepOn] = useState(true);
   const easyPaceMid = (SAMPLE.easyPace.from + SAMPLE.easyPace.to) / 2;
 
   const [period, setPeriod] = useState<Period>('3m');
@@ -276,6 +285,9 @@ export function DesignSystem() {
                   options={(['light', 'dark', 'system'] as const).map((v) => ({ value: v, label: t.settings.themes[v] }))}
                 />
               </Specimen>
+              <Specimen label="toggle · sm">
+                <Toggle label={t.sleep.toggle} pressed={sleepOn} onChange={setSleepOn} swatch="var(--sleep)" />
+              </Specimen>
               <Specimen label="box">
                 <Segmented<Period>
                   label={t.period.label}
@@ -349,6 +361,15 @@ export function DesignSystem() {
                 </h4>
                 <FormChart days={sum.days} period={PERIOD} />
               </div>
+              <div className={form.formRow}>
+                <div className={form.stripHead}>
+                  <h4 className={form.subheading}>
+                    {t.sleep.heading} <span className={form.titleMuted}>{t.sleep.headingNote}</span>
+                  </h4>
+                  <span className={form.small}>{t.sleep.average(f.hours((averageSleep(nights) ?? 0) * 60))}</span>
+                </div>
+                <SleepChart nights={nights} average={averageSleep(nights) ?? 0} period={PERIOD} />
+              </div>
             </div>
             <div className={`${form.card} ${form.easyHr} ${s.half}`}>
               <div className={form.headingBlock}>
@@ -362,7 +383,13 @@ export function DesignSystem() {
           </Example>
 
           <Example title={t.ds.tooltip} hint={t.ds.tooltipHint}>
-            <DayTooltip day={tipDay.day} activities={tipDay.activities} side="right" style={{ position: 'relative' }} />
+            <DayTooltip
+              day={tipDay.day}
+              activities={tipDay.activities}
+              night={tipDay.night}
+              side="right"
+              style={{ position: 'relative' }}
+            />
           </Example>
 
           <Example title={t.ds.dialog} hint={t.ds.dialogHint}>
@@ -468,7 +495,7 @@ const SIDEBAR = [
   'sidebar-accent',
   'sidebar-accent-soft',
 ];
-const TRAINING = ['fitness', 'fitness-ink', 'fatigue', 'fatigue-ink', 'load', 'heart', 'heart-ink'];
+const TRAINING = ['fitness', 'fitness-ink', 'fatigue', 'fatigue-ink', 'load', 'heart', 'heart-ink', 'sleep'];
 const ZONE_TOKENS = ZONES.flatMap(({ id }) => [`zone-${id}`, `zone-${id}-ink`, `zone-${id}-tint`]);
 const SPACES = [1, 2, 3, 4, 5, 6, 8, 10];
 const RADII = [

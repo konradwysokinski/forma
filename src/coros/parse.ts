@@ -6,8 +6,9 @@
  *
  * Only what Forma needs is read. Location, start coordinates, calories,
  * birthday, height, weight and name are skipped and never stored.
+ * From sleep only the hours and the score are kept.
  */
-import type { Activity, Athlete, Sport } from '../domain/types';
+import type { Activity, Athlete, SleepNight, Sport } from '../domain/types';
 import type { ToolResult } from './mcp';
 
 export class CorosFormatError extends Error {
@@ -178,4 +179,76 @@ export function parseSex(text: string): Athlete['sex'] {
   const m = /^Gender: (\w+)\s*$/im.exec(text);
   const value = m?.[1]?.toLowerCase();
   return value === 'male' || value === 'female' ? value : undefined;
+}
+
+/** Sleep lines Forma doesn't use: stage ratios, awake time and count, windows, periods incl. awake. Skipped unread. */
+const SLEEP_SKIPPED =
+  /^(Deep Sleep Ratio|Light Sleep Ratio|REM Ratio|Awake Ratio|Awake Time|Awake Count \(>\d+ min\)|Main Sleep Window|Main Sleep Period \(incl\. awake\)|Naps Period \(incl\. awake\)|Nap Window|Sleep metrics scope)$/;
+const SLEEP_UNAVAILABLE = 'Sleep detail for this day is not available yet.';
+
+/** "7h 12min", "45min", "0 min" → minutes. */
+function sleepMinutes(value: string, line: string): number {
+  const m = /^(?:(\d+)h)? ?(?:(\d+) ?min)?$/.exec(value);
+  if (!m || (m[1] === undefined && m[2] === undefined)) throw new CorosFormatError('a sleep duration', line);
+  return Number(m[1] ?? 0) * 60 + Number(m[2] ?? 0);
+}
+
+/** One day's lines → a night, or null when COROS has no sleep for it. */
+function toNight(lines: string[]): SleepNight | null {
+  const date = lines[0]!;
+  let score: number | null = null;
+  let daily: number | undefined;
+  let main: number | undefined;
+  let naps = 0;
+  for (const line of lines.slice(1)) {
+    if (line === SLEEP_UNAVAILABLE) return null;
+    const at = line.indexOf(': ');
+    if (at < 0) throw new CorosFormatError('a sleep line', line);
+    const key = line.slice(0, at);
+    const value = line.slice(at + 2).trim();
+    if (SLEEP_SKIPPED.test(key)) continue;
+    switch (key) {
+      case 'Sleep Score': {
+        if (!/^-?\d+$/.test(value)) throw new CorosFormatError('a sleep score', line);
+        const n = Number(value);
+        score = n > 0 && n <= 100 ? n : null;
+        break;
+      }
+      case 'Daily Sleep':
+        daily = sleepMinutes(value.replace(/ \(incl\. naps\)$/, ''), line);
+        break;
+      case 'Main Sleep':
+      case 'Main Sleep (asleep)':
+        main = sleepMinutes(value, line);
+        break;
+      case 'Naps Total':
+      case 'Naps Total (asleep)':
+        naps = sleepMinutes(value.replace(/ \(includes legacy reported durations\)$/, ''), line);
+        break;
+      default:
+        throw new CorosFormatError('a sleep line', line);
+    }
+  }
+  // COROS's own daily total when it gives one (older days don't), otherwise main sleep plus naps.
+  const minutes = daily ?? (main === undefined ? undefined : main + naps);
+  return minutes ? { date, minutes, score } : null;
+}
+
+/** querySleepOverview text → nights with sleep, oldest first. */
+export function parseSleep(text: string): SleepNight[] {
+  const lines = text.split('\n').map((l) => l.trim());
+  if (/^No sleep overview data\b/i.test(lines[0] ?? '')) return [];
+  if (lines[0] !== 'Sleep Overview') throw new CorosFormatError('sleep', lines[0]);
+
+  const days: string[][] = [];
+  for (const line of lines.slice(1)) {
+    if (!line || RULE.test(line) || /^Note:/.test(line)) continue;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(line)) days.push([line]);
+    else if (days.length) days.at(-1)!.push(line);
+    else throw new CorosFormatError('sleep', line);
+  }
+  return days
+    .map(toNight)
+    .filter((n): n is SleepNight => n !== null)
+    .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
 }

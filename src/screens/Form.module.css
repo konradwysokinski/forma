@@ -163,8 +163,39 @@
 }
 
 /* The zones under the form bars, outside the area the pointer explores. */
+/* The chart card's title and, on the right, what else it can show. */
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.alsoShow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alsoShowLabel {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--ink-muted);
+}
+
+/* A strip's title and, right-aligned, its period figure. */
+.stripHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+
+/* Under the form bars, inside the day explorer, so the sleep strip can follow them. */
 .zonesBlock {
-  margin-top: -6px;
+  margin-top: 2px;
 }
 
 .key {

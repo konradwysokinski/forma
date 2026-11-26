@@ -3,10 +3,12 @@
  * 400 days of running ending 25 Nov 2026 in blocks of three build weeks and an
  * easy week, the last days easy, so today reads "Fresh". Volume grows slowly,
  * easy-pace heart rate drifts down over the months, and four runs set the records.
+ * Sleep is invented too: a little shorter after hard days, slowly better
+ * scored, with the odd night the watch stayed on the charger.
  */
 import { addDays } from '../lib/days';
 import { DEFAULT_EASY_PACE } from '../domain/settings';
-import type { Activity, Dataset } from '../domain/types';
+import type { Activity, Dataset, SleepNight } from '../domain/types';
 
 export const SAMPLE_AS_OF = '2026-11-25';
 const DAYS = 400;
@@ -68,9 +70,33 @@ function buildActivities(): Activity[] {
   return activities;
 }
 
+/** A night per wake-up day, from a fixed seed so the sample never changes. */
+function buildSleep(activities: readonly Activity[]): SleepNight[] {
+  const hardDays = new Set(activities.filter((a) => a.movingTime > 3600 || a.name === 'Intervals').map((a) => a.start.slice(0, 10)));
+  const first = addDays(SAMPLE_AS_OF, -(DAYS - 1));
+  let seed = 11;
+  const random = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const nights: SleepNight[] = [];
+  for (let d = 1; d < DAYS; d++) {
+    const date = addDays(first, d);
+    const a = random();
+    const b = random();
+    if (d % 23 === 5) continue;
+    const afterHard = hardDays.has(addDays(date, -1));
+    const weekend = d % 7 === 4 || d % 7 === 5;
+    const hours = Math.max(5.2, Math.min(9, 7.1 + (a - 0.5) * 1.6 - (afterHard ? 0.5 : 0) + (weekend ? 0.5 : 0)));
+    const score = Math.round(Math.max(48, Math.min(95, 58 + (hours - 5.5) * 8 + d / 40 + (b - 0.5) * 12)));
+    nights.push({ date, minutes: Math.round(hours * 60), score });
+  }
+  return nights;
+}
+
+const ACTIVITIES = buildActivities();
+
 export const SAMPLE: Dataset = {
   source: 'sample',
-  activities: buildActivities(),
+  activities: ACTIVITIES,
+  sleep: buildSleep(ACTIVITIES),
   athlete: { maxHr: 192, restHr: 50 },
   easyPace: DEFAULT_EASY_PACE,
   asOf: SAMPLE_AS_OF,

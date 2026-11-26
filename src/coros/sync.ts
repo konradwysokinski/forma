@@ -7,7 +7,7 @@
  * The COROS calls come in through `CorosSource`, so this is tested without the network.
  */
 import { addDays, dayOf, daysBetween } from '../lib/days';
-import type { Activity, DayKey } from '../domain/types';
+import type { Activity, DayKey, SleepNight } from '../domain/types';
 
 /** COROS's cap on records per call. */
 export const PAGE_LIMIT = 100;
@@ -26,6 +26,8 @@ export interface DateWindow {
 export interface CorosSource {
   /** Activities that started between `from` and `to`, both inclusive, at most PAGE_LIMIT. */
   activities(window: DateWindow): Promise<Activity[]>;
+  /** Nights with sleep whose wake-up day is between `from` and `to`; COROS has no cap here. */
+  sleep(window: DateWindow): Promise<SleepNight[]>;
 }
 
 /** Windows of `size` days covering `from`–`to`, newest first. */
@@ -91,4 +93,33 @@ export async function syncActivities(
     onProgress?.((i + 1) / todo.length);
   }
   return merge(stored, fresh, from);
+}
+
+/**
+ * Brings stored sleep up to date in one call: the whole history the first
+ * time (COROS returns every day of a 420-day range at once), then from a few
+ * days before the newest stored night, since a night's score can arrive
+ * late. Fetched days replace stored ones.
+ */
+export async function syncSleep(source: CorosSource, stored: readonly SleepNight[], today: DayKey): Promise<SleepNight[]> {
+  const historyStart = addDays(today, -(HISTORY_DAYS - 1));
+  const newest = stored.at(-1)?.date;
+  const back = newest ? addDays(newest, -OVERLAP_DAYS) : historyStart;
+  const from = back < historyStart ? historyStart : back > today ? today : back;
+  const fresh = await source.sleep({ from, to: today });
+  const byDay = new Map(stored.filter((n) => n.date < from).map((n) => [n.date, n]));
+  for (const n of fresh) if (n.date >= from && n.date <= today) byDay.set(n.date, n);
+  return [...byDay.values()].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+}
+
+/** Data older than this is refreshed when Forma opens or comes back into view. */
+export const RESYNC_AFTER_MS = 60 * 60 * 1000;
+
+/**
+ * Whether stored COROS data should be synced now: when it is over an hour
+ * old, or when it was saved before Forma read sleep, so an update brings
+ * sleep on the first open instead of an hour later.
+ */
+export function needsSync(stored: { lastSync: number; sleep?: unknown }, now: number): boolean {
+  return stored.sleep === undefined || now - stored.lastSync > RESYNC_AFTER_MS;
 }

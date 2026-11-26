@@ -2,6 +2,7 @@
  * One look for every single choice in Forma: a bordered, softly rounded box
  * with the chosen option filled in --selected. Three sizes: box (40px, the
  * page-level period), md (36px, Settings) and sm (30px, inside cards).
+ * An on/off toggle (aria-pressed) uses the same box: pressed is filled.
  */
 .group {
   display: inline-flex;
@@ -31,7 +32,8 @@
   color: var(--ink);
 }
 
-.option[aria-checked='true'] {
+.option[aria-checked='true'],
+.option[aria-pressed='true'] {
   background: var(--selected);
   color: var(--ink);
   font-weight: 500;

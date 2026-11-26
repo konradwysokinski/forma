@@ -100,6 +100,13 @@
   background: var(--load);
 }
 
+.key_sleep {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--sleep);
+}
+
 .activities {
   margin: 0;
   padding: 8px 0 0;

@@ -1,0 +1,19 @@
+.option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swatch {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  border: 1.5px solid var(--swatch);
+  background: transparent;
+  transition: background 0.15s ease;
+}
+
+[aria-pressed='true'] > .swatch {
+  background: var(--swatch);
+}
