@@ -203,6 +203,10 @@
     padding: 14px;
   }
 
+  .group {
+    flex-direction: row;
+  }
+
   .wordmark {
     font-size: 26px;
     line-height: 30px;
@@ -225,8 +229,16 @@
   }
 }
 
-/* Phones: the cog alone in the top bar; the label stays for screen readers. */
+/* Phones: the screens by name only, the cog alone; its label stays for screen readers. */
 @media (max-width: 480px) {
+  .group .navIcon {
+    display: none;
+  }
+
+  .group .navRow {
+    padding: 0 10px;
+  }
+
   .navLabel {
     position: absolute;
     width: 1px;

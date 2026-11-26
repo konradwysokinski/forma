@@ -60,10 +60,12 @@ Built:
 
 2. **Settings** (`src/components/SettingsDialog.tsx`, Kilometr's pattern): a modal at `/settings` over the current screen (mounted by `Layout`), side nav (tabs on phones), Esc / X / scrim close. General: theme, language. Heart rate: max and resting heart rate (hint says estimated / from COROS / set by you, "Use estimate" to go back), easy-pace band (m:ss – m:ss /km, "Reset"); a field saves on Enter or blur, errors in words under the hint. Data: COROS source + Sync now, Disconnect COROS (heart-rate settings stay), or on sample Connect COROS (to Start); Remove all data with a confirm dialog (activities, sign-in, heart-rate settings; theme and language stay). About: version, MIT, GitHub, author, "Data from COROS".
 
+3. **Activities** (`src/screens/Activities.tsx`, after Kilometr's, without gear): second sidebar row (`/activities`; on phones the top bar shows both screens by name, no icons). Title with a muted line beside it ("What each session added to your load."); filter pills All / Runs / Rides / Other with counts (`aria-pressed`, shown only when there is more than one sport); the list by month, newest first, 3 months at a time + "Show more months", each month with its km and hours. A row: date, name (the row's button, stretched over it), moving time, distance, chevron; on phones only the distance (or the time when there is none). One row open at a time, in place: load first, then distance, moving time, pace (on foot) or speed (rides), average heart rate; under them where the load comes from ("Load from 2:03:41 at 128 bpm", or counted as easy without heart rate) and "Form that day" with the zone chip. Logic in `src/domain/activities.ts` (`groupByMonth`, `activityDetail`, `zonesByDay`, which starts where the Form screen's year starts so the zones agree). Settings opens over it and keeps its state: `App`'s one `Screen` route picks the screen from the path, or from `state.from` under `/settings`.
+
 Next (not designed yet), roughly in this order, to agree with Konrad:
 2. ~~COROS sync~~ done 2026-11-26 (see §1). Strava as the fallback source later.
 3. ~~Settings~~ done 2026-11-26 (see Settings above).
-4. Records and Activities screens.
+4. Records screen (~~Activities~~ done 2026-11-26).
 5. Vercel project and README screenshots.
 
 ---

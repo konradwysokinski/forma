@@ -26,8 +26,16 @@ export interface Format {
   monthName: (d: Date) => string;
   /** "Nov" / "Lis", for chart labels */
   monthShort: (d: Date) => string;
+  /** "November 2026" / "Listopad 2026" */
+  monthYear: (d: Date) => string;
   /** 28.4 km / 28,4 km */
   kmPrecise: (metres: number) => string;
+  /** 142 km, whole kilometres */
+  km: (metres: number) => string;
+  /** 28.7 km/h / 28,7 km/h */
+  speed: (kmPerHour: number) => string;
+  /** Longer spans: "18 h 20 min" / "18 godz. 20 min" */
+  hours: (seconds: number) => string;
   /** Seconds as "52:30" or "1:04:12". */
   duration: (seconds: number) => string;
   /** Seconds per km as "5:45 /km". */
@@ -55,6 +63,7 @@ export function createFormat(locale: Locale): Format {
   const dayMonth = new Intl.DateTimeFormat(tag, { day: 'numeric', month: 'short' });
   // en-GB writes "Sept"; chart labels want three letters.
   const monthShort = new Intl.DateTimeFormat(locale === 'pl' ? tag : 'en-US', { month: 'short' });
+  const monthYear = new Intl.DateTimeFormat(tag, { month: 'long', year: 'numeric' });
   const relative = new Intl.RelativeTimeFormat(tag, { numeric: 'auto', style: 'short' });
   const oneDecimal = (n: number) => (locale === 'pl' ? n.toFixed(1).replace('.', ',') : n.toFixed(1));
 
@@ -66,7 +75,18 @@ export function createFormat(locale: Locale): Format {
     weekdayDate: (d) => capitalise(weekdayDate.format(d).replace(/,/g, '').replace('Sept', 'Sep')),
     monthName: (d) => month.format(d),
     monthShort: (d) => capitalise(monthShort.format(d).replace('.', '')),
+    monthYear: (d) => capitalise(monthYear.format(d)),
     kmPrecise: (metres) => `${oneDecimal(metres / 1000)}${NBSP}km`,
+    km: (metres) => `${formatInt(metres / 1000)}${NBSP}km`,
+    speed: (kmPerHour) => `${oneDecimal(kmPerHour)}${NBSP}km/h`,
+    hours: (seconds) => {
+      const total = Math.round(seconds / 60);
+      const h = Math.floor(total / 60);
+      const m = total % 60;
+      const hUnit = locale === 'pl' ? 'godz.' : 'h';
+      if (!h) return `${m}${NBSP}min`;
+      return m ? `${formatInt(h)}${NBSP}${hUnit} ${m}${NBSP}min` : `${formatInt(h)}${NBSP}${hUnit}`;
+    },
     duration: clock,
     pace: (secondsPerKm) => `${clock(secondsPerKm)}${NBSP}/km`,
     paceShort: clock,
