@@ -34,6 +34,9 @@ export const en = {
     syncFailed: 'Sync failed',
     retry: 'Try again',
     reconnect: 'Connect again',
+    /** Short, beside "COROS": runs' elevation coming in after a sync. */
+    elevation: (done: string, total: string) => `Elevation ${done} of ${total}`,
+    elevationHint: 'Fetching elevation gain for your runs, one at a time. Sync with COROS now.',
   },
 
   settings: {
@@ -282,6 +285,7 @@ export const en = {
     /** Names an opened row's details for screen readers. */
     details: (name: string, date: string) => `${name}, ${date}`,
     distance: 'Distance',
+    elevation: 'Elevation',
     movingTime: 'Moving time',
     pace: 'Pace',
     speed: 'Speed',

@@ -1,4 +1,7 @@
-/** What Forma keeps per activity: everything comes from the source's activity list (COROS, later Strava), no extra requests. */
+/**
+ * What Forma keeps per activity: everything comes from the source's activity
+ * list (COROS, later Strava), except runs' elevation gain, one request per run.
+ */
 export type Sport = 'run' | 'ride' | 'other';
 
 export interface Activity {
@@ -11,8 +14,10 @@ export interface Activity {
   distance: number;
   /** Seconds. */
   movingTime: number;
-  /** Metres climbed. */
+  /** Metres climbed; 0 until it is known (COROS: runs only, fetched after the list). */
   elevationGain: number;
+  /** The source's own sport code (COROS: 100 run, 102 trail run…), needed to ask for an activity's details. */
+  sportCode?: number;
   /** Beats per minute, when a heart-rate sensor was worn. */
   averageHeartrate?: number;
 }

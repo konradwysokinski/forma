@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { RESTING_HR, SLEEP, SPORT_RECORDS, USER_INFO, wrap } from './fixtures';
-import { CorosFormatError, parseRestingHr, parseSex, parseSleep, parseSportRecords, sportOfCode, toolText } from './parse';
+import { DETAIL_INDOOR, DETAIL_IN_PROGRESS, DETAIL_TRAIL, RESTING_HR, SLEEP, SPORT_RECORDS, USER_INFO, wrap } from './fixtures';
+import { CorosFormatError, parseElevation, parseRestingHr, parseSex, parseSleep, parseSportRecords, sportOfCode, toolText } from './parse';
 
 const TZ = 'Europe/Warsaw';
 
@@ -36,6 +36,7 @@ describe('parseSportRecords', () => {
       distance: 10980,
       movingTime: 58 * 60 + 3,
       elevationGain: 0,
+      sportCode: 100,
       averageHeartrate: 140,
     });
   });
@@ -129,5 +130,31 @@ describe('parseSleep', () => {
     expect(() => parseSleep(SLEEP.replace('Sleep Score: 84', 'Sleep Quality: good'))).toThrow(CorosFormatError);
     expect(() => parseSleep(SLEEP.replace('7h 12min (incl. naps)', 'seven hours'))).toThrow(CorosFormatError);
     expect(() => parseSleep('Sleep summary')).toThrow(CorosFormatError);
+  });
+});
+
+describe('parseElevation', () => {
+  it('reads the gain from "Elevation Gain / Loss"', () => {
+    expect(parseElevation(DETAIL_TRAIL)).toBe(1240);
+  });
+
+  it('reads "Total Ascent" on indoor runs', () => {
+    expect(parseElevation(DETAIL_INDOOR)).toBe(35);
+  });
+
+  it('gives null while the activity is in progress', () => {
+    expect(parseElevation(DETAIL_IN_PROGRESS)).toBeNull();
+  });
+
+  it('gives 0 when COROS lists no elevation', () => {
+    expect(parseElevation(['🏃 Outdoor Run Activity Details', '====', '', 'Distance: 5.00 km'].join('\n'))).toBe(0);
+  });
+
+  it('rejects text that is not activity details', () => {
+    expect(() => parseElevation('Tool call anomalies detected. Try again.')).toThrow(CorosFormatError);
+  });
+
+  it('rejects an elevation it can’t read', () => {
+    expect(() => parseElevation(DETAIL_TRAIL.replace('1240 m / 1235 m', '-- m'))).toThrow(/elevation/);
   });
 });

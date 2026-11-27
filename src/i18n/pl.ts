@@ -29,6 +29,8 @@ export const pl: Messages = {
     syncFailed: 'Błąd synchronizacji',
     retry: 'Spróbuj ponownie',
     reconnect: 'Połącz ponownie',
+    elevation: (done, total) => `Przewyższenia ${done} z ${total}`,
+    elevationHint: 'Pobieram przewyższenia biegów, po jednym. Synchronizuj teraz z COROS.',
   },
 
   settings: {
@@ -271,6 +273,7 @@ export const pl: Messages = {
     empty: 'Nie ma jeszcze aktywności.',
     details: (name, date) => `${name}, ${date}`,
     distance: 'Dystans',
+    elevation: 'Przewyższenie',
     movingTime: 'Czas ruchu',
     pace: 'Tempo',
     speed: 'Prędkość',

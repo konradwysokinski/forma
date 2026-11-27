@@ -150,3 +150,50 @@ export const SLEEP = [
   '2026-11-25',
   'Sleep detail for this day is not available yet.',
 ].join('\n');
+
+/** getActivityDetail for a trail run (invented numbers). */
+export const DETAIL_TRAIL = [
+  '🏃 Trail Run Activity Details',
+  '========================================',
+  '',
+  'Workout Time: 2:15:10',
+  'Distance: 22.06 km',
+  'Total Time: 2:20:02',
+  'Average Pace: 6:07 /km',
+  'Moving Average Pace: 5:36 /km',
+  'Adjusted Pace: 4:58 /km',
+  'Best Kilometer: 4:40 /km',
+  'Average Heart Rate: 128 bpm',
+  'Average Cadence: 170 spm',
+  'Average Stride Length: 1.02 m',
+  'Average Power: 250 W',
+  'Elevation Gain / Loss: 1240 m / 1235 m',
+  'Calories: 1100 kcal',
+  'Training Load: 180',
+  'Aerobic TE: 3.4',
+  'Anaerobic TE: 0.8',
+  'Training Focus: Base',
+].join('\n');
+
+/** getActivityDetail for an indoor run: "Total Ascent" instead of gain / loss. */
+export const DETAIL_INDOOR = [
+  '🏃 Indoor Run Activity Details',
+  '========================================',
+  '',
+  'Workout Time: 40:00',
+  'Distance: 8.00 km',
+  'Average Heart Rate: 140 bpm',
+  'Total Ascent: 35 m',
+  'Calories: 500 kcal',
+  'Training Focus: Threshold',
+].join('\n');
+
+/** An activity still being recorded, as COROS's docs describe it. */
+export const DETAIL_IN_PROGRESS = [
+  '🏃 Outdoor Run Activity Details',
+  'Status: in progress. Metrics reflect data uploaded so far and will change when the activity ends.',
+  '========================================',
+  '',
+  'Workout Time: 12:00',
+  'Elevation Gain / Loss: 20 m / 18 m',
+].join('\n');

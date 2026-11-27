@@ -2,14 +2,14 @@ import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore
 import { corosAthlete, corosSource } from '../coros/client';
 import { corosTokens, finishCorosSignIn, forgetCoros, startCorosSignIn } from '../coros/oauth';
 import { clearCorosData, loadCorosData, saveCorosData, type CorosData } from '../coros/store';
-import { needsSync, syncActivities, syncSleep } from '../coros/sync';
+import { elevationTodo, needsSync, syncActivities, syncElevation, syncSleep, withElevation, type ElevationMap } from '../coros/sync';
 import { SAMPLE } from '../data/sample';
 import { estimateAthlete } from '../domain/load';
 import { athleteWith, DEFAULT_EASY_PACE, readSettings, type TrainingSettings } from '../domain/settings';
 import type { Dataset } from '../domain/types';
 import { createFormat, detectLocale, LOCALES, MESSAGES, type Locale } from '../i18n';
 import { todayKey } from '../lib/days';
-import { AppContext, type AppState, type Source, type SyncState, type ThemePref } from './context';
+import { AppContext, type AppState, type ElevationProgress, type Source, type SyncState, type ThemePref } from './context';
 
 const KEY_LOCALE = 'forma.locale';
 /** Remembers that the athlete chose the sample on Start. */
@@ -71,7 +71,8 @@ const isSignedOut = (e: unknown) =>
 /**
  * App-wide state: the language, the data source and the data. COROS data
  * lives in IndexedDB (src/coros/store.ts) and is brought up to date in the
- * background when it is more than an hour old, or has no sleep yet.
+ * background when it is more than an hour old, or has no sleep yet. After
+ * each sync, runs without elevation get theirs, one request at a time.
  */
 export function AppProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(readLocale);
@@ -84,6 +85,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [sync, setSync] = useState<SyncState>({ status: 'idle' });
   const corosRef = useRef<CorosData | null>(null);
   const syncing = useRef(false);
+  const [elevation, setElevation] = useState<ElevationProgress | null>(null);
+  /** The elevation run in flight, if any; `cancelled` stops it (on disconnect). */
+  const elevationRun = useRef<{ cancelled: boolean } | null>(null);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -92,6 +96,37 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     document.documentElement.lang = locale;
   }, [locale]);
+
+  /**
+   * Fetches runs' elevation in the background, saving as it goes. Quiet:
+   * a failure is only logged, and the next sync tries again.
+   */
+  const fetchElevation = useCallback(async (source: ReturnType<typeof corosSource>) => {
+    const stored = corosRef.current;
+    if (elevationRun.current || !stored) return;
+    const run = { cancelled: false };
+    elevationRun.current = run;
+    const save = async (all: ElevationMap) => {
+      const current = corosRef.current;
+      if (run.cancelled || !current) return;
+      const next = { ...current, elevation: all };
+      await saveCorosData(next);
+      corosRef.current = next;
+      setCoros(next);
+    };
+    try {
+      await syncElevation(source, stored.activities, stored.elevation ?? {}, {
+        onBatch: save,
+        onProgress: (done, total) => !run.cancelled && setElevation(done < total ? { done, total } : null),
+        signal: run,
+      });
+    } catch (e) {
+      console.warn('Forma: elevation from COROS stopped;', (e as Error).message);
+    } finally {
+      if (elevationRun.current === run) elevationRun.current = null;
+      setElevation(null);
+    }
+  }, []);
 
   const runSync = useCallback(async () => {
     if (syncing.current) return;
@@ -113,22 +148,29 @@ export function AppProvider({ children }: { children: ReactNode }) {
         syncSleep(source, stored?.sleep ?? [], todayKey()),
         corosAthlete(tokens),
       ]);
-      const next: CorosData = { activities, sleep, lastSync: Date.now(), ...athlete };
+      // Elevation fetched meanwhile is kept, read at the last moment.
+      const next: CorosData = { activities, sleep, elevation: corosRef.current?.elevation ?? {}, lastSync: Date.now(), ...athlete };
       await saveCorosData(next);
       corosRef.current = next;
       setCoros(next);
       setSync({ status: 'idle' });
+      void fetchElevation(source);
     } catch (e) {
       setSync({ status: 'error', message: (e as Error).message, signedOut: isSignedOut(e) });
     } finally {
       syncing.current = false;
     }
-  }, []);
+  }, [fetchElevation]);
 
+  /** Syncs when the data is stale; otherwise carries on with elevation a closed tab left unfinished. */
   const syncIfStale = useCallback(() => {
     const stored = corosRef.current;
-    if (stored && needsSync(stored, Date.now())) void runSync();
-  }, [runSync]);
+    if (!stored) return;
+    if (needsSync(stored, Date.now())) void runSync();
+    else if (elevationTodo(stored.activities, stored.elevation ?? {}).length) {
+      void corosTokens().then((tokens) => tokens && fetchElevation(corosSource(tokens)));
+    }
+  }, [runSync, fetchElevation]);
 
   // Where the data comes from: stored COROS data, the remembered sample, a sign-in without data yet, or Start.
   useEffect(() => {
@@ -182,7 +224,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (source !== 'coros') return { ...SAMPLE, athlete, easyPace };
     return {
       source: 'coros',
-      activities: coros?.activities ?? [],
+      activities: withElevation(coros?.activities ?? [], coros?.elevation),
       sleep: coros?.sleep ?? [],
       athlete,
       easyPace,
@@ -191,6 +233,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [source, coros, estimate, training]);
 
   const disconnectCoros = useCallback(async () => {
+    if (elevationRun.current) elevationRun.current.cancelled = true;
     forgetCoros();
     await clearCorosData();
     corosRef.current = null;
@@ -204,6 +247,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       source,
       data,
       sync,
+      elevation,
       lastSync: coros?.lastSync ?? null,
       showSample: () => {
         storage.set(KEY_SAMPLE, '1');
@@ -250,7 +294,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       t: MESSAGES[locale],
       f: createFormat(locale),
     }),
-    [source, data, sync, coros, runSync, disconnectCoros, training, estimate, theme, themePref, locale],
+    [source, data, sync, elevation, coros, runSync, disconnectCoros, training, estimate, theme, themePref, locale],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -17,7 +17,7 @@ function useMinuteTick() {
 
 /** Where the data comes from and how fresh it is, with the one action that fits. */
 function SourceStatus() {
-  const { t, f, source, sync, lastSync, syncNow, connectCoros, chooseSource } = useApp();
+  const { t, f, source, sync, elevation, lastSync, syncNow, connectCoros, chooseSource } = useApp();
   useMinuteTick();
 
   if (source === 'sample') {
@@ -54,6 +54,17 @@ function SourceStatus() {
           {sync.signedOut ? t.sidebar.reconnect : t.sidebar.retry}
         </button>
       </div>
+    );
+  }
+
+  // Runs' elevation, fetched quietly after a sync: the same row, a busy dot and a count (no source label, so it fits on one line).
+  if (elevation) {
+    return (
+      <button type="button" className={`${s.status} ${s.statusButton}`} onClick={syncNow} title={t.sidebar.elevationHint}>
+        <span className={`${s.dot} ${s.dotBusy}`} aria-hidden="true" />
+        <span className={s.statusText}>{t.sidebar.elevation(f.int(elevation.done), f.int(elevation.total))}</span>
+        <span className="visually-hidden">, {t.sidebar.syncNow}</span>
+      </button>
     );
   }
 

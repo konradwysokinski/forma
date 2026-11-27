@@ -121,8 +121,9 @@ function toActivity(lines: string[], timeZone?: string): Activity {
     start: localTime(Number(start[1]), timeZone),
     distance: distance ? metres(distance.value, distance.line) : 0,
     movingTime: seconds(duration.value, duration.line),
-    // Not in COROS's list; Forma's model doesn't use it.
+    // Not in COROS's list; runs get theirs from getActivityDetail (see parseElevation).
     elevationGain: 0,
+    sportCode: Number(code.value),
     ...(bpm && Number(bpm[1]) > 0 ? { averageHeartrate: Number(bpm[1]) } : {}),
   };
 }
@@ -251,4 +252,37 @@ export function parseSleep(text: string): SleepNight[] {
     .map(toNight)
     .filter((n): n is SleepNight => n !== null)
     .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+}
+
+/** "🏃 Trail Run Activity Details": an emoji (or none), the record's name, "Activity Details". */
+const DETAIL_HEADER = /^(?:\S+ )?.+ Activity Details$/u;
+/** Outdoor and trail runs. */
+const GAIN_LOSS = /^(\d+(?:\.\d+)?) m \/ \d+(?:\.\d+)? m$/;
+/** Indoor runs say "Total Ascent: 120 m" instead. */
+const ASCENT = /^(\d+(?:\.\d+)?) m$/;
+
+/**
+ * getActivityDetail text → metres climbed: 0 when COROS lists no elevation,
+ * null while the activity is still in progress (its numbers will change).
+ * Every other line (pace, cadence, power, calories…) is skipped unread, but
+ * must look like "Key: value".
+ */
+export function parseElevation(text: string): number | null {
+  const lines = text.split('\n').map((l) => l.trim());
+  if (!DETAIL_HEADER.test(lines[0] ?? '')) throw new CorosFormatError('activity details', lines[0]);
+  let gain = 0;
+  for (const line of lines.slice(1)) {
+    if (!line || RULE.test(line)) continue;
+    if (/^Status: in progress\b/.test(line)) return null;
+    const at = line.indexOf(': ');
+    if (at < 1) throw new CorosFormatError('an activity detail line', line);
+    const key = line.slice(0, at);
+    const value = line.slice(at + 2).trim();
+    if (key === 'Elevation Gain / Loss' || key === 'Total Ascent') {
+      const m = (key === 'Total Ascent' ? ASCENT : GAIN_LOSS).exec(value);
+      if (!m) throw new CorosFormatError('an elevation', line);
+      gain = Math.round(Number(m[1]));
+    }
+  }
+  return gain;
 }

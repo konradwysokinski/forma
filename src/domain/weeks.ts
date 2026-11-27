@@ -25,9 +25,10 @@ export interface ActivityWeek {
   /** Sunday. */
   end: DayKey;
   days: WeekDay[];
-  /** Totals of the shown activities: metres, seconds. */
+  /** Totals of the shown activities: metres, seconds, metres climbed (runs' elevation, once known). */
   distance: number;
   movingTime: number;
+  elevationGain: number;
   /** Load of every activity that week, whatever the filter: training is all of it. */
   load: number;
   /** The week's load against fitness, as the Fatigue tile words it; null for the week still running. */
@@ -92,6 +93,7 @@ export function groupByWeek({ shown, all, athlete, asOf, training, sleep = [] }:
         days,
         distance: acts.reduce((sum, a) => sum + a.distance, 0),
         movingTime: acts.reduce((sum, a) => sum + a.movingTime, 0),
+        elevationGain: acts.reduce((sum, a) => sum + a.elevationGain, 0),
         load,
         feel: current || !last ? null : weekFeel(load / 7, last.fitness),
         zone: last?.form != null ? zoneOf(last.form) : null,
