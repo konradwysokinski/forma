@@ -199,6 +199,8 @@ function ActivityRow({
         {/* Without a distance, the time stays on phones too, in the distance's place. */}
         <span className={`${s.time} ${a.distance > 0 ? '' : s.timeOnly}`}>{f.duration(a.movingTime)}</span>
         <span className={s.hr}>{a.averageHeartrate ? f.bpm(a.averageHeartrate) : <span aria-hidden="true">–</span>}</span>
+        {/* Metres climbed: runs only, once COROS has sent them; blank otherwise. */}
+        <span className={s.climb}>{a.elevationGain > 0 ? f.climb(a.elevationGain) : ''}</span>
         <span className={s.km}>{a.distance > 0 ? f.kmPrecise(a.distance) : ''}</span>
         <svg className={s.chevron} width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
           <path d="M4 5.5l3 3 3-3" />

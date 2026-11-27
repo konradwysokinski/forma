@@ -17,6 +17,7 @@ export function ActivityNumbers({ activity: a }: { activity: Activity }) {
   const stats = [
     { label: t.activities.load, value: f.int(d.load) },
     a.distance > 0 && { label: t.activities.distance, value: f.kmPrecise(a.distance) },
+    a.elevationGain > 0 && { label: t.activities.elevation, value: f.climb(a.elevationGain) },
     d.movingTime !== null && { label: t.activities.movingTime, value: f.duration(d.movingTime) },
     d.pace !== null && { label: t.activities.pace, value: f.pace(d.pace) },
     d.speed !== null && { label: t.activities.speed, value: f.speed(d.speed) },

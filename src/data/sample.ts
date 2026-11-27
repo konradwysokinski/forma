@@ -63,7 +63,8 @@ function buildActivities(): Activity[] {
       start,
       distance: Math.round(km * 1000),
       movingTime: Math.round(km * slot.pace),
-      elevationGain: Math.round(km * 6),
+      // Invented: the long run goes up into the hills, the rest stays flat-ish.
+      elevationGain: Math.round(km * (slot.name === 'Long run' ? 24 : 6)),
       averageHeartrate: Math.round(slot.hr - 1 + drift),
     });
   }

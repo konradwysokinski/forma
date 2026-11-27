@@ -103,7 +103,11 @@ function Week({
       <div className={s.head}>
         <h2 className={s.range}>{range}</h2>
         <span className={s.muted}>
-          {[week.distance > 0 && f.km(week.distance), week.movingTime > 0 && f.hours(week.movingTime)]
+          {[
+            week.distance > 0 && f.km(week.distance),
+            week.movingTime > 0 && f.hours(week.movingTime),
+            week.elevationGain > 0 && f.climb(week.elevationGain),
+          ]
             .filter(Boolean)
             .join(' · ')}
         </span>

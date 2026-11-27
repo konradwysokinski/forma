@@ -167,7 +167,7 @@
 .row {
   position: relative;
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr) 72px 64px 72px 14px;
+  grid-template-columns: 56px minmax(0, 1fr) 72px 64px 64px 72px 14px;
   align-items: center;
   gap: 12px;
   min-height: 44px;
@@ -240,6 +240,13 @@
 
 /* Average heart rate, quiet like the time; a dash when the activity has none. */
 .hr {
+  color: var(--ink-muted);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Elevation gain, quiet like the time. */
+.climb {
   color: var(--ink-muted);
   text-align: right;
   white-space: nowrap;
@@ -364,6 +371,7 @@
 
   .time:not(.timeOnly),
   .hr,
+  .climb,
   .km:empty {
     display: none;
   }

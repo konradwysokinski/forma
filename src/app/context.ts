@@ -17,11 +17,19 @@ export type SyncState =
   /** `signedOut`: COROS no longer accepts the sign-in, so the athlete must connect again. */
   | { status: 'error'; message: string; signedOut: boolean };
 
+/** Runs' elevation being fetched in the background, after a sync. */
+export interface ElevationProgress {
+  done: number;
+  total: number;
+}
+
 export interface AppState {
   source: Source;
   /** The data the screens show; empty until the first COROS sync has finished. */
   data: Dataset;
   sync: SyncState;
+  /** Set while runs' elevation is being fetched; null otherwise. */
+  elevation: ElevationProgress | null;
   /** Milliseconds since the epoch, null before the first sync. */
   lastSync: number | null;
   showSample: () => void;

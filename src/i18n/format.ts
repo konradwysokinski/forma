@@ -36,6 +36,8 @@ export interface Format {
   kmPrecise: (metres: number) => string;
   /** 142 km, whole kilometres */
   km: (metres: number) => string;
+  /** Metres climbed, "+1 240 m". */
+  climb: (metres: number) => string;
   /** 28.7 km/h / 28,7 km/h */
   speed: (kmPerHour: number) => string;
   /** Longer spans: "18 h 20 min" / "18 godz. 20 min" */
@@ -90,6 +92,7 @@ export function createFormat(locale: Locale): Format {
     monthYear: (d) => capitalise(monthYear.format(d)),
     kmPrecise: (metres) => `${oneDecimal(metres / 1000)}${NBSP}km`,
     km: (metres) => `${formatInt(metres / 1000)}${NBSP}km`,
+    climb: (metres) => `+${formatInt(metres)}${NBSP}m`,
     speed: (kmPerHour) => `${oneDecimal(kmPerHour)}${NBSP}km/h`,
     hours: (seconds) => {
       const total = Math.round(seconds / 60);

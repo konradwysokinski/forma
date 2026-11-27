@@ -2,7 +2,7 @@
 import type { Athlete } from '../domain/types';
 import { callTool } from './mcp';
 import type { CorosTokens } from './oauth';
-import { parseRestingHr, parseSex, parseSleep, parseSportRecords, toolText } from './parse';
+import { parseElevation, parseRestingHr, parseSex, parseSleep, parseSportRecords, toolText } from './parse';
 import { PAGE_LIMIT, type CorosSource } from './sync';
 
 /** "2026-11-26" → "20261126", COROS's date format. */
@@ -19,6 +19,11 @@ export function corosSource(tokens: CorosTokens): CorosSource {
       const tool = 'querySleepOverview';
       const result = await callTool(tokens, tool, { startDate: corosDate(from), endDate: corosDate(to) });
       return parseSleep(toolText(result, tool));
+    },
+    async elevation({ id, sportCode }) {
+      const tool = 'getActivityDetail';
+      const result = await callTool(tokens, tool, { labelId: id, sportType: sportCode });
+      return parseElevation(toolText(result, tool));
     },
   };
 }
