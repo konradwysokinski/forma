@@ -11,7 +11,6 @@ const BAR_SPAN = 120;
 const MAX_RUNS = 4;
 
 const monthDate = (month: string) => dateOf(`${month}-15`);
-const monthIndex = (month: string) => +month.slice(5) - 1;
 
 /**
  * Easy-pace heart rate: the latest month large, against the first month shown,
@@ -26,6 +25,8 @@ export function EasyHrChart({ months }: { months: readonly EasyHrMonth[] }) {
 
   const first = known[0]!;
   const last = known[known.length - 1]!;
+  // The chip compares with the month before the latest one that has easy runs.
+  const previous = known.length > 1 ? known[known.length - 2]! : null;
   const values = known.map((m) => m.bpm!);
   const lo = Math.min(...values) - 3;
   const hi = Math.max(...values);
@@ -39,10 +40,12 @@ export function EasyHrChart({ months }: { months: readonly EasyHrMonth[] }) {
       <div className={s.headline}>
         <span className={s.big}>
           <span className={s.number}>{f.int(last.bpm!)}</span>
-          <span className={s.unit}>{t.easyHr.unit(monthIndex(last.month))}</span>
+          <span className={s.unit}>{t.easyHr.unit(f.monthShort(monthDate(last.month)))}</span>
         </span>
-        {known.length > 1 && (
-          <span className={s.chip}>{t.easyHr.change(last.bpm! - first.bpm!, monthIndex(first.month))}</span>
+        {previous && (
+          <span className={s.chip}>
+            {t.easyHr.change(last.bpm! - previous.bpm!, f.monthShort(monthDate(previous.month)))}
+          </span>
         )}
       </div>
 

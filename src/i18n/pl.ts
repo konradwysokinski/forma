@@ -304,13 +304,8 @@ export const pl: Messages = {
       `Biegi ${from}–${to} /km, ich liczba pod słupkiem. Niższe znaczy lepiej.`,
     aria: (first, from, last, to) => `Tętno w spokojnym tempie: ${first} bpm (${from}), ${last} bpm (${to}).`,
     empty: 'Brak spokojnych biegów z tętnem w tych miesiącach.',
-    unit: (month) => `bpm ${inMonth(month)}`,
-    change: (change, month) =>
-      change < 0
-        ? `${-change} bpm mniej niż ${inMonth(month)}`
-        : change > 0
-          ? `${change} bpm więcej niż ${inMonth(month)}`
-          : `Tak samo jak ${inMonth(month)}`,
+    unit: (month) => `bpm · ${month}`,
+    change: (change, month) => `${change > 0 ? '+' : change < 0 ? '−' : '±'}${Math.abs(change)} bpm vs ${month}`,
     runs: (n) => {
       const tens = n % 100;
       const few = n % 10 >= 2 && n % 10 <= 4 && (tens < 12 || tens > 14);
