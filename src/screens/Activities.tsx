@@ -12,6 +12,7 @@ import {
 import type { Zone } from '../domain/training';
 import type { Activity } from '../domain/types';
 import { Segmented } from '../components/Segmented';
+import { ZoneDot } from '../components/ZoneDot';
 import { dateOf, dayOf } from '../lib/days';
 import { ActivityNumbers, FormThatDay, LoadNote } from './ActivityParts';
 import { ActivityWeeks } from './ActivityWeeks';
@@ -194,6 +195,7 @@ function ActivityRow({
           aria-controls={panelId}
           onClick={onToggle}
         >
+          {zone && <ZoneDot zone={zone} className={s.rowDot} />}
           {a.name}
         </button>
         {/* Without a distance, the time stays on phones too, in the distance's place. */}

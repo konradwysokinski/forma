@@ -232,8 +232,32 @@ export const pl: Messages = {
   },
 
   today: {
-    label: 'Dziś',
-    verdict: { harder: 'Dobry dzień na mocniejszy trening', easy: 'Dziś spokojnie', rest: 'Dzień na odpoczynek' },
+    headline: {
+      harder: [
+        'Hej, dziś dobry dzień na mocniejszy trening',
+        'Siema, dziś możesz dołożyć',
+        'Dobry dzień na mocniejszy trening',
+        'Hej, nogi gotowe na mocniejszą robotę',
+        'Elo, dziś śmiało dociśnij',
+        'Dziś jest dzień na jakość',
+      ],
+      easy: [
+        'Hej, dziś spokojnie',
+        'Siema, dziś na luzie',
+        'Dziś spokojne kilometry',
+        'Hej, dziś bez szarżowania',
+        'Elo, dziś lekko',
+        'Spokojny dzień, spokojne tempo',
+      ],
+      rest: [
+        'Hej, dziś odpocznij',
+        'Siema, dziś dzień wolny',
+        'Dziś dzień na odpoczynek',
+        'Hej, dziś odpuść',
+        'Elo, dziś regeneracja',
+        'Dziś odpoczynek, jutro bieganie',
+      ],
+    },
     advice: {
       harder: [
         'Interwały, tempo albo podbiegi dziś dobrze wejdą.',
@@ -347,7 +371,9 @@ export const pl: Messages = {
     sleep: (time) => `Sen ${time} na noc`,
     rest: 'Odpoczynek',
     restDay: 'Bez aktywności',
-    dayLabel: (date, names) => (names.length ? `${date}, ${names.join(', ')}` : `${date}, odpoczynek`),
+    dayLabel: (date, names, zone) =>
+      `${date}, ${names.length ? names.join(', ') : 'odpoczynek'}${zone ? `, forma: ${zone}` : ''}`,
+    formDot: (zone) => `Forma: ${zone}`,
     dayDetails: (date) => `Aktywności, ${date}`,
   },
 

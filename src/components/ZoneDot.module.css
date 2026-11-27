@@ -1,0 +1,10 @@
+/* A day's form zone as a 7px dot, next to its date or the activity's name. */
+.dot {
+  flex: none;
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-pill);
+  background: var(--zone);
+  vertical-align: 1px;
+}

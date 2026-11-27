@@ -246,8 +246,33 @@ export const en = {
   },
 
   today: {
-    label: 'Today',
-    verdict: { harder: 'Good day for a harder session', easy: 'Keep it easy', rest: 'Rest day' } satisfies Record<Verdict, string>,
+    /** Six ways to say the verdict, casual on purpose (Konrad); the next one each day. */
+    headline: {
+      harder: [
+        'Hey, a good day for a harder session',
+        'Today you can push',
+        'Good day for a harder session',
+        'Hey, your legs are ready for some work',
+        'Go on, make it a quality day',
+        'Today suits a hard session',
+      ],
+      easy: [
+        'Hey, keep it easy today',
+        'Easy does it today',
+        'Keep it easy',
+        'Hey, no heroics today',
+        'Nice and light today',
+        'An easy day, an easy pace',
+      ],
+      rest: [
+        'Hey, rest today',
+        'Take the day off',
+        'Rest day',
+        'Hey, ease off today',
+        'Today is for recovery',
+        'Rest today, run tomorrow',
+      ],
+    } satisfies Record<Verdict, string[]>,
     /** A few ways to say what the verdict means; one is picked per day. */
     advice: {
       harder: [
@@ -366,7 +391,10 @@ export const en = {
     rest: 'Rest',
     restDay: 'No activities',
     /** A day's button for screen readers: "Tuesday 18 November, Intervals, Easy run". */
-    dayLabel: (date: string, names: string[]) => (names.length ? `${date}, ${names.join(', ')}` : `${date}, rest`),
+    dayLabel: (date: string, names: string[], zone: string | null) =>
+      `${date}, ${names.length ? names.join(', ') : 'rest'}${zone ? `, form: ${zone}` : ''}`,
+    /** The dot before an activity's name and by a day's date: that day's form zone. */
+    formDot: (zone: string) => `Form: ${zone}`,
     dayDetails: (date: string) => `Activities on ${date}`,
   },
 

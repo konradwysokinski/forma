@@ -216,6 +216,11 @@
   cursor: pointer;
 }
 
+/* The day's form zone, before the name, so the dots line up down the month. */
+.rowDot {
+  margin-right: 10px;
+}
+
 .rowName::after {
   content: '';
   position: absolute;

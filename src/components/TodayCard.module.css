@@ -1,12 +1,13 @@
 /*
  * Today, compact (Konrad, 2026-11-27): the verdict and one line of advice on
  * the left, the signals in two columns on the right; stacked when narrow.
+ * No outline: a soft tint of today's zone (--tint, set by the card).
  */
 .card {
   container-type: inline-size;
   padding: 12px 18px;
-  border: 1px solid var(--line);
   border-radius: var(--radius-tile);
+  background: color-mix(in srgb, var(--tint) 10%, var(--surface));
 }
 
 /* Side by side when the card is wide enough for the signals' full lines. */
@@ -32,12 +33,6 @@
   font-size: 16px;
   line-height: 22px;
   font-weight: 500;
-}
-
-.label {
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--ink-muted);
 }
 
 .advice {

@@ -1,8 +1,9 @@
 import { useId, useMemo, useState, type CSSProperties } from 'react';
 import { useApp } from '../app/context';
+import { ZoneDot } from '../components/ZoneDot';
 import { trainingByDay } from '../domain/activities';
 import { activityLoad } from '../domain/load';
-import { zoneOf, type TrainingDay } from '../domain/training';
+import { zoneOf, type TrainingDay, type Zone } from '../domain/training';
 import type { Activity, DayKey } from '../domain/types';
 import { groupByWeek, type ActivityWeek, type WeekDay } from '../domain/weeks';
 import { dateOf } from '../lib/days';
@@ -20,6 +21,9 @@ const blockHeight = (load: number) => Math.min(170, 48 + Math.round(load * 0.55)
  * Focus's week view: a pastel block per run or ride, taller with more load;
  * other activities stay one quiet line. A day opens its numbers under the week.
  */
+/** A day's form zone, when form has a figure that day. */
+const zoneFor = (day: TrainingDay | undefined): Zone | null => (day?.form == null ? null : zoneOf(day.form));
+
 export function ActivityWeeks({ activities }: { activities: readonly Activity[] }) {
   const { data, t } = useApp();
   const [shown, setShown] = useState(WEEKS_STEP);
@@ -129,6 +133,7 @@ function Week({
             key={d.date}
             day={d}
             quietOther={quietOther}
+            zone={d.ahead ? null : zoneFor(training.get(d.date))}
             open={open?.date === d.date}
             panelId={panelId}
             onSelect={() => onSelect(d.date)}
@@ -144,12 +149,14 @@ function Week({
 function Day({
   day,
   quietOther,
+  zone,
   open,
   panelId,
   onSelect,
 }: {
   day: WeekDay;
   quietOther: boolean;
+  zone: Zone | null;
   open: boolean;
   panelId: string;
   onSelect: () => void;
@@ -166,14 +173,21 @@ function Day({
       className={`${s.day} ${open ? s.open : ''} ${day.ahead ? s.ahead : ''}`}
       aria-expanded={day.ahead ? undefined : open}
       aria-controls={day.ahead ? undefined : panelId}
-      aria-label={t.activities.dayLabel(f.weekdayDate(date), day.activities.map((a) => a.name))}
+      aria-label={t.activities.dayLabel(
+        f.weekdayDate(date),
+        day.activities.map((a) => a.name),
+        zone && t.zones[zone].name,
+      )}
       disabled={day.ahead}
       onClick={onSelect}
     >
       <span className={s.dayHead}>
         <span className={`${s.date} ${today ? s.today : ''}`}>
           <span className={s.dow}>{f.weekdayShort(date)}</span>
-          <span className={s.num}>{date.getDate()}</span>
+          <span className={s.numRow}>
+            <span className={s.num}>{date.getDate()}</span>
+            {zone && <ZoneDot zone={zone} spoken={false} />}
+          </span>
         </span>
       </span>
       {blocks.map((a) => {
