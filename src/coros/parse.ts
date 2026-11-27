@@ -8,7 +8,7 @@
  * birthday, height, weight and name are skipped and never stored.
  * From sleep only the hours and the score are kept.
  */
-import type { Activity, Athlete, SleepNight, Sport } from '../domain/types';
+import type { Activity, Athlete, RestingHrDay, SleepNight, Sport } from '../domain/types';
 import type { ToolResult } from './mcp';
 
 export class CorosFormatError extends Error {
@@ -157,22 +157,30 @@ export function parseSportRecords(text: string, timeZone?: string): Activity[] {
   return records.map((r) => toActivity(r, timeZone));
 }
 
-/** queryRestingHeartRate text → the median of the days listed, or null when none are. */
-export function parseRestingHr(text: string): number | null {
+/** queryRestingHeartRate text → each morning's resting heart rate, oldest first (days at 0 are left out). */
+export function parseRestingHrDays(text: string): RestingHrDay[] {
   const lines = text.split('\n').map((l) => l.trim());
   if (!/^Resting Heart Rate\b/.test(lines[0] ?? '')) throw new CorosFormatError('resting heart rate', lines[0]);
-  const values: number[] = [];
+  const days: RestingHrDay[] = [];
   for (const line of lines.slice(1)) {
     if (!line || RULE.test(line)) continue;
-    const m = /^\d{4}-\d{2}-\d{2}: (\d+) bpm$/.exec(line);
+    const m = /^(\d{4}-\d{2}-\d{2}): (\d+) bpm$/.exec(line);
     if (!m) throw new CorosFormatError('resting heart rate', line);
-    if (Number(m[1]) > 0) values.push(Number(m[1]));
+    if (Number(m[2]) > 0) days.push({ date: m[1]!, bpm: Number(m[2]) });
   }
-  if (!values.length) return null;
-  values.sort((a, b) => a - b);
+  return days.sort((a, b) => (a.date < b.date ? -1 : 1));
+}
+
+/** The median of the mornings listed, or null when there are none. */
+export function medianRestingHr(days: readonly RestingHrDay[]): number | null {
+  if (!days.length) return null;
+  const values = days.map((d) => d.bpm).sort((a, b) => a - b);
   const mid = values.length / 2;
   return Number.isInteger(mid) ? Math.round((values[mid - 1]! + values[mid]!) / 2) : values[Math.floor(mid)]!;
 }
+
+/** queryRestingHeartRate text → the median of the days listed, or null when none are. */
+export const parseRestingHr = (text: string) => medianRestingHr(parseRestingHrDays(text));
 
 /** queryUserInfo text → sex, for the load formula's constants. Nothing else from the profile is read. */
 export function parseSex(text: string): Athlete['sex'] {

@@ -8,7 +8,7 @@
  */
 import { addDays } from '../lib/days';
 import { DEFAULT_EASY_PACE } from '../domain/settings';
-import type { Activity, Dataset, SleepNight } from '../domain/types';
+import type { Activity, Dataset, RestingHrDay, SleepNight } from '../domain/types';
 
 export const SAMPLE_AS_OF = '2026-11-25';
 const DAYS = 400;
@@ -92,12 +92,27 @@ function buildSleep(activities: readonly Activity[]): SleepNight[] {
   return nights;
 }
 
+/** Resting heart rate for the last 30 mornings, as COROS gives it; invented, around 50, a beat or two up after hard days. */
+function buildRestingHr(activities: readonly Activity[]): RestingHrDay[] {
+  const hardDays = new Set(activities.filter((a) => a.movingTime > 3600 || a.name === 'Intervals').map((a) => a.start.slice(0, 10)));
+  let seed = 7;
+  const random = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const days: RestingHrDay[] = [];
+  for (let d = 29; d >= 0; d--) {
+    const date = addDays(SAMPLE_AS_OF, -d);
+    const up = hardDays.has(addDays(date, -1)) ? 2 : 0;
+    days.push({ date, bpm: Math.round(49 + up + (random() - 0.5) * 3) });
+  }
+  return days;
+}
+
 const ACTIVITIES = buildActivities();
 
 export const SAMPLE: Dataset = {
   source: 'sample',
   activities: ACTIVITIES,
   sleep: buildSleep(ACTIVITIES),
+  restingHr: buildRestingHr(ACTIVITIES),
   athlete: { maxHr: 192, restHr: 50 },
   easyPace: DEFAULT_EASY_PACE,
   asOf: SAMPLE_AS_OF,

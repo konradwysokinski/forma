@@ -43,7 +43,7 @@
 
 .kpis {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 12px;
 }
 
@@ -247,32 +247,10 @@
   line-height: 18px;
 }
 
-/* The name opens the zone guide: a quiet text button with an info icon. */
+/* The zone's name, in its ink; the guide opens from the info button by Form. */
 .zoneName {
-  align-self: flex-start;
-  margin: -4px -6px;
-  padding: 4px 6px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font: inherit;
   font-weight: 500;
   color: var(--zone-ink);
-  text-align: left;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-.zoneName:hover {
-  background: color-mix(in srgb, var(--zone) 10%, transparent);
-}
-
-.zoneInfo {
-  flex: none;
-  opacity: 0.75;
 }
 
 .zoneRange {
@@ -286,6 +264,33 @@
   line-height: 14px;
   color: var(--ink-muted);
   text-wrap: pretty;
+}
+
+/* Form's sub-title with the one info button, which opens the zone guide. */
+.formHead {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.infoButton {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  margin: -4px 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.infoButton:hover {
+  background: var(--hover);
+  color: var(--ink);
 }
 
 .pair {

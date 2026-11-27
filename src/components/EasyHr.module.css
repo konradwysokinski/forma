@@ -23,7 +23,7 @@
 
 /* line-height 1 puts the box's bottom just under the baseline, so the chip's bottom edge lines up with it. */
 .number {
-  font-size: 34px;
+  font-size: 28px;
   line-height: 1;
   font-weight: 400;
   letter-spacing: -0.03em;

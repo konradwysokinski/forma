@@ -37,6 +37,8 @@ export interface Dataset {
   easyPace: PaceBand;
   /** Nights of sleep, by wake-up day, oldest first; absent when the source has none. */
   sleep?: SleepNight[];
+  /** Resting heart rate per morning, oldest first; absent when the source has none. */
+  restingHr?: RestingHrDay[];
   /** "Today" for this data, "2026-11-25". Sample data is pinned to a date; real data uses the real day. */
   asOf: string;
 }
@@ -49,6 +51,12 @@ export interface SleepNight {
   minutes: number;
   /** COROS's sleep score, 0–100, when it has one. */
   score: number | null;
+}
+
+/** A morning's resting heart rate. */
+export interface RestingHrDay {
+  date: DayKey;
+  bpm: number;
 }
 
 /** A pace range in seconds per km, `from` the faster end. */

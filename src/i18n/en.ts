@@ -3,6 +3,7 @@ import type { ActivityFilter } from '../domain/activities';
 import type { WeekFeel } from '../domain/formSummary';
 import type { ActivitiesView } from '../screens/activitiesView';
 import type { Sport } from '../domain/types';
+import type { LoadLevel, Rating, Verdict } from '../domain/today';
 import type { Locale } from './types';
 
 const MONTHS = [
@@ -144,6 +145,8 @@ export const en = {
     '3m': '3 months',
     '6m': '6 months',
     year: 'Year',
+    /** On the period switch; the full name is spoken. */
+    short: { '6w': '6W', '3m': '3M', '6m': '6M', year: 'Year' },
     /** For chart descriptions. */
     over: { '6w': 'over 6 weeks', '3m': 'over 3 months', '6m': 'over 6 months', year: 'over the year' },
   },
@@ -158,7 +161,9 @@ export const en = {
 
   zoneGuide: {
     title: 'Form zones',
-    open: (zone: string) => `What ${zone} means`,
+    open: 'How form and its zones work',
+    about: 'How it works',
+    sections: 'Parts of the guide',
     close: 'Close',
     intro: [
       'Form compares how fit you are with how tired you are. Fitness is your average daily load over the last 42 days, fatigue the same over the last 7. Form is the gap between them as a share of fitness: when recent training is heavier than usual, fatigue rises above fitness and form goes below zero.',
@@ -240,6 +245,56 @@ export const en = {
     moreActivities: (n: number) => `+${n} more`,
   },
 
+  today: {
+    label: 'Today',
+    verdict: { harder: 'Good day for a harder session', easy: 'Keep it easy', rest: 'Rest day' } satisfies Record<Verdict, string>,
+    /** A few ways to say what the verdict means; one is picked per day. */
+    advice: {
+      harder: [
+        'Intervals, a tempo run or hills would land well today.',
+        'You are rested enough for quality work.',
+        'A good day to push a little: the body is ready for it.',
+        'Fresh legs: make the most of them with a faster run.',
+        'If a hard session is on the plan, today suits it.',
+        'Ready for some work: a progression run or strides would do.',
+      ],
+      easy: [
+        'An easy run or a short one; save the hard work for another day.',
+        'Run if you like, at a pace you could talk at.',
+        'Something light today keeps the week in balance.',
+        'Easy miles today; the harder ones can wait.',
+        'Keep the effort low and the run short if you like.',
+        'Not a day for speed: an easy run or a ride will do.',
+      ],
+      rest: [
+        'Take the day off or go for a walk; the training needs time to sink in.',
+        'A day without running does more good today than a hard one.',
+        'Rest now and the next hard session will count for more.',
+        'Your body asks for a break; give it one.',
+        'Stretch, walk, sleep well: that is training today.',
+        'Skip the run today and come back fresher tomorrow.',
+      ],
+    } satisfies Record<Verdict, string[]>,
+    rating: { good: 'Good', neutral: 'Neutral', poor: 'Watch' } satisfies Record<Rating, string>,
+    /** Short, to fit half the card: the form figure itself is on the tile below. */
+    form: (zoneName: string, zone: Zone) =>
+      `${zoneName}: ${
+        {
+          transition: 'well rested, fitness slipping',
+          fresh: 'fatigue below fitness',
+          grey: 'fatigue level with fitness',
+          optimal: 'fatigue above fitness',
+          risk: 'fatigue far above fitness',
+        }[zone]
+      }`,
+    load: (level: LoadLevel, load: string, usual: string) =>
+      `Week's load ${{ low: 'low', normal: 'normal', high: 'high' }[level]}: ${load}, usually ${usual}`,
+    restHr: (bpm: string, change: number) =>
+      `Resting HR ${bpm}, ${change === 0 ? 'as usual' : `${Math.abs(change)} ${change > 0 ? 'above' : 'below'} average`}`,
+    /** `change`: null without nights to compare with; within 15 min counts as usual. */
+    sleep: (hours: string, change: number | null, diff: string) =>
+      `Slept ${hours}${change === null ? '' : Math.abs(change) < 15 ? ', about your usual' : `, ${diff} ${change > 0 ? 'more' : 'less'} than usual`}`,
+  },
   sleep: {
     /** The chart card's switch for extra strips. */
     alsoShow: 'Also show',

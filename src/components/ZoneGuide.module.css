@@ -1,7 +1,13 @@
-/* The modal pattern of Settings and ConfirmDialog: radius 18, modal shadow, scrim. */
+/*
+ * Zone guide, laid out like Settings: a side nav (How it works, then the five
+ * zones) on the left, the chosen part on the right; a full-screen sheet with
+ * scrolling tabs on top on phones.
+ */
 .dialog {
-  width: min(580px, calc(100vw - 32px));
-  max-height: min(720px, calc(100dvh - 32px));
+  width: min(760px, calc(100vw - 32px));
+  height: min(560px, calc(100dvh - 32px));
+  max-width: none;
+  max-height: none;
   padding: 0;
   border: 0;
   border-radius: var(--radius-card);
@@ -9,16 +15,14 @@
   color: var(--ink);
   box-shadow: var(--shadow-modal);
   overflow: hidden;
-  flex-direction: column;
-}
-
-.dialog[open] {
-  display: flex;
-  animation: enter 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .dialog::backdrop {
   background: var(--scrim);
+}
+
+.dialog[open] {
+  animation: enter 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .dialog[open]::backdrop {
@@ -44,19 +48,104 @@
   }
 }
 
-.head {
+.shell {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+}
+
+.side {
+  padding: 24px 12px;
+  background: var(--surface-sunken);
+  border-right: 1px solid var(--line-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.title {
+  padding: 0 12px;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 500;
+}
+
+.tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tab {
+  height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--radius-nav);
+  background: transparent;
+  color: var(--ink);
+  font-size: 14px;
+  text-align: left;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.tab:hover {
+  background: var(--hover);
+}
+
+.tab[aria-selected='true'] {
+  background: var(--selected);
+  font-weight: 500;
+}
+
+/* The zone's colour beside its name, as in the legend. */
+.swatch {
   flex: none;
+  width: 4px;
+  height: 16px;
+  border-radius: 2px;
+  background: var(--zone);
+}
+
+.content {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 18px 20px 28px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.contentHead {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 18px 16px 10px 28px;
 }
 
-.title {
-  font-size: 18px;
-  line-height: 24px;
+.sectionTitle {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 10px;
+  font-size: 16px;
+  line-height: 22px;
   font-weight: 500;
+}
+
+.zoneName {
+  color: var(--zone-ink);
+  font-weight: 500;
+}
+
+.range {
+  font-size: 14px;
+  color: var(--ink);
 }
 
 .close {
@@ -78,86 +167,160 @@
   color: var(--ink);
 }
 
-.body {
-  min-height: 0;
-  overflow-y: auto;
-  padding: 0 28px 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.intro {
+.text {
+  max-width: 520px;
   font-size: 14px;
   line-height: 21px;
-  color: var(--ink-muted);
   text-wrap: pretty;
 }
 
-.zones {
-  margin: 10px 0 0;
+/* How it works: the five zones at a glance, each opening its own part. */
+.zoneList {
+  margin: 6px 0 0;
   padding: 0;
   list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.zone {
-  display: grid;
-  grid-template-columns: 4px minmax(0, 1fr);
-  gap: 14px;
-  padding: 14px 16px;
+  border: 1px solid var(--line-soft);
   border-radius: var(--radius-tile);
-  scroll-margin: 12px;
-  transition: background 0.2s ease;
 }
 
-/* The zone whose info button opened the guide. */
-.zone[data-current] {
-  background: color-mix(in srgb, var(--zone) 9%, transparent);
+.zoneList li + li {
+  border-top: 1px solid var(--line-soft);
+}
+
+.zoneRow {
+  width: 100%;
+  padding: 10px 14px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  line-height: 18px;
+  text-align: left;
+  display: grid;
+  grid-template-columns: 4px minmax(110px, auto) minmax(90px, auto) minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.zoneList li:first-child .zoneRow {
+  border-radius: var(--radius-tile) var(--radius-tile) 0 0;
+}
+
+.zoneList li:last-child .zoneRow {
+  border-radius: 0 0 var(--radius-tile) var(--radius-tile);
+}
+
+.zoneRow:hover {
+  background: color-mix(in srgb, var(--zone) 7%, transparent);
 }
 
 .bar {
+  height: 18px;
   border-radius: 2px;
   background: var(--zone);
 }
 
-.text {
+.rowRange {
+  font-weight: 500;
+}
+
+.rowNote {
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+/* A zone: its short line in a tint of its colour, then the full description. */
+.zoneBody {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 14px;
 }
 
-.name {
-  font-size: 15px;
-  line-height: 22px;
-  font-weight: 500;
+.note {
+  align-self: flex-start;
+  padding: 8px 12px;
+  border-radius: var(--radius-control);
+  background: color-mix(in srgb, var(--zone) 10%, transparent);
   color: var(--zone-ink);
-}
-
-.range {
-  margin-left: 6px;
   font-size: 13px;
-  color: var(--ink);
+  line-height: 18px;
+  font-weight: 500;
 }
 
-.about {
-  font-size: 14px;
-  line-height: 21px;
-  text-wrap: pretty;
-}
-
-@media (max-width: 480px) {
-  .head {
-    padding-left: 20px;
+@media (max-width: 640px) {
+  .dialog {
+    width: 100vw;
+    height: 100dvh;
+    border-radius: 0;
   }
 
-  .body {
-    padding: 0 20px 22px;
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
   }
 
-  .zone {
-    padding: 12px;
+  .side {
+    padding: 16px 20px 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--surface);
+    gap: 10px;
+  }
+
+  .title {
+    padding: 0;
+    line-height: 40px;
+  }
+
+  /* Six tabs don't fit a phone: they scroll sideways. */
+  .tabs {
+    flex-direction: row;
+    gap: 4px;
+    margin: 0 -20px;
+    padding: 0 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .tab {
+    flex: none;
+    padding: 0 8px;
+    border-radius: 0;
+    background: transparent;
+    border-bottom: 2px solid transparent;
+  }
+
+  .tab:hover {
+    background: transparent;
+  }
+
+  .tab[aria-selected='true'] {
+    background: transparent;
+    border-bottom-color: var(--ink);
+  }
+
+  .content {
+    padding: 16px 20px 28px;
+  }
+
+  .contentHead {
+    display: block;
+  }
+
+  .close {
+    position: absolute;
+    top: 16px;
+    right: 12px;
+  }
+
+  .zoneRow {
+    grid-template-columns: 4px minmax(0, auto) minmax(0, 1fr);
+    row-gap: 2px;
+  }
+
+  .rowNote {
+    grid-column: 2 / -1;
   }
 }

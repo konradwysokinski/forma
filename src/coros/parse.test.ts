@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { DETAIL_INDOOR, DETAIL_IN_PROGRESS, DETAIL_TRAIL, RESTING_HR, SLEEP, SPORT_RECORDS, USER_INFO, wrap } from './fixtures';
-import { CorosFormatError, parseElevation, parseRestingHr, parseSex, parseSleep, parseSportRecords, sportOfCode, toolText } from './parse';
+import { CorosFormatError, parseElevation, parseRestingHr, parseRestingHrDays, parseSex, parseSleep, parseSportRecords, sportOfCode, toolText } from './parse';
 
 const TZ = 'Europe/Warsaw';
 
@@ -86,6 +86,15 @@ describe('sportOfCode', () => {
 describe('parseRestingHr', () => {
   it('takes the median of the days listed', () => {
     expect(parseRestingHr(RESTING_HR)).toBe(46);
+  });
+
+  it('lists each morning, oldest first', () => {
+    expect(parseRestingHrDays(RESTING_HR)).toEqual([
+      { date: '2026-11-22', bpm: 52 },
+      { date: '2026-11-23', bpm: 47 },
+      { date: '2026-11-24', bpm: 43 },
+      { date: '2026-11-25', bpm: 45 },
+    ]);
   });
 
   it('is null without days', () => {

@@ -226,6 +226,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       source: 'coros',
       activities: withElevation(coros?.activities ?? [], coros?.elevation),
       sleep: coros?.sleep ?? [],
+      restingHr: coros?.restingHr,
       athlete,
       easyPace,
       asOf: todayKey(),

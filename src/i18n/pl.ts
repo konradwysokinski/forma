@@ -138,6 +138,7 @@ export const pl: Messages = {
     '3m': '3 miesiące',
     '6m': '6 miesięcy',
     year: 'Rok',
+    short: { '6w': '6T', '3m': '3M', '6m': '6M', year: 'Rok' },
     over: { '6w': 'w ciągu 6 tygodni', '3m': 'w ciągu 3 miesięcy', '6m': 'w ciągu 6 miesięcy', year: 'w ciągu roku' },
   },
 
@@ -151,7 +152,9 @@ export const pl: Messages = {
 
   zoneGuide: {
     title: 'Strefy formy',
-    open: (zone) => `Co oznacza strefa ${zone}`,
+    open: 'Jak działa forma i jej strefy',
+    about: 'Jak to działa',
+    sections: 'Części przewodnika',
     close: 'Zamknij',
     intro: [
       'Forma porównuje kondycję ze zmęczeniem. Kondycja to średnie dzienne obciążenie z ostatnich 42 dni, zmęczenie to samo z ostatnich 7. Forma to różnica między nimi jako procent kondycji: kiedy ostatnie treningi są cięższe niż zwykle, zmęczenie przerasta kondycję i forma spada poniżej zera.',
@@ -228,6 +231,53 @@ export const pl: Messages = {
     moreActivities: (n) => `+${n} więcej`,
   },
 
+  today: {
+    label: 'Dziś',
+    verdict: { harder: 'Dobry dzień na mocniejszy trening', easy: 'Dziś spokojnie', rest: 'Dzień na odpoczynek' },
+    advice: {
+      harder: [
+        'Interwały, tempo albo podbiegi dziś dobrze wejdą.',
+        'Odpoczynku wystarczy na mocniejszą pracę.',
+        'Dobry dzień, żeby docisnąć: organizm jest gotowy.',
+        'Świeże nogi: wykorzystaj je na szybszy bieg.',
+        'Jeśli w planie jest mocny trening, dziś mu sprzyja.',
+        'Gotowość do pracy: bieg z narastającym tempem albo przebieżki.',
+      ],
+      easy: [
+        'Spokojny albo krótki bieg; mocny trening zostaw na inny dzień.',
+        'Biegnij, jeśli masz ochotę, w tempie pozwalającym rozmawiać.',
+        'Coś lekkiego dziś utrzyma tydzień w równowadze.',
+        'Dziś spokojne kilometry; mocniejsze poczekają.',
+        'Niski wysiłek, a bieg może być krótki.',
+        'To nie dzień na szybkość: wystarczy spokojny bieg albo rower.',
+      ],
+      rest: [
+        'Zrób dzień wolny albo idź na spacer; trening potrzebuje czasu.',
+        'Dzień bez biegania da dziś więcej niż mocny trening.',
+        'Odpocznij teraz, a następny mocny trening da więcej.',
+        'Organizm prosi o przerwę; daj mu ją.',
+        'Rozciąganie, spacer, dobry sen: to dziś jest trening.',
+        'Odpuść dziś bieg, a jutro wróć z zapasem sił.',
+      ],
+    },
+    rating: { good: 'Dobrze', neutral: 'Bez zmian', poor: 'Uwaga' },
+    form: (zoneName, zone) =>
+      `${zoneName}: ${
+        {
+          transition: 'dużo odpoczynku, kondycja spada',
+          fresh: 'zmęczenie poniżej kondycji',
+          grey: 'zmęczenie równe kondycji',
+          optimal: 'zmęczenie ponad kondycją',
+          risk: 'zmęczenie dużo ponad kondycją',
+        }[zone]
+      }`,
+    load: (level, load, usual) =>
+      `Obciążenie tygodnia ${{ low: 'niskie', normal: 'zwykłe', high: 'wysokie' }[level]}: ${load}, zwykle ${usual}`,
+    restHr: (bpm, change) =>
+      `Tętno rano ${bpm}, ${change === 0 ? 'jak zwykle' : `${Math.abs(change)} ${change > 0 ? 'powyżej' : 'poniżej'} średniej`}`,
+    sleep: (hours, change, diff) =>
+      `Sen ${hours}${change === null ? '' : Math.abs(change) < 15 ? ', jak zwykle' : `, ${diff} ${change > 0 ? 'dłużej' : 'krócej'} niż zwykle`}`,
+  },
   sleep: {
     alsoShow: 'Pokaż też',
     toggle: 'Sen',

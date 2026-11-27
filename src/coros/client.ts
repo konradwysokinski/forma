@@ -1,8 +1,8 @@
 /** COROS as Forma's data source: the MCP calls Forma makes, turned into its own types. */
-import type { Athlete } from '../domain/types';
+import type { Athlete, RestingHrDay } from '../domain/types';
 import { callTool } from './mcp';
 import type { CorosTokens } from './oauth';
-import { parseElevation, parseRestingHr, parseSex, parseSleep, parseSportRecords, toolText } from './parse';
+import { medianRestingHr, parseElevation, parseRestingHrDays, parseSex, parseSleep, parseSportRecords, toolText } from './parse';
 import { PAGE_LIMIT, type CorosSource } from './sync';
 
 /** "2026-11-26" → "20261126", COROS's date format. */
@@ -28,14 +28,18 @@ export function corosSource(tokens: CorosTokens): CorosSource {
   };
 }
 
-/** What the load formula can learn from COROS: a measured resting heart rate and sex. */
-export async function corosAthlete(tokens: CorosTokens): Promise<{ restHr: number | null; sex: Athlete['sex'] }> {
+/** What COROS tells about the athlete: resting heart rate (the median for the load formula, the mornings for Today) and sex. */
+export async function corosAthlete(
+  tokens: CorosTokens,
+): Promise<{ restHr: number | null; restingHr: RestingHrDay[]; sex: Athlete['sex'] }> {
   const [rest, profile] = await Promise.all([
     callTool(tokens, 'queryRestingHeartRate', { days: 30 }),
     callTool(tokens, 'queryUserInfo', {}),
   ]);
+  const restingHr = parseRestingHrDays(toolText(rest, 'queryRestingHeartRate'));
   return {
-    restHr: parseRestingHr(toolText(rest, 'queryRestingHeartRate')),
+    restHr: medianRestingHr(restingHr),
+    restingHr,
     sex: parseSex(toolText(profile, 'queryUserInfo')),
   };
 }

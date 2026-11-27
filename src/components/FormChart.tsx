@@ -5,7 +5,7 @@ import { useWidth } from '../lib/useWidth';
 import { AXIS_LEFT, barWidth, dayX } from './chartAxis';
 import s from './Charts.module.css';
 
-const HEIGHT = 110;
+const HEIGHT = 140;
 /** Form shown from +40% down to −50%; days beyond are drawn at the edge. */
 const TOP_PCT = 40;
 const BOTTOM_PCT = -50;
