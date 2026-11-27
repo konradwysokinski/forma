@@ -25,6 +25,7 @@ export function DayTooltip({
   day,
   activities,
   night,
+  morning,
   style,
   side,
 }: {
@@ -32,6 +33,8 @@ export function DayTooltip({
   activities: readonly Activity[];
   /** The night that ended this day; undefined while the sleep strip is off, null when there is none. */
   night?: SleepNight | null;
+  /** That morning's resting heart rate; undefined while its strip is off, null when there is none. */
+  morning?: number | null;
   style: CSSProperties;
   /** Which side of the guide line the card sits on. */
   side: 'left' | 'right';
@@ -39,12 +42,13 @@ export function DayTooltip({
   const { t, f } = useApp();
   const zone = day.form === null ? null : zoneOf(day.form);
   const shown = activities.slice(0, MAX_ACTIVITIES);
-  const rows: { key: 'fitness' | 'fatigue' | 'load' | 'sleep'; label: string; value: string }[] = [
+  const rows: { key: 'fitness' | 'fatigue' | 'load' | 'sleep' | 'rest'; label: string; value: string }[] = [
     { key: 'fitness', label: t.form.fitness, value: f.int(day.fitness) },
     { key: 'fatigue', label: t.form.fatigue, value: f.int(day.fatigue) },
     { key: 'load', label: t.form.dayLoad, value: f.int(day.load) },
   ];
   if (night !== undefined) rows.push({ key: 'sleep', label: t.sleep.label, value: night ? sleepLine(night, t, f) : '–' });
+  if (morning !== undefined) rows.push({ key: 'rest', label: t.restHr.heading, value: morning === null ? '–' : f.bpm(morning) });
 
   return (
     <div className={s.tip} data-side={side} style={style} aria-hidden="true">

@@ -64,6 +64,13 @@ const subscribeDark = (onChange: () => void) => {
 
 class SignedOutError extends Error {}
 
+/** Stored days with fresh ones laid over them (fresh wins on the same date), oldest first. */
+function mergeByDate<T extends { date: string }>(stored: readonly T[], fresh: readonly T[]): T[] {
+  const byDate = new Map(stored.map((d) => [d.date, d]));
+  for (const d of fresh) byDate.set(d.date, d);
+  return [...byDate.values()].sort((a, b) => (a.date < b.date ? -1 : 1));
+}
+
 /** COROS answers 401 to an expired sign-in, and refuses to refresh one that has run out. */
 const isSignedOut = (e: unknown) =>
   e instanceof SignedOutError || /token request failed \(4\d\d\)|\(401\)/.test((e as Error).message ?? '');
@@ -149,7 +156,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
         corosAthlete(tokens),
       ]);
       // Elevation fetched meanwhile is kept, read at the last moment.
-      const next: CorosData = { activities, sleep, elevation: corosRef.current?.elevation ?? {}, lastSync: Date.now(), ...athlete };
+      // Resting HR: COROS may give only the last 30 mornings, so older ones are kept from earlier syncs.
+      const restingHr = mergeByDate(stored?.restingHr ?? [], athlete.restingHr);
+      const next: CorosData = {
+        activities,
+        sleep,
+        elevation: corosRef.current?.elevation ?? {},
+        lastSync: Date.now(),
+        ...athlete,
+        restingHr,
+      };
       await saveCorosData(next);
       corosRef.current = next;
       setCoros(next);

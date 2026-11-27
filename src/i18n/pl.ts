@@ -302,6 +302,14 @@ export const pl: Messages = {
     sleep: (hours, change, diff) =>
       `Sen ${hours}${change === null ? '' : Math.abs(change) < 15 ? ', jak zwykle' : `, ${diff} ${change > 0 ? 'dłużej' : 'krócej'} niż zwykle`}`,
   },
+  restHr: {
+    toggle: 'Tętno spoczynkowe',
+    heading: 'Tętno spoczynkowe',
+    headingNote: 'każdego ranka; kilka uderzeń wyżej to słabsza regeneracja',
+    average: (bpm) => `Średnio ${bpm}`,
+    none: 'Brak tętna spoczynkowego w tym okresie',
+    aria: (over, average) => `Tętno spoczynkowe każdego ranka ${over}. Średnio ${average}.`,
+  },
   sleep: {
     alsoShow: 'Pokaż też',
     toggle: 'Sen',

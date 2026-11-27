@@ -92,13 +92,13 @@ function buildSleep(activities: readonly Activity[]): SleepNight[] {
   return nights;
 }
 
-/** Resting heart rate for the last 30 mornings, as COROS gives it; invented, around 50, a beat or two up after hard days. */
+/** Resting heart rate for every morning of the sample; invented, around 50, a beat or two up after hard days. */
 function buildRestingHr(activities: readonly Activity[]): RestingHrDay[] {
   const hardDays = new Set(activities.filter((a) => a.movingTime > 3600 || a.name === 'Intervals').map((a) => a.start.slice(0, 10)));
   let seed = 7;
   const random = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   const days: RestingHrDay[] = [];
-  for (let d = 29; d >= 0; d--) {
+  for (let d = DAYS - 1; d >= 0; d--) {
     const date = addDays(SAMPLE_AS_OF, -d);
     const up = hardDays.has(addDays(date, -1)) ? 2 : 0;
     days.push({ date, bpm: Math.round(49 + up + (random() - 0.5) * 3) });

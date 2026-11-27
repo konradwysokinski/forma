@@ -7,6 +7,7 @@ import { Icon } from '../components/Icon';
 import { KpiCard } from '../components/KpiCard';
 import { DayExplorer } from './DayExplorer';
 import { Segmented } from '../components/Segmented';
+import { RestHrChart } from '../components/RestHrChart';
 import { SleepChart } from '../components/SleepChart';
 import { TodayCard } from '../components/TodayCard';
 import { Toggle } from '../components/Toggle';
@@ -22,12 +23,22 @@ import s from './Form.module.css';
 const PERIODS: readonly Period[] = ['6w', '3m', '6m', 'year'];
 /** Whether the sleep strip is on; unset means on. */
 const KEY_SHOW_SLEEP = 'forma.showSleep';
+/** Whether the resting heart rate strip is on; unset means on. */
+const KEY_SHOW_REST = 'forma.showRestHr';
 
-function readShowSleep() {
+function readShown(key: string) {
   try {
-    return localStorage.getItem(KEY_SHOW_SLEEP) !== '0';
+    return localStorage.getItem(key) !== '0';
   } catch {
     return true;
+  }
+}
+
+function saveShown(key: string, on: boolean) {
+  try {
+    localStorage.setItem(key, on ? '1' : '0');
+  } catch {
+    /* remembered for this visit only */
   }
 }
 const RECORD_ORDER: readonly RecordId[] = [...RECORD_DISTANCES.map((r) => r.id), 'longest'];
@@ -61,18 +72,28 @@ export function FormScreen() {
   const shownRecords = recordScope === 'all' ? sum.recordsAll : sum.records;
   const easyPaceMid = (data.easyPace.from + data.easyPace.to) / 2;
   // Sleep: the switch shows only when the source has any; the strip follows the period.
-  const [showSleep, setShowSleepState] = useState(readShowSleep);
+  const [showSleep, setShowSleepState] = useState(() => readShown(KEY_SHOW_SLEEP));
   const hasSleep = Boolean(data.sleep?.length);
   const sleepOn = hasSleep && showSleep;
   const nights = useMemo(() => sleepByDay(data.sleep ?? [], sum.days), [data.sleep, sum.days]);
   const sleepAverage = averageSleep(nights);
   const setShowSleep = (on: boolean) => {
     setShowSleepState(on);
-    try {
-      localStorage.setItem(KEY_SHOW_SLEEP, on ? '1' : '0');
-    } catch {
-      /* remembered for this visit only */
-    }
+    saveShown(KEY_SHOW_SLEEP, on);
+  };
+  // Resting heart rate: the same pattern, one value per morning.
+  const [showRest, setShowRestState] = useState(() => readShown(KEY_SHOW_REST));
+  const hasRest = Boolean(data.restingHr?.length);
+  const restOn = hasRest && showRest;
+  const mornings = useMemo(() => {
+    const byDate = new Map((data.restingHr ?? []).map((d) => [d.date, d.bpm]));
+    return sum.days.map((d) => byDate.get(d.date) ?? null);
+  }, [data.restingHr, sum.days]);
+  const knownMornings = mornings.filter((m): m is number => m !== null);
+  const restAverage = knownMornings.length ? knownMornings.reduce((a, b) => a + b, 0) / knownMornings.length : null;
+  const setShowRest = (on: boolean) => {
+    setShowRestState(on);
+    saveShown(KEY_SHOW_REST, on);
   };
 
   return (
@@ -167,16 +188,26 @@ export function FormScreen() {
             {t.form.chartTitle}
           </h2>
           <ChartLegend />
-          {hasSleep && (
+          {(hasSleep || hasRest) && (
             <div role="group" aria-label={t.sleep.alsoShow} className={s.alsoShow}>
               <span className={s.alsoShowLabel} aria-hidden="true">
                 {t.sleep.alsoShow}
               </span>
-              <Toggle label={t.sleep.toggle} pressed={showSleep} onChange={setShowSleep} swatch="var(--sleep)" />
+              {hasSleep && (
+                <Toggle label={t.sleep.toggle} pressed={showSleep} onChange={setShowSleep} swatch="var(--sleep)" />
+              )}
+              {hasRest && (
+                <Toggle label={t.restHr.toggle} pressed={showRest} onChange={setShowRest} swatch="var(--heart)" />
+              )}
             </div>
           )}
         </div>
-        <DayExplorer key={period} days={sum.days} sleep={sleepOn ? nights : undefined}>
+        <DayExplorer
+          key={period}
+          days={sum.days}
+          sleep={sleepOn ? nights : undefined}
+          rest={restOn ? mornings : undefined}
+        >
           {(active) => (
             <>
               <FitnessChart days={sum.days} period={period} active={active} />
@@ -212,6 +243,23 @@ export function FormScreen() {
                     <p className={s.small}>{t.sleep.none}</p>
                   ) : (
                     <SleepChart nights={nights} average={sleepAverage} period={period} active={active} />
+                  )}
+                </div>
+              )}
+              {restOn && (
+                <div className={s.formRow}>
+                  <div className={s.stripHead}>
+                    <h3 className={s.subheading}>
+                      {t.restHr.heading} <span className={s.titleMuted}>{t.restHr.headingNote}</span>
+                    </h3>
+                    {restAverage !== null && (
+                      <span className={s.small}>{t.restHr.average(f.bpm(Math.round(restAverage)))}</span>
+                    )}
+                  </div>
+                  {restAverage === null ? (
+                    <p className={s.small}>{t.restHr.none}</p>
+                  ) : (
+                    <RestHrChart days={mornings} average={restAverage} period={period} active={active} />
                   )}
                 </div>
               )}

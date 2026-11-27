@@ -28,17 +28,23 @@ export function corosSource(tokens: CorosTokens): CorosSource {
   };
 }
 
+/** Mornings of resting heart rate asked for, as far back as the activities go. */
+const REST_DAYS = 420;
+
 /** What COROS tells about the athlete: resting heart rate (the median for the load formula, the mornings for Today) and sex. */
 export async function corosAthlete(
   tokens: CorosTokens,
 ): Promise<{ restHr: number | null; restingHr: RestingHrDay[]; sex: Athlete['sex'] }> {
+  // A longer history for the chart; if COROS refuses that many days, the 30 it documents.
+  const restCall = (days: number) => callTool(tokens, 'queryRestingHeartRate', { days });
   const [rest, profile] = await Promise.all([
-    callTool(tokens, 'queryRestingHeartRate', { days: 30 }),
+    restCall(REST_DAYS).catch(() => restCall(30)),
     callTool(tokens, 'queryUserInfo', {}),
   ]);
   const restingHr = parseRestingHrDays(toolText(rest, 'queryRestingHeartRate'));
   return {
-    restHr: medianRestingHr(restingHr),
+    // The load formula's resting HR stays the median of the last 30 mornings.
+    restHr: medianRestingHr(restingHr.slice(-30)),
     restingHr,
     sex: parseSex(toolText(profile, 'queryUserInfo')),
   };

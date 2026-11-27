@@ -320,6 +320,14 @@ export const en = {
     sleep: (hours: string, change: number | null, diff: string) =>
       `Slept ${hours}${change === null ? '' : Math.abs(change) < 15 ? ', about your usual' : `, ${diff} ${change > 0 ? 'more' : 'less'} than usual`}`,
   },
+  restHr: {
+    toggle: 'Resting HR',
+    heading: 'Resting HR',
+    headingNote: 'each morning; a few beats up means less recovered',
+    average: (bpm: string) => `Average ${bpm}`,
+    none: 'No resting heart rate in this period yet',
+    aria: (over: string, average: string) => `Resting heart rate each morning ${over}. Average ${average}.`,
+  },
   sleep: {
     /** The chart card's switch for extra strips. */
     alsoShow: 'Also show',

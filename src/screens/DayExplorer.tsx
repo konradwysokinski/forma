@@ -21,11 +21,14 @@ const TIP_GAP = 12;
 export function DayExplorer({
   days,
   sleep,
+  rest,
   children,
 }: {
   days: readonly TrainingDay[];
   /** Nights per chart day while the sleep strip is on; the tooltip then gains a sleep row. */
   sleep?: readonly (SleepNight | null)[];
+  /** Resting heart rate per chart day while its strip is on; the tooltip then gains a row. */
+  rest?: readonly (number | null)[];
   children: (active: number | null) => ReactNode;
 }) {
   const { t, f, data } = useApp();
@@ -74,6 +77,7 @@ export function DayExplorer({
   const day = active === null ? null : days[active]!;
   const list = day ? (byDay.get(day.date) ?? []) : [];
   const night = sleep && active !== null ? (sleep[active] ?? null) : undefined;
+  const morning = rest && active !== null ? (rest[active] ?? null) : undefined;
   const x = active === null ? 0 : dayX(active, n, width);
   const side = x > width / 2 ? 'left' : 'right';
 
@@ -86,6 +90,7 @@ export function DayExplorer({
         `${t.form.fatigue} ${f.int(day.fatigue)}`,
         `${t.form.dayLoad} ${f.int(day.load)}`,
         night !== undefined && (night ? `${t.sleep.label} ${sleepLine(night, t, f)}` : t.sleep.noNight),
+        morning !== undefined && `${t.restHr.heading} ${morning === null ? '–' : f.bpm(morning)}`,
         list.length ? list.map((a) => activityLine(a, f)).join('; ') : t.form.restDay,
       ]
         .filter(Boolean)
@@ -114,6 +119,7 @@ export function DayExplorer({
           day={day}
           activities={list}
           night={night}
+          morning={morning}
           side={side}
           style={
             side === 'right'

@@ -87,3 +87,15 @@
 .sleep {
   fill: var(--sleep);
 }
+
+/* Resting heart rate each morning: a thin line in the heart colour. */
+.restHr {
+  fill: none;
+  stroke: var(--heart);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.restHrDot {
+  fill: var(--heart);
+}
